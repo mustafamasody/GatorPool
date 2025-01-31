@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/secrets"
@@ -66,7 +65,9 @@ func main() {
 		w.Write([]byte("Hello, world!"))
 	})
 
-	fmt.Println("Started server at ", time.Now())
+	// MARK: Start Server
+	logger.Info("Server started at http://" + os.Getenv("HOSTNAME") + ":8080")
+	logger.Error(http.ListenAndServe(":8080", r).Error())
 
 }
 
