@@ -8,6 +8,7 @@ import (
 
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/secrets"
+	"code.gatorpool.internal/util"
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -52,11 +53,13 @@ func main() {
 
 	r := chi.NewRouter()
 
+	r.Use(util.JSONMiddleware)
+
 	// Set up CORS middleware
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000", "https://gatorpool.netlify.app"}, // Allow your frontend origin
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Terratrade-Username", "X-Terratrade-Device-Id", "*", "tt-token"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-GatorPool-Username", "X-GatorPool-Device-Id", "*"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
