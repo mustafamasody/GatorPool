@@ -22,7 +22,7 @@ type AccountEntity struct {
 
 	LastLogin           *time.Time 				`json:"last_login,omitempty" bson:"last_login,omitempty"`
 	LastLogout          *time.Time 				`json:"last_logout,omitempty" bson:"last_logout,omitempty"`
-
+	OnboardingStatus 	*OnboardingStatus 		`json:"onboarding_status" bson:"onboarding_status"`
 	FirstName   		*string 				`json:"first_name,omitempty" bson:"first_name,omitempty"`
 	LastName   			*string 				`json:"last_name,omitempty" bson:"last_name,omitempty"`
 	UFID				*string 				`json:"ufid,omitempty" bson:"ufid,omitempty"`
@@ -32,6 +32,12 @@ type AccountEntity struct {
 	DriverUUID			*string 				`json:"driver_uuid,omitempty" bson:"driver_uuid,omitempty"`
 	CreatedAt   		*time.Time 				`json:"created_at,omitempty" bson:"created_at,omitempty"`
 	UpdatedAt   		*time.Time 				`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+type OnboardingStatus struct {
+	State			*string			`json:"state" bson:"state"`
+	Step			*int64			`json:"step" bson:"step"`
+	Responses       map[string]interface{} `json:"responses" bson:"responses"`
 }
 
 type Password struct {
