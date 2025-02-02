@@ -10,6 +10,27 @@ module.exports = {
     ],
     theme: {
       extend: {
+        screens: {
+          mobile: "320px",
+          tablet: "480px",
+          laptop: "770px",
+          desktop: "1024px",
+          desktop2: "1280px",
+          xl: "1440px",
+          mmxl: "1500px",
+          prehalfxl: "1660px",
+          halfxl: "1600px",
+          halfxlactual: "1805px",
+          threequarterxl: "1920px",
+          threequarterxl2: "1960px",
+          threequarterxl3: "2000px",
+          threefivequarterxl: "2044px",
+          halfxxl: "2148px",
+          xxl: "2412px",
+          threexl: "2560px",
+          threexl2: "2700px",
+          halfhalf: "1078px",
+        },
         fontFamily: {
           RobotoThin: ["RobotoThin"],
           RobotoLight: ["RobotoLight"],
@@ -23,7 +44,7 @@ module.exports = {
         },
       },
     },
-    darkMode: "class",
+    // darkMode: "class",
     plugins: [heroui({
         prefix: "heroui", // prefix for themes variables
         addCommonColors: true, // override common colors (e.g. "blue", "green", "pink").
@@ -46,8 +67,17 @@ module.exports = {
           },
           dark: {
             layout: {}, // dark theme layout tokens
-            colors: {}, // dark theme colors
-          },
+            colors: {
+              primary: {
+                DEFAULT: "#24bf44",
+                foreground: "#000000",
+              },
+              secondary: {
+                DEFAULT: "#19802e",
+                foreground: "#000000",
+              },
+              focus: "#BEF264",
+            },          },
           // ... custom themes
         },
     })],

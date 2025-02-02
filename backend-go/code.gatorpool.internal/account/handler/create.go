@@ -195,16 +195,16 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	}
 
 	encryptedFieldCache := &accountEntities.EncryptedFieldCache{
-		Email:    &emailVerificationData.Email,
-		ObjectID: &emailVerificationData.ObjectID,
-		Code:     &emailVerificationData.Code,
+		Email:    &emailVerificationData.EncryptedEmail,
+		ObjectID: &emailVerificationData.EncryptedObjectID,
+		Code:     &emailVerificationData.EncryptedCode,
 	}
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "encrypted_fields", Value: encryptedFieldCache},
 		}},
 	}
-	_, err = accountsCollection.UpdateOne(ctx, bson.D{{Key: "_id", Value: newVerificationObject.ID}}, update)
+	_, err = verificationCollection.UpdateOne(ctx, bson.D{{Key: "_id", Value: newVerificationObject.ID}}, update)
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": "internal_error",

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,6 +14,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+
+	accountHandler "code.gatorpool.internal/account/handler"
 )
 
 func main() {
@@ -66,6 +69,16 @@ func main() {
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, world!"))
+	})
+
+	// Account routes
+	r.Route("/v1/account", func(r chi.Router) {
+		r.Post("/auth/signup", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.SignUpV1(r, w, context.Background())
+		})
+		r.Put("/auth/verify", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.VerifyAccount(r, w, context.Background())
+		})
 	})
 
 	// MARK: Start Server

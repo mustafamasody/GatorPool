@@ -39,7 +39,6 @@ Now, you can run the backend and frontend!
 
 To Run the Golang backend: 
 - cd into "backend-go/code.gatorpool.internal"
-- Run "go mod download" - if its your first time starting it up
 - Run "go run main.go" (Make sure you're authenticated with gcloud CLI or it won't work!)
 
 To Run the React app:
