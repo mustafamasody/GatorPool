@@ -3,12 +3,14 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	accountEntities "code.gatorpool.internal/account/entities"
 	"code.gatorpool.internal/account/validator"
 	datastores "code.gatorpool.internal/datastores/mongo"
+	"code.gatorpool.internal/guardian/encryption"
 	passwords "code.gatorpool.internal/guardian/password"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
@@ -21,7 +23,7 @@ import (
 
 func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
-	// deviceID := req.Header.Get("X-GatorPool-Device-Id")
+	deviceID := req.Header.Get("X-GatorPool-Device-Id")
 	email := req.Header.Get("X-GatorPool-Username")
 
 	if !*validator.ValidateInitializeSignUpRequest(req) {
@@ -104,6 +106,104 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 			EncryptedVersion: version,
 		},
 	}
+
+	_, err = accountsCollection.InsertOne(ctx, account)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	var verification *accountEntities.VerificationEntity
+	verificationFilter := bson.D{
+		{Key: "info", Value: email},
+		{Key: "device_id", Value: deviceID},
+	}
+
+	err = accountsCollection.FindOne(ctx, verificationFilter).Decode(&verification)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	if err == nil {
+		_, err = accountsCollection.DeleteOne(ctx, verificationFilter)
+		if err != nil {
+			return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+				"error": "internal_error",
+			})
+		}
+	}
+
+	// Generate a 6 digit signature code to encrypt
+	code, codeErr := util.Generate6DigitCode()
+	if codeErr != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	newVerificationObject := &accountEntities.VerificationEntity{
+		ID:             primitive.NewObjectID(),
+		DeviceID:       ptr.String(deviceID),
+		Code:           code,
+		Info:           ptr.String(email),
+		CreatedAt:      ptr.Time(time.Now()),
+		Attempts:       ptr.Int32(0),
+		IsComplete:     ptr.Bool(false),
+		IsVerified:     ptr.Bool(false),
+		Resends:        ptr.Int32(0),
+		UUID:           account.UserUUID,
+		EncryptedFields: &accountEntities.EncryptedFieldCache{
+			Email:    nil,
+			ObjectID: nil,
+			Code:     nil,
+		},
+	}
+
+	_, err = accountsCollection.InsertOne(ctx, newVerificationObject)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	stringCode := strconv.FormatInt(*code, 10)
+	stringObjectID := newVerificationObject.ID.String()
+	stringObjectID = stringObjectID[10 : len(stringObjectID)-2]
+
+	emailVerificationData := encryption.EmailVerificationData{
+		Email: email,
+		Code:  stringCode,
+		ObjectID:    stringObjectID,
+	}
+
+	err = encryption.EncryptEmailVerificationData(&emailVerificationData)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	encryptedFieldCache := &accountEntities.EncryptedFieldCache{
+		Email:    &emailVerificationData.Email,
+		ObjectID: &emailVerificationData.ObjectID,
+		Code:     &emailVerificationData.Code,
+	}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "encrypted_fields", Value: encryptedFieldCache},
+		}},
+	}
+	_, err = accountsCollection.UpdateOne(ctx, bson.D{{Key: "_id", Value: newVerificationObject.ID}}, update)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "internal_error",
+		})
+	}
+
+	// link := ""
 
 	return nil
 }
