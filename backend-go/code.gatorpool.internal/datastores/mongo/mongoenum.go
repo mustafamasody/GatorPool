@@ -2,5 +2,6 @@ package mongo
 
 const (
 	Accounts 						= "accounts"
+	AccountsCreationVerification 	= "accounts_cv"
 	AccountsMFA 					= "accounts_mfa"
 )
