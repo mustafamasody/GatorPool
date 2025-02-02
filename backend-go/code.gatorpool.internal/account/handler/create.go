@@ -48,7 +48,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	password := body["password"].(string)
 
 	if password == "" {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_request" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_password" })
 	}
 
 	if !*passwords.ValidatePassword(&password) {
@@ -58,7 +58,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	db := datastores.GetMongoDatabase(ctx)
 
 	accountsCollection := db.Collection(datastores.Accounts)
-	// verificationCollection := db.Collection(datastores.AccountsCreationVerification)
+	verificationCollection := db.Collection(datastores.AccountsCreationVerification)
 
 	accountQuery := bson.D{{Key: "email", Value: email}}
 	var account *accountEntities.AccountEntity
@@ -99,8 +99,8 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 		CreatedAt: ptr.Time(time.Now()),
 		UpdatedAt: ptr.Time(time.Now()),
 		Sessions: []*accountEntities.Session{},
-		LastLogin: ptr.Time(time.Now()),
-		LastLogout: ptr.Time(time.Now()),
+		LastLogin: nil,
+		LastLogout: nil,
 		FirstName: nil,
 		LastName: nil,
 		UFID: nil,
@@ -170,7 +170,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 		},
 	}
 
-	_, err = accountsCollection.InsertOne(ctx, newVerificationObject)
+	_, err = verificationCollection.InsertOne(ctx, newVerificationObject)
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": "internal_error",
@@ -215,7 +215,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	if os.Getenv("ENV") == "development" {
 		link = "http://localhost:3000/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
 	} else {
-		link = "https://gatorpool.netlify.app/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
+		link = "https://gatorpool.com/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
 	}
 
 	fmt.Println("Debug Link: " + link)
@@ -244,6 +244,8 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 }
 
 // MARK: VerifyAccount
+// This is called when the user clicks the verification link in their email
+// ?id=verification_id&signature=encrypted_code
 func VerifyAccount(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
 	id := req.URL.Query().Get("id")
@@ -344,7 +346,6 @@ func VerifyAccount(req *http.Request, res http.ResponseWriter, ctx context.Conte
 	return util.JSONResponse(res, 200, map[string]interface{}{
 		"success":      true,
 		"message":      "Account verified",
-		"tt_from":      &verification.Info,
 	})
 }
 
@@ -529,6 +530,8 @@ func ResendVerificationEmail(req *http.Request, res http.ResponseWriter, ctx con
 		"message":      "Verification email sent",
 	})
 }
+
+
 func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
 	email := req.Header.Get("X-GatorPool-Username")
@@ -540,7 +543,7 @@ func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Con
 
 	email = strings.ToLower(email)
 
-	body, err := requesthydrator.ParseJSONBody(req, []string{"first_name", "last_name", "ttid"})
+	body, err := requesthydrator.ParseJSONBody(req, []string{"first_name", "last_name", "ufid"})
 	if err != nil {
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": err.Error()})
 	}
@@ -553,7 +556,7 @@ func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Con
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid request"})
 	}
 
-	// Validate the ufid and make sure its an 8 digit number like 36157338
+	// Validate the ufid and make sure its an 8 digit number
 	reg := regexp.MustCompile(`^\d{8}$`)
 	if !reg.MatchString(ufid) {
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid ufid"})

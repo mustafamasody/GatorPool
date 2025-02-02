@@ -88,6 +88,12 @@ func ValidatePassword(password *string) *bool {
 	const minLen = 8
 	const maxLen = 32
 
+	// 8-32 characters
+	// 1 symbol
+	// 1 number
+	// 1 uppercase letter
+	// 1 lowercase letter
+
 	// If the password is nil, return false
 	if password == nil {
 		result := false

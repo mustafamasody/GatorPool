@@ -31,6 +31,38 @@ type OAuthBody struct {
 	MFACode   *string `json:"mfa_code"`
 }
 
+// https://gatorpool.com/oauth2/token
+
+/*
+
+	Logging In
+	{
+		"username": "email",
+		"password": "myPassword",
+		"grant_type": "password",
+		"scope": "internal"
+		"mfa_code": (2fa code, incase their account has it on)
+	}
+
+	Refresh token
+	{
+		"username": "email",
+		"password": "refresh_token",
+		"grant_type": "refresh",
+		"scope": "internal"
+	}
+
+	Revoke token (logout)
+	{
+		"username": "email",
+		"password": "revoke",
+		"grant_type": "revoke",
+		"scope": "internal"
+	}
+
+	
+*/
+
 func OAuthToken(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
 	// Set the logger
