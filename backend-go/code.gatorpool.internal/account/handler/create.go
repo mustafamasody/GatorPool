@@ -35,6 +35,11 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 
 	email = strings.ToLower(email)
 
+	// Make sure the email domain is ufl.edu
+	if !strings.HasSuffix(email, "@ufl.edu") {
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "uf_only" })
+	}
+
 	body, err := requesthydrator.ParseJSONBody(req, []string{"password"})
 	if err != nil {
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_request" })
