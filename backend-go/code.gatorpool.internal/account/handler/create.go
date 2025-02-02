@@ -2,7 +2,9 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -67,7 +69,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 		}
 	}
 
-	if err != nil && err != mongo.ErrNoDocuments {
+	if err != mongo.ErrNoDocuments {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": "internal_error",
 		})
@@ -203,7 +205,34 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 		})
 	}
 
-	// link := ""
+	link := ""
+	if os.Getenv("ENV") == "development" {
+		link = "http://localhost:3000/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
+	} else {
+		link = "https://gatorpool.netlify.app/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
+	}
 
-	return nil
+	fmt.Println("Debug Link: " + link)
+
+	emailErr := SendEmail(EmailRequestBody{
+		Email:    email,
+		Subject:  "GatorPool - Finish signing up",
+		Template: "verify-create-account",
+		Data: map[string]string{
+			"EMAIL": email,
+			"URL":   link,
+		},
+	})
+
+	if emailErr != nil {
+		fmt.Println("Internal server error: " + emailErr.Error())
+		return util.JSONResponse(res, 500, map[string]interface{}{
+			"error": "Internal server error",
+		})
+	}
+
+	return util.JSONResponse(res, http.StatusOK, map[string]interface{}{
+		"success":      true,
+		"message":      "account initialized",
+	})
 }

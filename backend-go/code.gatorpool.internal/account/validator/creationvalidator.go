@@ -9,8 +9,8 @@ import (
 
 func ValidateInitializeSignUpRequest(req *http.Request) *bool {
 
-	deviceID := req.Header.Get("X-Terratrade-Device-Id")
-	email := req.Header.Get("X-Terratrade-Username")
+	deviceID := req.Header.Get("X-GatorPool-Device-Id")
+	email := req.Header.Get("X-GatorPool-Username")
 
 	if deviceID == "" || email == "" {
 		return ptr.Bool(false)
