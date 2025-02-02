@@ -12,7 +12,7 @@ export default function Navbar() {
           <div className="flex flex-row md:justify-between w-full items-center">
             <div className="flex flex-row space-x-6 items-center">
                 <div className="flex flex-row items-center">
-                    {/* <Image unoptimized src={logo} alt="Trading Journal Logo" width={64} height={64} /> */}
+                    <img src={require("../../assets/images/logo.png")} alt="GatorPool" className="w-12 h-12" />
                     <span className="ml-1 text-xl font-semibold">GatorPool</span>
                 </div>
                 {/* Desktop Links */}

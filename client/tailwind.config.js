@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const {heroui} = require("@heroui/theme");
+// const { fontFamily } = require('tailwindcss/defaultTheme');
 
 module.exports = {
     content: [
@@ -10,15 +11,15 @@ module.exports = {
     theme: {
       extend: {
         fontFamily: {
-          RobotoThin: ["RobotoThin", fontFamily.sans],
-          RobotoLight: ["RobotoLight", fontFamily.sans],
-          RobotoRegular: ["RobotoRegular", fontFamily.sans],
-          RobotoMedium: ["RobotoMedium", fontFamily.sans],
-          RobotoSemiBold: ["RobotoSemiBold", fontFamily.sans],
-          RobotoBold: ["RobotoBold", fontFamily.sans],
-          RobotoExtraBold: ["RobotoExtraBold", fontFamily.sans],
-          RobotoBlack: ["RobotoBlack", fontFamily.sans],
-          RobotoExtraLight: ["RobotoExtraLight", fontFamily.sans],
+          RobotoThin: ["RobotoThin"],
+          RobotoLight: ["RobotoLight"],
+          RobotoRegular: ["RobotoRegular"],
+          RobotoMedium: ["RobotoMedium"],
+          RobotoSemiBold: ["RobotoSemiBold"],
+          RobotoBold: ["RobotoBold"],
+          RobotoExtraBold: ["RobotoExtraBold"],
+          RobotoBlack: ["RobotoBlack"],
+          RobotoExtraLight: ["RobotoExtraLight"],
         },
       },
     },

@@ -186,7 +186,7 @@ func OAuthToken(req *http.Request, res http.ResponseWriter, ctx context.Context)
 				HttpOnly: true,
 				Secure:   true,
 				Path:     "/",
-				MaxAge:   3600 * 24, // 1 hour
+				MaxAge:   3600 * 24, // 24 hours
 				SameSite: http.SameSiteStrictMode,
 			})
 
