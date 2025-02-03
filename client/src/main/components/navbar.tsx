@@ -5,7 +5,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-primary fixed z-30 text-white w-full shadow">
+    <nav className="bg-secondary fixed z-30 text-white w-full shadow">
       <div className="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo and title */}
@@ -17,16 +17,16 @@ export default function Navbar() {
                 </div>
                 {/* Desktop Links */}
                 <div className="hidden md:flex space-x-2">
-                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Home</Link>
-                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Link 1</Link>
-                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Link 2</Link>
-                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Link 3</Link>
-                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Link 4</Link>
+                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Home</Link>
+                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Link 1</Link>
+                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Link 2</Link>
+                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Link 3</Link>
+                <Link to="/" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Link 4</Link>
                 </div>
             </div>
             <div className="flex flex-row ml-auto  md:mb- space-x-0 lg:space-x-4">
-              <Link to="/auth/signup" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Try Now</Link>
-              <Link to="/auth/signin" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Login</Link>
+              <Link to="/auth/signup" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Try Now</Link>
+              <Link to="/auth/signin" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary`}>Login</Link>
             </div>
           </div>
         
@@ -52,12 +52,12 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden flex flex-col space-y-2 mt-2">
             <Link to="/" className="block py-2 px-4 text-white">Home</Link>
-            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Link 1</Link>
-            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Link 2</Link>
-            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Link 3</Link>
-            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Link 4</Link>
-            <Link to="/auth/signup" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Try Now</Link>
-            <Link to="/auth" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-secondarynewdark">Login</Link>
+            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Link 1</Link>
+            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Link 2</Link>
+            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Link 3</Link>
+            <Link to="/" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Link 4</Link>
+            <Link to="/auth/signup" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Try Now</Link>
+            <Link to="/auth" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">Login</Link>
           </div>
         )}
       </div>

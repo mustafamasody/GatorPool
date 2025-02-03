@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "leaflet/dist/leaflet.css";
+
 
 body {
   margin: 0;
@@ -14,6 +16,11 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.custom-3d-tilt {
+  transform: perspective(1000px) rotateX(5deg) rotateY(-15deg);
+  transition: transform 0.3s ease-in-out;
 }
 
 @font-face {
