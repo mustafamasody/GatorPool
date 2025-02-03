@@ -26,7 +26,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-row ml-auto  md:mb- space-x-0 lg:space-x-4">
               <Link to="/auth/signup" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Try Now</Link>
-              <Link to="/auth" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Login</Link>
+              <Link to="/auth/signin" className={`block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-secondary`}>Login</Link>
             </div>
           </div>
         

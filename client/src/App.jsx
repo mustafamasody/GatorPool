@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './main/home';
 import {HeroUIProvider} from "@heroui/react";
 import SignUp from './app/auth/signup.tsx';
+import SignIn from './app/auth/signin.tsx';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocation } from 'react-router-dom';
@@ -37,6 +38,7 @@ function App() {
           <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/auth/signup" element={<SignUp />} />
+              <Route path="/auth/signin" element={<SignIn />} />
               <Route path="/verify" element={<Verify />} />
           </Routes>
         </div>
