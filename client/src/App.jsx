@@ -5,12 +5,13 @@ import HomePage from './main/home';
 import {HeroUIProvider} from "@heroui/react";
 import SignUp from './app/auth/signup.tsx';
 import SignIn from './app/auth/signin.tsx';
-import ViewProfile from './main/profile';
+import ViewProfile from './app/profile/profile';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocation } from 'react-router-dom';
 import Verify from './app/auth/verify';
 import FinishSignup from './app/auth/finish_signup';
+import ProtectedRoute from './app/auth/auth_provider';
 
 function App() {
 
@@ -43,7 +44,8 @@ function App() {
               <Route path="/auth/signin" element={<SignIn />} />
               <Route path="/auth/finish" element={<FinishSignup />} />
               <Route path="/verify" element={<Verify />} />
-              <Route path="/profile" element={<ViewProfile />} />
+
+              <Route path="/profile" element={<ProtectedRoute><ViewProfile /></ProtectedRoute>} />
           </Routes>
         </div>
       </HeroUIProvider>
