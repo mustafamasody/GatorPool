@@ -103,7 +103,7 @@ const SignUp = () => {
                             <Input 
                             type="email"
                             label="Email"
-                            placeholder="Enter your email"
+                            placeholder="Enter your UF email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="mobile:w-full desktop2:w-8/12 md:mt-16 text-black dark:text-white" />
