@@ -205,7 +205,7 @@ const HomePage = () => {
     }, [route]);
 
     return (
-        <div className="light dark:dark bg-white dark:bg-black flex flex-col h-full min-h-full min-h-screen w-full">
+        <div className="light dark:dark bg-white dark:bg-black flex flex-`col h-full min-h-full min-h-screen w-full">
             <Navbar />
             <div className="flex flex-col h-full w-full mt-32 px-6">
                 <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 items-center w-full max-w-screen-lg mx-auto">
