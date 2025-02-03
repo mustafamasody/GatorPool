@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import fetchBase from '../common/fetchBase';
 import ViewProfile from './profile/profile';
+import useLocalStorage from './utils/useLocalStorage';
+import CloseIcon from '@mui/icons-material/Close';
 
 const ViewController = ({}) => {
 
@@ -78,6 +80,25 @@ const ViewController = ({}) => {
             component = <ViewProfile  />;
     }
 
+    const sidebarVariants = {
+        hidden: { 
+            x: '-100%',
+            transition: {
+                type: 'tween',
+                ease: 'linear',
+                duration: 0.1 // Adjust this value to control the speed (lower is faster)
+            }
+        },
+        visible: {
+            x: 0,
+            transition: {
+                type: 'tween',
+                ease: 'linear',
+                duration: 0.1
+            }
+        }
+    };
+
         return (
 
             <div  className="relative flex flex-row w-full bg-backgroundDark ">
@@ -133,6 +154,18 @@ const ViewController = ({}) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                    {
+                        !sidebarVisible && (
+                            <div className="absolute top-4 left-4 lg:hidden">
+                                <button onClick={() => setSidebarVisible(true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )
+                    }
     
                     <div
                     className={`
@@ -143,10 +176,9 @@ const ViewController = ({}) => {
                         announcementData={announcementData}
                         setAnnouncementData={setAnnouncementData}
                         sidebarShown={sidebarShown} setSidebarShown={setSidebarShown} sidebarState={sidebarVisible} setSidebarState={setSidebarVisible} mobile={false} accountData={accountData} />
-                        {/* <h1 className="font-PoppinsBold text-white text-2xl text-center">Terra</h1> */}
                     </div>
     
-                    <div className="">
+                    <div className={`${sidebarShown ? ' lg:ml-[19.5rem] w-full lg:w-[calc(100vw-19.5rem)] ' : ' lg:ml-20 w-full lg:w-[calc(100vw-5rem)] '}`}>
                         {component}
                     </div>
                 </div>

@@ -42,6 +42,10 @@ module.exports = {
           RobotoBlack: ["RobotoBlack"],
           RobotoExtraLight: ["RobotoExtraLight"],
         },
+        colors: {
+          'gator-translucent': 'rgba(39, 245, 121, 0.2)', // Custom class for your color
+          'gator-translucent2': 'rgba(39, 245, 121, 0.3)', // Custom class for your color
+        }
       },
     },
     // darkMode: "class",

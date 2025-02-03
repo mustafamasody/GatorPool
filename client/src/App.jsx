@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import Verify from './app/auth/verify';
 import FinishSignup from './app/auth/finish_signup';
 import ProtectedRoute from './app/auth/auth_provider';
+import ViewController from './app/view_controller';
 
 function App() {
 
@@ -45,7 +46,7 @@ function App() {
               <Route path="/auth/finish" element={<FinishSignup />} />
               <Route path="/verify" element={<Verify />} />
 
-              <Route path="/profile" element={<ProtectedRoute><ViewProfile /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
           </Routes>
         </div>
       </HeroUIProvider>
