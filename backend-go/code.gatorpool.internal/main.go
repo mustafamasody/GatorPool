@@ -91,6 +91,16 @@ func main() {
 		r.Post("/auth/finish", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.FinishAccountV1(r, w, context.Background())
 		})
+
+		r.Post("/auth/password/reset/request", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.RequestPasswordReset(r, w, context.Background())
+		})
+		r.Post("/auth/password/reset", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.ResetPassword(r, w, context.Background())
+		})
+		r.Post("/auth/password/reset/code", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.CheckCode(r, w, context.Background())
+		})
 	})
 
 	// MARK: Start Server

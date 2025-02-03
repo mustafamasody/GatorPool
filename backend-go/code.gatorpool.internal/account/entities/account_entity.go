@@ -17,6 +17,7 @@ type AccountEntity struct {
 	ProfilePicture 		*bool 					`json:"profile_picture,omitempty" bson:"profile_picture,omitempty"`
 
 	TwoFAEnabled		*bool 					`json:"two_fa_enabled,omitempty" bson:"two_fa_enabled,omitempty"`
+	TwoFARequests     []*TwoFARequest      `json:"two_fa_requests" bson:"two_fa_requests"`
 	Gender  			*string 				`json:"gender" bson:"gender"`
 	Sessions			[]*Session 				`json:"sessions,omitempty" bson:"sessions,omitempty"`
 	LastLogin           *time.Time 				`json:"last_login,omitempty" bson:"last_login,omitempty"`
@@ -63,4 +64,20 @@ type Session struct {
 type EncryptedVersions struct {
 	SymmetricVersion  *int64 `json:"symmetric_version" bson:"symmetric_version"`
 	AsymmetricVersion *int64 `json:"asymmetric_version" bson:"asymmetric_version"`
+}
+
+type TwoFARequest struct {
+	RequestID         *string 				`json:"request_id" bson:"request_id"`
+	FlowType		  *string 				`json:"flow_type" bson:"flow_type"`
+	FlowStatus		  *string 				`json:"flow_status" bson:"flow_status"`
+	FlowData		  *string 				`json:"flow_data" bson:"flow_data"`
+	StateChanges	  []*TwoFAStateChange 	`json:"state_changes" bson:"state_changes"`
+	DeleteTimer		  *bool 				`json:"delete_timer" bson:"delete_timer"`
+	CreatedAt		  *time.Time 			`json:"created_at" bson:"created_at"`
+	UpdatedAt		  *time.Time 			`json:"updated_at" bson:"updated_at"`
+}
+
+type TwoFAStateChange struct {
+	State			  *string 				`json:"state" bson:"state"`
+	ChangedAt		  *time.Time 			`json:"changed_at" bson:"changed_at"`
 }
