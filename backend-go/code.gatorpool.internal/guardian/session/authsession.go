@@ -407,8 +407,6 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	_ = jwtversion
 	_ = publicversion
 
-	audience := []string{"v1"}
-
 	// Get public key
 	publicKey, retrieved := secrets.GetPublicKeyWithVersion(int32(*publicversion))
 	if !retrieved {
@@ -455,12 +453,6 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	if time.Now().Unix() > expirationTime {
 		logger.Error("Session expired for the following account: ", gpFrom)
 		return errors.New("session expired for the following account: " + gpFrom)
-	}
-
-	// Check if audience matches
-	if !util.Contains(audience, claims["aud"].(string)) {
-		logger.Error("Invalid audience for the following account: ", gpFrom)
-		return errors.New("invalid audience for the following account: " + gpFrom)
 	}
 
 	go updateLastLoginAt(account, sessions, foundSession) // Asynchronous session update

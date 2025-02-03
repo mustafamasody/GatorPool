@@ -111,7 +111,7 @@ const SignUp = () => {
                             <Input 
                             type="password"
                             label="Password"
-                            placeholder="Enter your password"
+                            placeholder="Create your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="mobile:w-full desktop2:w-8/12 mt-8 text-black dark:text-white" />
@@ -164,7 +164,7 @@ const SignUp = () => {
                                 <p className="text-black dark:text-white font-RobotoRegular text-sm">
                                     Already have an account?
                                 </p>
-                                <Link to="/login" className="text-black dark:text-white underline font-RobotoBold text-sm">
+                                <Link to="/auth/signin" className="text-black dark:text-white underline font-RobotoBold text-sm">
                                     Sign in
                                 </Link>
                             </div>

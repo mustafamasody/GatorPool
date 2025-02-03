@@ -16,6 +16,7 @@ import (
 	"github.com/joho/godotenv"
 
 	accountHandler "code.gatorpool.internal/account/handler"
+	"code.gatorpool.internal/account/oauth"
 )
 
 func main() {
@@ -71,6 +72,14 @@ func main() {
 		w.Write([]byte("Hello, world!"))
 	})
 
+	r.Post("/oauth2/token", func(w http.ResponseWriter, r *http.Request) {
+		oauth.OAuthToken(r, w, context.Background())
+	})
+
+	r.Post("/v1/auth/verify", func(w http.ResponseWriter, r *http.Request) {
+		accountHandler.VerifyToken(r, w, context.Background())
+	})
+
 	// Account routes
 	r.Route("/v1/account", func(r chi.Router) {
 		r.Post("/auth/signup", func(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +87,9 @@ func main() {
 		})
 		r.Put("/auth/verify", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.VerifyAccount(r, w, context.Background())
+		})
+		r.Post("/auth/finish", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.FinishAccountV1(r, w, context.Background())
 		})
 	})
 

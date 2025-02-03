@@ -17,9 +17,8 @@ type AccountEntity struct {
 	ProfilePicture 		*bool 					`json:"profile_picture,omitempty" bson:"profile_picture,omitempty"`
 
 	TwoFAEnabled		*bool 					`json:"two_fa_enabled,omitempty" bson:"two_fa_enabled,omitempty"`
-
+	Gender  			*string 				`json:"gender" bson:"gender"`
 	Sessions			[]*Session 				`json:"sessions,omitempty" bson:"sessions,omitempty"`
-
 	LastLogin           *time.Time 				`json:"last_login,omitempty" bson:"last_login,omitempty"`
 	LastLogout          *time.Time 				`json:"last_logout,omitempty" bson:"last_logout,omitempty"`
 	OnboardingStatus 	*OnboardingStatus 		`json:"onboarding_status" bson:"onboarding_status"`

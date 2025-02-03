@@ -103,6 +103,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 		LastLogout: nil,
 		FirstName: nil,
 		LastName: nil,
+		Gender: nil,
 		UFID: nil,
 		Phone: nil,
 		RiderUUID: nil,
@@ -532,7 +533,7 @@ func ResendVerificationEmail(req *http.Request, res http.ResponseWriter, ctx con
 }
 
 
-func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
 	email := req.Header.Get("X-GatorPool-Username")
 	deviceID := req.Header.Get("X-GatorPool-Device-Id")
@@ -543,7 +544,7 @@ func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Con
 
 	email = strings.ToLower(email)
 
-	body, err := requesthydrator.ParseJSONBody(req, []string{"first_name", "last_name", "ufid"})
+	body, err := requesthydrator.ParseJSONBody(req, []string{"first_name", "last_name", "ufid", "gender"})
 	if err != nil {
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": err.Error()})
 	}
@@ -551,8 +552,9 @@ func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Con
 	firstName := body["first_name"].(string)
 	lastName := body["last_name"].(string)
 	ufid := body["ufid"].(string)
+	gender := body["gender"].(string)
 
-	if firstName == "" || lastName == "" || ufid == "" {
+	if firstName == "" || lastName == "" || ufid == "" || gender == "" {
 		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid request"})
 	}
 
@@ -591,6 +593,7 @@ func FinishAccountV2(req *http.Request, res http.ResponseWriter, ctx context.Con
 
 	account.FirstName = &firstName
 	account.LastName = &lastName
+	account.Gender = &gender
 
 	account.UFID = &ufid
 

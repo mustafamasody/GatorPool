@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocation } from 'react-router-dom';
 import Verify from './app/auth/verify';
+import FinishSignup from './app/auth/finish_signup';
 
 function App() {
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/auth/signup" element={<SignUp />} />
               <Route path="/auth/signin" element={<SignIn />} />
+              <Route path="/auth/finish" element={<FinishSignup />} />
               <Route path="/verify" element={<Verify />} />
           </Routes>
         </div>
