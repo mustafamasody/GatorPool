@@ -105,7 +105,7 @@ func main() {
 			accountHandler.CheckCode(r, w, context.Background())
 		})
 
-		r.With(session.VerifyOAuthToken).Get("/loadin", func(w http.ResponseWriter, r *http.Request) {
+		r.With(session.VerifyOAuthToken).Post("/loadin", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.LoadIn(r, w, r.Context())
 		})
 

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -26,7 +27,19 @@ import (
 	// "go.mongodb.org/mongo-driver/mongo"
 )
 
+type LoadInRequestBody struct {
+	HydrateDashboard *bool `json:"hydrate_dashboard"`
+}
+
 func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	var body LoadInRequestBody
+	err := json.NewDecoder(req.Body).Decode(&body)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": err.Error(),
+		})
+	}
 
 	// Get the account object from context
 	account, ok := req.Context().Value("account").(accountEntities.AccountEntity) // No pointer
@@ -97,7 +110,22 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 
 	// Status cards are shown right under the display cards on the dashboard.
 	// They can be either information, warning, or critical.
+	if body.HydrateDashboard != nil && *body.HydrateDashboard {
+		statusCards, bottomCards := HydrateDashboard(account, *rider)
+
+		defaultReturn["status_cards"] = statusCards
+		defaultReturn["bottom_actions"] = bottomCards
+	}
+		
+	return util.JSONResponse(res, http.StatusOK, defaultReturn)
+}
+
+func HydrateDashboard(account accountEntities.AccountEntity, rider riderEntities.RiderEntity) ([]*accountEntities.ReturnLoadInStatusCard, []*accountEntities.ReturnLoadInBottomAction) {
+
 	statusCards := make([]*accountEntities.ReturnLoadInStatusCard, 0)
+	bottomActions := make([]*accountEntities.ReturnLoadInBottomAction, 0)
+
+	// Hydrate the status cards under "Recommended Actions in the dashboard".
 
 	if rider.Address == nil {
 		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
@@ -135,7 +163,5 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		})
 	}
 
-	defaultReturn["status_cards"] = statusCards
-		
-	return util.JSONResponse(res, http.StatusOK, defaultReturn)
+	return statusCards, bottomActions
 }

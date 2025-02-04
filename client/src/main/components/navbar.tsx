@@ -68,8 +68,8 @@ export default function Navbar() {
                 <div className="flex flex-row ml-auto md:mb- space-x-0 lg:space-x-4">
                   {
                     isLoggedIn ? (
-                      <Link to="/profile" className="block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary">
-                        View Profile
+                      <Link to="/dashboard" className="block font-RobotoRegular text-sm rounded-full text-white px-3 py-2 transition delay-75 hover:bg-primary">
+                        Dashboard
                       </Link>
                     ) : (
                       <div className="flex flex-row space-x-2 items-center">
@@ -119,8 +119,8 @@ export default function Navbar() {
                 </Link>
                 {
                   isLoggedIn ? (
-                    <Link to="/profile" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">
-                      View Profile
+                    <Link to="/dashboard" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">
+                      Dashboard
                     </Link>
                   ) : (
                     <div className="flex flex-col space-y-2">

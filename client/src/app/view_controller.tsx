@@ -56,12 +56,15 @@ const ViewController = ({}) => {
         }) 
 
         fetch(fetchBase + "/v1/account/loadin", {
-            method: 'GET', credentials: 'include',
+            method: 'POST', credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
               'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id'),
               'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username')
             },
+            body: JSON.stringify({
+                hydrate_dashboard: true
+            })
           }).then(res => res.json()).then((data) => {
             if(!data.success) {
               if(data.error?.includes("no account") || data.error?.includes("session") || data.error?.includes("token")) {
