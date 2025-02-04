@@ -30,6 +30,7 @@ type AccountEntity struct {
 	LastName   			*string 				`json:"last_name,omitempty" bson:"last_name,omitempty"`
 	UFID				*string 				`json:"ufid,omitempty" bson:"ufid,omitempty"`
 	Email				*string 				`json:"email,omitempty" bson:"email,omitempty"`
+	AboutMe				*string 				`json:"aboutme,omitempty" bson:"aboutme,omitempty"`
 	Phone				*string 				`json:"phone,omitempty" bson:"phone,omitempty"`
 	RiderUUID			*string 				`json:"rider_uuid,omitempty" bson:"rider_uuid,omitempty"`
 	DriverUUID			*string 				`json:"driver_uuid,omitempty" bson:"driver_uuid,omitempty"`

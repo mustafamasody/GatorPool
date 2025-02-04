@@ -460,7 +460,7 @@ const SignIn = () => {
                                     })                    
                                 }, 300)
                             }}
-                            color="primary" className=" text-white mx-auto font-PoppinsRegular w-full mt-6 py-2" size="md"  >
+                            color="primary" className=" text-white mx-auto font-PoppinsRegular w-full mt-6 py-2" size="md">
                                 Sign in
                             </Button>
 
