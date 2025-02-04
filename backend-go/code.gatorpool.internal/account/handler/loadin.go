@@ -116,6 +116,10 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		defaultReturn["status_cards"] = statusCards
 		defaultReturn["bottom_actions"] = bottomCards
 	}
+
+	if rider.Address != nil && rider.Address.Name != nil {
+		defaultReturn["address"] = *rider.Address.Name
+	}
 		
 	return util.JSONResponse(res, http.StatusOK, defaultReturn)
 }

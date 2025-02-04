@@ -12,8 +12,8 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
     const [bio, setBio] = useState<string>("");
 
     return(
-        <div className="flex flex-col">
-            <div className="flex bg-white dark:bg-black min-h-screen p-8 items-center">
+        <div className="flex flex-col min-h-screen">
+            <div className="flex bg-white dark:bg-black p-8 items-center">
                 <div className="flex flex-col items-center space-y-8 mr-16">
                     <div className="flex flex-row items-center">
                         <div className="flex flex-row items-center space-x-4 mt-32">
@@ -40,11 +40,12 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                             <p className="text-black dark:text-white text-l font-Roboto mr-8">000</p>
                         </div>
                     </div>
+                    <div className=''></div>
+                    <h1 className="text-black dark:text-white text-l font-RobotoSemiBold mr-4">Your home address: {accountData?.address}</h1>
                 </div>
                 <Textarea 
                     onChange={(e) => setBio(e.target.value)}
                     value={bio}
-                    isClearable
                     className="max-w-lg" 
                     label="Edit your bio:" 
                     errorMessage="The description should not be more than 500 characters long."
@@ -53,10 +54,13 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                     placeholder="Tell others about yourself..." 
                 />
             </div>
-            <div className="flex flex-row">
+            <div className="flex flex-row space-x-2 ml-auto mr-60">
                 <Button 
                 onPress={() => console.log("Saving bio: ", bio)} // Placeholders for now
-                color="primary" className="text-white mx-auto font-PoppinsRegular w-full mt-6 py-2" size="md">
+                color="primary" 
+                className="text-white font-PoppinsRegular mt-6 px-4 py-1" 
+                size="sm"
+                >
                 Save
                 </Button>
                 <Button
@@ -64,7 +68,10 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                     setBio("");
                     console.log("Pressed cancel");
                 }}
-                color="default" className="text-white mx-auto font-PoppinsRegular w-full mt-6 py-2" size="md">
+                color="default" 
+                className="text-white font-PoppinsRegular mt-6 px-4 py-1" 
+                size="sm"
+                >
                     Cancel
                 </Button>
             </div>

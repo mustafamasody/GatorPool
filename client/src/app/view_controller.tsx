@@ -25,7 +25,10 @@ export interface AccountData {
     profile_picture: string;
     user_uuid: string;
     status_cards: StatusCard[];
+    address: string;
 }
+
+
 
 export interface StatusCard {
     uuid: string;
@@ -77,7 +80,8 @@ const ViewController = ({}) => {
                     email: data.email,
                     profile_picture: data.profile_picture,
                     user_uuid: data.user_uuid,
-                    status_cards: data.status_cards
+                    status_cards: data.status_cards,
+                    address: data?.address,
                 }
                 setAccountData(accountData);
             }
