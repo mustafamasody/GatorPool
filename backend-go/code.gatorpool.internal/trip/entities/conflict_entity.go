@@ -5,7 +5,7 @@ import (
 )
 
 type TripConflictEntity struct {
-	// Type of conflict: fare, driver_cancelled, driver_changed, date_change, etc.
+	// Type of conflict: fare_changed, driver_cancelled, driver_changed, date_change, etc.
 	Type				*string							`json:"type" bson:"type"`
 
 	// Timestamp of when the conflict was made

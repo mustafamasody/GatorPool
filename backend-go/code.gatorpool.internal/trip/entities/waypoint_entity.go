@@ -4,6 +4,47 @@ import (
 	"time"
 )
 
+/*
+
+	Trip from UF Marston Library to:
+		- Stop 1: Wynwood, Miami, FL
+		- Stop 2: Miami Beach, Miami, FL
+
+	- Driver: John
+	- Rider: Jack
+	- Rider 2: Jill
+
+	- Waypoints:
+		1:
+			- Type: pickup
+			- For: driver
+			- Data: {anything, driver_uuid} <-- we probably wont be using this
+			- Latitude: latitude of marston library (idk)
+			- Longitude: longitude of marston library (idk)
+			- Address: Marston Library, Gainesville, FL
+			- Expected: 9:30am Pickup
+			- Actual: 9:38am Pickup
+		2:
+			- Type: dropoff
+			- For: rider
+			- Data: {anything, rider_uuid} <-- we probably wont be using this
+			- Latitude: latitude of wynwood, miami, fl (idk)
+			- Longitude: longitude of wynwood, miami, fl (idk)
+			- Address: Wynwood, Miami, FL
+			- Expected: 2:00pm Dropoff
+			- Actual: 2:28pm Dropoff
+		3:
+			- Type: dropoff
+			- For: rider
+			- Data: {anything, rider_uuid_2}
+			- Latitude: latitude of miami beach, miami, fl (idk)
+			- Longitude: longitude of miami beach, miami, fl (idk)
+			- Address: Miami Beach, Miami, FL
+			- Expected: 3:00pm Dropoff
+			- Actual: 3:17pm Dropoff
+
+*/
+
 type WaypointEntity struct {
 	// Type: Destination, Pickup, Stopover
 	Type			*string					`json:"type" bson:"type"`

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	accountEntities "code.gatorpool.internal/account/entities"
+	riderEntities "code.gatorpool.internal/rider/entities"
 	"code.gatorpool.internal/account/validator"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/encryption"
@@ -594,6 +595,7 @@ func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Con
 	account.FirstName = &firstName
 	account.LastName = &lastName
 	account.Gender = &gender
+	account.RiderUUID = account.UserUUID
 
 	account.UFID = &ufid
 
@@ -612,6 +614,31 @@ func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Con
 	}
 
 	_, err = verificationCollection.DeleteOne(ctx, verificationQuery)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{"error": "internal server error"})
+	}
+
+	// Create their rider object
+	rider := &riderEntities.RiderEntity{
+		RiderUUID: account.RiderUUID,
+		PastTrips: []*string{},
+		Rating: nil,
+		Options: &riderEntities.RiderOptionsEntity{
+			PayGas: nil,
+			PayFood: nil,
+		},
+		Fulfillment: &riderEntities.RiderFulfillmentEntity{
+			BackedOut: ptr.Int64(0),
+		},
+		Disceplanary: &riderEntities.RiderDisceplanaryEntity{
+			Warnings: []*string{},
+			Bans: []*string{},
+			Complaints: []*string{},
+		},
+	}
+	
+	ridersCollection := db.Collection(datastores.Riders)
+	_, err = ridersCollection.InsertOne(ctx, rider)
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{"error": "internal server error"})
 	}

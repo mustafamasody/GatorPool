@@ -20,6 +20,9 @@ type TripEntity struct {
 	// Posted by (UserUUID) for the trip
 	PostedBy			*string							`json:"posted_by" bson:"posted_by"`
 
+	// Can be driver, rider
+	PostedByType		*string							`json:"posted_by_type" bson:"posted_by_type"`
+
 	// FlowType: rider_requests_ride, driver_requests_riders, etc.
 	// This is used to determine the flow of the trip and how to display it
 	// Like if a person requests a ride, it will be displayed for drivers going to nearby locations
@@ -28,10 +31,10 @@ type TripEntity struct {
 	// Whether the trip is a carpool or not
 	Carpool				*bool							`json:"carpool" bson:"carpool"`
 
-	// The datetime of the trip
+	// The expected datetime of the trip
 	Datetime			*time.Time						`json:"datetime" bson:"datetime"`
 
-	// Current location of the driver, updated everytime driver loads page
+	// Current location of the driver, updated everytime driver loads page/does anything on the page
 	CurrentLocation		*WaypointEntity					`json:"current_location" bson:"current_location"`
 
 	// Riders for the trip

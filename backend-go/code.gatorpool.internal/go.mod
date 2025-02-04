@@ -70,6 +70,21 @@ require (
 )
 
 require (
+	cel.dev/expr v0.19.0 // indirect
+	cloud.google.com/go v0.118.0 // indirect
+	cloud.google.com/go/monitoring v1.23.0 // indirect
+	cloud.google.com/go/storage v1.50.0 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.25.0 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.48.1 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.48.1 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78 // indirect
+	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
+	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
+	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+	go.opentelemetry.io/contrib/detectors/gcp v1.32.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.34.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.32.0 // indirect
 )
