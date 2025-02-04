@@ -15,7 +15,9 @@ import (
 	accountEntities "code.gatorpool.internal/account/entities"
 	"code.gatorpool.internal/datastores/gcs"
 	datastores "code.gatorpool.internal/datastores/mongo"
+	driverEntities "code.gatorpool.internal/driver/entities"
 	riderEntities "code.gatorpool.internal/rider/entities"
+	tripEntities "code.gatorpool.internal/trip/entities"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
 	"github.com/pborman/uuid"
@@ -23,6 +25,7 @@ import (
 	// "code.gatorpool.internal/util/requesthydrator"
 	// "github.com/pborman/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/bson/primitive"
 	// "go.mongodb.org/mongo-driver/mongo"
 )
@@ -121,6 +124,27 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		defaultReturn["address"] = *rider.Address.Name
 	}
 		
+	// If they are a driver, validate them. This will control whether or not they can view
+	// driver specific things on the frontend. If they aren't a driver, only the "Apply"
+	// tab will be shown.
+	var driver driverEntities.DriverEntity
+	driverCollection := db.Collection(datastores.Drivers)
+	driverQuery := bson.D{{Key: "driver_uuid", Value: account.UserUUID}}
+	err = driverCollection.FindOne(ctx, driverQuery).Decode(&driver)
+	if err == nil {
+		if driver.Verified != nil && *driver.Verified {
+			defaultReturn["driver_verified"] = true
+		} else {
+			if driver.Applications != nil && len(driver.Applications) > 0 {
+				defaultReturn["driver_application"] = driver.Applications
+			}
+		}
+	} else {
+		if err != mongo.ErrNoDocuments {
+			fmt.Println("Error fetching driver: ", err)
+		}
+	}
+
 	return util.JSONResponse(res, http.StatusOK, defaultReturn)
 }
 
@@ -166,6 +190,64 @@ func HydrateDashboard(account accountEntities.AccountEntity, rider riderEntities
 			DisplayType: "drawer",
 		})
 	}
+
+	// Card 1: "Book your first trip"
+	// Will be shown if user has no prior trip history
+	// So we query the trip collection to see if the user has any trips
+	var tripsWithUser []*tripEntities.TripEntity
+	tripsCollection := datastores.GetMongoDatabase(context.Background()).Collection(datastores.Trips)
+
+	riderQuery := bson.D{
+		{Key: "riders.user_uuid", Value: *rider.RiderUUID},
+	}
+
+	cursor, err := tripsCollection.Find(context.Background(), riderQuery)
+	if err != nil {
+		fmt.Println("Error fetching trips with user: ", err)
+	} else {
+		err = cursor.All(context.Background(), &tripsWithUser)
+		if err != nil {
+			fmt.Println("Error decoding trips with user: ", err)
+		}
+	}
+
+	if len(tripsWithUser) == 0 {
+		bottomActions = append(bottomActions, &accountEntities.ReturnLoadInBottomAction{
+			UUID: uuid.NewRandom().String(),
+			Title: "Book your first trip",
+			Description: "Get started by booking your first trip",
+			Action: "book_trip",
+			ActionName: "Book Trip",
+			DisplayType: "card",
+			Color: "green_gradient",
+			DisplayBlob: "https://storage.googleapis.com/gatorpool-449522.appspot.com/travel.png",
+		})
+	}
+
+	bottomActions = append(bottomActions, &accountEntities.ReturnLoadInBottomAction{
+		UUID: uuid.NewRandom().String(),
+		Title: "Miami Spring Break?",
+		Description: "See fares to Miami for Spring Break",
+		Action: "book_trip_flow",
+		ActionName: "See Fares",
+		FlowData: map[string]interface{}{
+			"destination": "Miami, FL, US",
+		},
+		Color: "orange_gradient",
+		DisplayType: "card",
+		DisplayBlob: "https://storage.googleapis.com/gatorpool-449522.appspot.com/computer.png",
+	})
+
+	bottomActions = append(bottomActions, &accountEntities.ReturnLoadInBottomAction{
+		UUID: uuid.NewRandom().String(),
+		Title: "Anywhere in Florida",
+		Description: "Go anywhere in Florida if drivers are available",
+		Action: "book_trip",
+		ActionName: "Book Trip",
+		Color: "default",
+		DisplayType: "card",
+		DisplayBlob: "https://storage.googleapis.com/gatorpool-449522.appspot.com/map.png",
+	})
 
 	return statusCards, bottomActions
 }

@@ -7,4 +7,6 @@ const (
 	AccountsPasswordReset		 	= "accounts-pr"
 	Riders 							= "riders"
 	Config 							= "config"
+	Trips 							= "trips"
+	Drivers 						= "drivers"
 )

@@ -14,9 +14,10 @@ type ReturnLoadInBottomAction struct {
 	UUID 				string 		`json:"uuid"`
 	Title	   			string 		`json:"title"`
 	Description 		string 		`json:"description"`
-	Type 				string 		`json:"type"`
+	Color 				string 		`json:"color"`
 	Action 				string 		`json:"action"`
 	ActionName 			string 		`json:"action_name"`
+	FlowData			map[string]interface{} `json:"flow_data"`
 	DisplayType 		string 		`json:"display_type"`
 	DisplayBlob 		string 		`json:"display_blob"`
 }

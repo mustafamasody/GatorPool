@@ -26,6 +26,7 @@ export interface AccountData {
     user_uuid: string;
     status_cards: StatusCard[];
     address: string;
+    bottom_actions: ReturnLoadInBottomAction[];
 }
 
 
@@ -39,6 +40,19 @@ export interface StatusCard {
     action_name: string;
     display_type: string;
 }
+
+export interface ReturnLoadInBottomAction {
+    uuid?: string;
+    title?: string;
+    description?: string;
+    action?: string;
+    color?: string;
+    action_name?: string;
+    flow_data?: Record<string, any>;
+    display_type?: string;
+    display_blob?: string;
+  }
+  
 
 const ViewController = ({}) => {
 
@@ -82,6 +96,7 @@ const ViewController = ({}) => {
                     user_uuid: data.user_uuid,
                     status_cards: data.status_cards,
                     address: data?.address,
+                    bottom_actions: data.bottom_actions,
                 }
                 setAccountData(accountData);
             }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import fetchBase from '../../common/fetchBase';
 import { cn, Input } from '@heroui/react';
-import { Settings, Bell } from 'lucide-react';
+import { Settings, Bell, MoveRight } from 'lucide-react';
 import { AccountData } from '../view_controller';
 import {Alert, Button} from "@heroui/react";
 import RecommendedActions from './recommended_actions';
@@ -72,36 +72,41 @@ const Dashboard: React.FC<DashboardProps> = ({ accountData, setAccountData }) =>
                 )
             }
 
-        <div className="flex w-full flex-col">
-            <Tabs aria-label="Options">
-                <Tab key="photos" title="Photos">
-                <Card>
-                    <CardBody>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </CardBody>
-                </Card>
-                </Tab>
-                <Tab key="music" title="Music">
-                <Card>
-                    <CardBody>
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                    ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur.
-                    </CardBody>
-                </Card>
-                </Tab>
-                <Tab key="videos" title="Videos">
-                <Card>
-                    <CardBody>
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                    mollit anim id est laborum.
-                    </CardBody>
-                </Card>
-                </Tab>
-            </Tabs>
+            <div className="flex flex-col w-full">
+                <h1 className="text-black mb-4 dark:text-white text-2xl font-RobotoSemiBold">Feed</h1>
+                <div className="flex w-full grid-cols-1 lg:grid-cols-3 gap-8">
+                    {
+                        accountData?.bottom_actions?.map((action, index) => (
+                            <div
+                            key={action.uuid}
+                            className={`
+                            ${action.color === "default" ? " bg-neutral-800 text-black dark:text-white " :
+                                action.color === "orange_gradient" ? " text-white bg-gradient-to-r from-orange-400 to-rose-800 "
+                                :
+                                action.color === "green_gradient" ? " text-white bg-gradient-to-r from-green-400 to-emerald-800 " 
+                                : " bg-neutral-800 text-black dark:text-white "
+                            }
+                            w-full h-[28rem] rounded-2xl p-6 relative`}>
+                                <h1 className="text-white font-RobotoSemiBold text-2xl">{action.title}</h1>
+                                <p className="text-white font-RobotoRegular text-lg">{action.description}</p>
+
+                                <Button
+                                endContent={<MoveRight size={14} />}
+                                onPress={() => {
+                                }}
+                                className="absolute bottom-6 bg-opacity-50 right-6 text-white font-RobotoRegular"
+                                size="md"
+                                >
+                                    {action.action_name}
+                                </Button>
+
+                                <img src={action.display_blob} className="absolute bottom-2 left-2 h-48 w-48" />
+                            </div>
+                        ))
+                    }
+                </div>
             </div>
+
         </div>
     );
 }
