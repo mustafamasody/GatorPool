@@ -12,13 +12,14 @@ import { Notebook, Bot, Bike, ShipWheel, Settings } from 'lucide-react';
 import QueryStatsOutlinedIcon from '@mui/icons-material/QueryStatsOutlined';
 import { AlarmSmoke } from 'lucide-react';
 import Person2Icon from '@mui/icons-material/Person2';
+import { AccountData } from '../view_controller';
 
 
     interface SidebarProps {
         setSidebarState: React.Dispatch<React.SetStateAction<boolean>>;
         sidebarState: boolean;
         mobile: boolean;
-        accountData: any;
+        accountData: AccountData;
         sidebarShown: boolean;
         setSidebarShown: React.Dispatch<React.SetStateAction<boolean>>;
         announcementData: any;
@@ -122,9 +123,36 @@ import Person2Icon from '@mui/icons-material/Person2';
         icon: <ShipWheel />,
         title: "Drive",
         tabgroup: <>
-            <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
-            <Tab title="Drive History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
-            <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
+        {
+          accountData?.driver_verified && (
+            <>
+              <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
+              <Tab title="Drive History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
+              <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
+            </>
+          )
+        }
+        {
+          accountData.driver_applications && accountData?.driver_applications.length > 0 && !accountData.driver_verified && (
+            <>
+              <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
+              {
+                accountData.driver_applications.map((application, index) => (
+                  <Tab
+                  key={application.application_uuid}
+                  title={"Application " + (index + 1)} activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="driver-application" secondaryId={application.application_uuid} />
+                ))
+              }
+            </>
+          )
+        }
+        {
+          !accountData.driver_applications && !accountData.driver_verified && (
+            <>
+              <Tab title="Apply" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="driver-apply"  />
+            </>
+          )
+        }
         </>
       },
       {

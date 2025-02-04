@@ -136,7 +136,7 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 			defaultReturn["driver_verified"] = true
 		} else {
 			if driver.Applications != nil && len(driver.Applications) > 0 {
-				defaultReturn["driver_application"] = driver.Applications
+				defaultReturn["driver_applications"] = driver.Applications
 			}
 		}
 	} else {

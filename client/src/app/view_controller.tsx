@@ -27,9 +27,29 @@ export interface AccountData {
     status_cards: StatusCard[];
     address: string;
     bottom_actions: ReturnLoadInBottomAction[];
+    driver_verified?: boolean;
+    driver_applications?: DriverApplicationEntity[];
 }
 
-
+export interface DriverApplicationEntity {
+    application_uuid?: string;
+    full_name?: string;
+    email?: string;
+    phone_number?: string;
+    date_of_birth?: string;
+    address?: string;
+    address_line_2?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+    accepted?: boolean;
+    accepted_at?: Date;
+    message?: string;
+    closed?: boolean;
+    created_at?: Date;
+    updated_at?: Date;
+  }
+  
 
 export interface StatusCard {
     uuid: string;
@@ -97,6 +117,8 @@ const ViewController = ({}) => {
                     status_cards: data.status_cards,
                     address: data?.address,
                     bottom_actions: data.bottom_actions,
+                    driver_verified: data.driver_verified,
+                    driver_applications: data.driver_applications,
                 }
                 setAccountData(accountData);
             }
@@ -197,10 +219,12 @@ const ViewController = ({}) => {
                             animate="visible"
                             exit="hidden"
                         >
-                            <Sidebar 
-                            announcementData={announcementData} 
-                            setAnnouncementData={setAnnouncementData}
-                            sidebarShown={sidebarShown} setSidebarShown={setSidebarShown} sidebarState={sidebarVisible} setSidebarState={setSidebarVisible} mobile={false} accountData={accountData} />
+                        {
+                            accountData &&<Sidebar
+                        announcementData={announcementData}
+                        setAnnouncementData={setAnnouncementData}
+                        sidebarShown={sidebarShown} setSidebarShown={setSidebarShown} sidebarState={sidebarVisible} setSidebarState={setSidebarVisible} mobile={false} accountData={accountData} />
+                        }
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -222,10 +246,12 @@ const ViewController = ({}) => {
                         
                     ${sidebarVisible ? ' mobile:hidden lg:block w-64 ' : ' mobile:hidden lg:block w-16 '}
                     absolute fixed z-30 border-r-1 border-neutral-200 top-0 left-0 bg-slate-950`}>
-                        <Sidebar
+                        {
+                            accountData &&<Sidebar
                         announcementData={announcementData}
                         setAnnouncementData={setAnnouncementData}
                         sidebarShown={sidebarShown} setSidebarShown={setSidebarShown} sidebarState={sidebarVisible} setSidebarState={setSidebarVisible} mobile={false} accountData={accountData} />
+                        }
                     </div>
     
                     <div className={`${sidebarShown ? ' lg:ml-[19.5rem] w-full lg:w-[calc(100vw-19.5rem)] ' : ' lg:ml-20 w-full lg:w-[calc(100vw-5rem)] '}`}>
