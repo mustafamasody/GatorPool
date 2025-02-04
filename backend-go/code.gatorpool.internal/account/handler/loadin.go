@@ -13,7 +13,7 @@ import (
 	accountEntities "code.gatorpool.internal/account/entities"
 	"code.gatorpool.internal/datastores/gcs"
 	datastores "code.gatorpool.internal/datastores/mongo"
-	// riderEntities "code.gatorpool.internal/rider/entities"
+	riderEntities "code.gatorpool.internal/rider/entities"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
 	// "code.gatorpool.internal/util/requesthydrator"
@@ -31,6 +31,14 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		fmt.Println("Account object is missing in context")
 		return util.JSONResponse(res, http.StatusUnauthorized, map[string]interface{}{
 			"error": "no account in context",
+		})
+	}
+
+	rider, ok := req.Context().Value("rider").(*riderEntities.RiderEntity) // No pointer
+	if !ok {
+		fmt.Println("Rider object is missing in context")
+		return util.JSONResponse(res, http.StatusUnauthorized, map[string]interface{}{
+			"error": "no rider in context",
 		})
 	}
 
@@ -83,6 +91,39 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		defaultReturn["profile_picture"] = "https://storage.googleapis.com/gatorpool-449552.appspot.com/default_pfp.png"
 		defaultReturn["profile_picture_expiry"] = time.Now().Add(time.Minute * 20).UnixMilli()
 	}
+
+	// Status cards are shown right under the display cards on the dashboard.
+	// They can be either information, warning, or critical.
+	statusCards := make([]*accountEntities.ReturnLoadInStatusCard, 0)
+
+	if rider.Address == nil {
+		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
+			Title: "Home Address",
+			Description: "Add your home address to get started",
+			Type: "critical",
+			Action: "rider_add_address",
+		})
+	}
+
+	if account.TwoFAEnabled == nil || !*account.TwoFAEnabled {
+		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
+			Title: "Secure your account",
+			Description: "Enable two-factor authentication for added security",
+			Type: "warning",
+			Action: "account_two_fa",
+		})
+	}
+
+	if rider.Options.PayFood == nil || rider.Options.PayGas == nil {
+		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
+			Title: "Ride Preferences",
+			Description: "Set your ride preferences",
+			Type: "information",
+			Action: "rider_payment_preferences",
+		})
+	}
+
+	defaultReturn["status_cards"] = statusCards
 		
 	return util.JSONResponse(res, http.StatusOK, defaultReturn)
 }

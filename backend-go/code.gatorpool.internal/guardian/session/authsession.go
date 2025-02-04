@@ -14,6 +14,7 @@ import (
 	"time"
 
 	accountModel "code.gatorpool.internal/account/entities"
+	riderEntities "code.gatorpool.internal/rider/entities"
 	datastores "code.gatorpool.internal/datastores/mongo"
 
 	"code.gatorpool.internal/guardian/secrets"
@@ -461,7 +462,16 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 
 	go updateLastLoginAt(account, sessions, foundSession) // Asynchronous session update
 
-	// Put the account object in req.Context
+	ridersCollection := datastores.GetMongoDatabase(ctx).Collection("riders")
+	var rider *riderEntities.RiderEntity
+	err = ridersCollection.FindOne(ctx, bson.D{{Key: "rider_uuid", Value: *account.UserUUID}}).Decode(&rider)
+	if err != nil && err != mongo.ErrNoDocuments {
+		logger.Error("Error finding rider: ", err)
+		return nil, errors.New("error finding rider")
+	}
+
+	// Put objects into context to save IO downstream
+	ctx = context.WithValue(ctx, "rider", rider)
 	ctx = context.WithValue(ctx, "account", account)
 	req = req.WithContext(ctx)
 

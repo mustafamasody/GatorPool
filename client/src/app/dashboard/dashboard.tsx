@@ -32,29 +32,29 @@ const Dashboard: React.FC<DashboardProps> = ({ accountData }) => {
                         className="light dark:dark rounded-full w-72"
                         radius="full"
                     />
-                    <button className="bg-gator-translucent hover:bg-gator-translucent2 p-3 rounded-full">
+                    <button className="bg-green-600 hover:bg-green-700 dark:bg-gator-translucent hover:bg-gator-translucent2 p-3 rounded-full">
                         <Settings
-                        className="text-black dark:text-white"
+                        className="text-white"
                         size={24} />
                     </button>
-                    <button className="bg-gator-translucent hover:bg-gator-translucent2 p-3 rounded-full">
+                    <button className="bg-green-600 hover:bg-green-700 dark:bg-gator-translucent hover:bg-gator-translucent2 p-3 rounded-full">
                         <Bell
-                        className="text-black dark:text-white"
+                        className="text-white"
                         size={24} />
                     </button>
                 </div>
             </div>
             <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                <div className="flex flex-col bg-gator-translucent p-4 rounded-xl h-32">
+                <div className="flex flex-col bg-green-600 dark:bg-gator-translucent p-4 rounded-xl h-32">
                     <h1 className="text-white font-RobotoSemiBold text-2xl">Past Trips</h1>
                 </div>
-                <div className="flex flex-col bg-gator-translucent p-4 rounded-xl h-32">
+                <div className="flex flex-col bg-green-600 dark:bg-gator-translucent p-4 rounded-xl h-32">
                     <h1 className="text-white font-RobotoSemiBold text-2xl">Past Trips</h1>
                 </div>
-                <div className="flex flex-col bg-gator-translucent p-4 rounded-xl h-32">
+                <div className="flex flex-col bg-green-600 dark:bg-gator-translucent p-4 rounded-xl h-32">
                     <h1 className="text-white font-RobotoSemiBold text-2xl">Past Trips</h1>
                 </div>
-                <div className="flex flex-col bg-gator-translucent p-4 rounded-xl h-32">
+                <div className="flex flex-col bg-green-600 dark:bg-gator-translucent p-4 rounded-xl h-32">
                     <h1 className="text-white font-RobotoSemiBold text-2xl">Past Trips</h1>
                 </div>
             </div>

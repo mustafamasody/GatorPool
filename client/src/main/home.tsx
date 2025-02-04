@@ -270,7 +270,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Map Container */}
-                    <div id="map-container" ref={mapContainerRef} className="rounded-xl w-11/12 md:w-1/2 h-[600px] mt-12" />
+                    {/* <div id="map-container" ref={mapContainerRef} className="rounded-xl w-11/12 md:w-1/2 h-[600px] mt-12" /> */}
                 </div>
             </div>
 
