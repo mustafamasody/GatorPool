@@ -19,7 +19,7 @@ const Dashboard: React.FC<DashboardProps> = ({ accountData, setAccountData }) =>
         <div className="flex flex-col space-y-8 bg-white dark:bg-black min-h-screen p-8">
             <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-row items-center space-x-4">
-                    <img src="https://static-00.iconduck.com/assets.00/profile-default-icon-512x511-v4sw4m29.png"
+                    <img src={accountData.profile_picture}
                      className="h-16 w-16 rounded-full" />
                     <div className="flex flex-col ">
                         <h1 className="text-black dark:text-white text-xl font-RobotoSemiBold">Welcome, {accountData?.first_name} {accountData?.last_name}</h1>

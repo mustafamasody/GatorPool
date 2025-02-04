@@ -91,7 +91,7 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 			defaultReturn["profile_picture_expiry"] = *account.ProfilePictureObj.ImageURLExpiryAt
 		}
 	} else {
-		defaultReturn["profile_picture"] = "https://storage.googleapis.com/gatorpool-449552.appspot.com/default_pfp.png"
+		defaultReturn["profile_picture"] = "https://storage.googleapis.com/gatorpool-449522.appspot.com/default_pfp.png"
 		defaultReturn["profile_picture_expiry"] = time.Now().Add(time.Minute * 20).UnixMilli()
 	}
 
@@ -119,11 +119,11 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 			Action: "account_two_fa",
 			ActionName: "Enable 2FA",
 			UUID: uuid.NewRandom().String(),
-			DisplayType: "modal",
+			DisplayType: "drawer",
 		})
 	}
 
-	if rider.Options.PayFood == nil || rider.Options.PayGas == nil {
+	if rider.Options == nil || rider.Options.PayFood == nil || rider.Options.PayGas == nil {
 		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
 			Title: "Ride Preferences",
 			Description: "Set your ride preferences",

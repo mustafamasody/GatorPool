@@ -108,11 +108,19 @@ func main() {
 		r.With(session.VerifyOAuthToken).Get("/loadin", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.LoadIn(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Post("/auth/2fa", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.ToggleTwoFA(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/rider", func(r chi.Router) {
 		r.With(session.VerifyOAuthToken).Post("/address/save", func(w http.ResponseWriter, r *http.Request) {
 			riderHandler.SaveAddress(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/preferences/save", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.SetRidePreferences(r, w, r.Context())
 		})
 	})
 

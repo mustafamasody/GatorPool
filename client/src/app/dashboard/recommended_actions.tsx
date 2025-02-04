@@ -12,6 +12,8 @@ import {
     useDisclosure,
   } from "@heroui/react";
 import SetHomeAddress from './actions/set_home_address';
+import SetRidePreferences from './actions/set_ride_preferences';
+import Enable2FA from './actions/enable_2fa';
 
 interface RecommendedActionsProps {
     statusCards: StatusCard[];
@@ -66,7 +68,22 @@ const RecommendedActions: React.FC<RecommendedActionsProps> = ({ statusCards, se
                   statusCard={currentCard}
                   onClose={onClose}
                   />
-              ) : (
+              ) :
+              currentCard?.action === "rider_payment_preferences" ? (
+                <SetRidePreferences
+                setAccountData={setAccountData}
+                statusCard={currentCard}
+                onClose={onClose}
+                />
+            ) :
+            currentCard?.action === "account_two_fa" ? (
+              <Enable2FA
+              setAccountData={setAccountData}
+              statusCard={currentCard}
+              onClose={onClose}
+              />
+          )
+              : (
                 <h1 className="text-black dark:text-white text-2xl font-RobotoSemiBold">No action found</h1>
               )
           }
