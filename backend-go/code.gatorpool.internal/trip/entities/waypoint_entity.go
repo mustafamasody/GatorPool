@@ -62,6 +62,7 @@ type WaypointEntity struct {
 	Longitude		*float64				`json:"longitude" bson:"longitude"`
 
 	// Geographical location of the waypoint
+	Name			*string					`json:"name" bson:"name"`
 	Address			*string					`json:"address" bson:"address"`
 	Address2		*string					`json:"address2" bson:"address2"`
 	City			*string					`json:"city" bson:"city"`

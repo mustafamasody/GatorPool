@@ -295,7 +295,6 @@ import Person2Icon from '@mui/icons-material/Person2';
                           })
                         }).then(res => res.json()).then(data => {
                           if(data.success) {
-                            localStorage.removeItem('tt-token');
                             // localStorage.removeItem('X-GatorPool-Device-Id');
                             localStorage.removeItem('X-GatorPool-Username');
                             window.location.href = '/auth/signin';

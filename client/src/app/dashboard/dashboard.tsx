@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import fetchBase from '../../common/fetchBase';
-import { Input } from '@heroui/react';
+import { cn, Input } from '@heroui/react';
 import { Settings, Bell } from 'lucide-react';
 import { AccountData } from '../view_controller';
+import {Alert, Button} from "@heroui/react";
+import RecommendedActions from './recommended_actions';
 
 interface DashboardProps {
     accountData: AccountData;
+    setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ accountData }) => {
+const Dashboard: React.FC<DashboardProps> = ({ accountData, setAccountData }) => {
 
     const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -58,6 +61,14 @@ const Dashboard: React.FC<DashboardProps> = ({ accountData }) => {
                     <h1 className="text-white font-RobotoSemiBold text-2xl">Past Trips</h1>
                 </div>
             </div>
+
+            {
+                accountData?.status_cards && accountData?.status_cards.length > 0 && (
+                    <RecommendedActions statusCards={accountData.status_cards}
+                    setAccountData={setAccountData}
+                    />
+                )
+            }
         </div>
     );
 }

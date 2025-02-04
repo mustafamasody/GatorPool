@@ -8,12 +8,33 @@ import useLocalStorage from './utils/useLocalStorage';
 import CloseIcon from '@mui/icons-material/Close';
 import Dashboard from './dashboard/dashboard';
 
+/**
+ *     "status_cards": [
+        {
+            "title": "Home Address",
+            "description": "Add your home address to get started",
+            "type": "critical",
+            "action": "rider_add_address"
+        },
+ */
+
 export interface AccountData {
     first_name: string;
     last_name: string;
     email: string;
     profile_picture: string;
     user_uuid: string;
+    status_cards: StatusCard[];
+}
+
+export interface StatusCard {
+    uuid: string;
+    title: string;
+    description: string;
+    type: string;
+    action: string;
+    action_name: string;
+    display_type: string;
 }
 
 const ViewController = ({}) => {
@@ -53,6 +74,7 @@ const ViewController = ({}) => {
                     email: data.email,
                     profile_picture: data.profile_picture,
                     user_uuid: data.user_uuid,
+                    status_cards: data.status_cards
                 }
                 setAccountData(accountData);
             }
@@ -75,15 +97,15 @@ const ViewController = ({}) => {
     switch(currentTab) {
         case "profile":
             title = 'Profile';
-            component = <ViewProfile accountData={accountData} />;
+            component = <ViewProfile accountData={accountData} setAccountData={setAccountData} />;
             break;
         case "dashboard":
             title = 'Dashboard';
-            component = <Dashboard accountData={accountData} />;
+            component = <Dashboard accountData={accountData} setAccountData={setAccountData} />;
             break;
         default:
             title = 'Profile';
-            component = <ViewProfile accountData={accountData}  />;
+            component = <ViewProfile accountData={accountData} setAccountData={setAccountData}  />;
             break;
     }
 
@@ -124,7 +146,6 @@ const ViewController = ({}) => {
                                             method: 'GET', credentials: 'include',
                                             headers: {
                                               'Content-Type': 'application/json',
-                                              'tt-token': localStorage.getItem('tt-token'),
                                               'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id'),
                                               'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username')
                                             },
@@ -186,7 +207,9 @@ const ViewController = ({}) => {
                     </div>
     
                     <div className={`${sidebarShown ? ' lg:ml-[19.5rem] w-full lg:w-[calc(100vw-19.5rem)] ' : ' lg:ml-20 w-full lg:w-[calc(100vw-5rem)] '}`}>
-                        {component}
+                        {
+                            accountData && component
+                        }
                     </div>
                 </div>
         </div>

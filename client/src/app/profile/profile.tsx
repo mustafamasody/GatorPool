@@ -4,9 +4,10 @@ import { AccountData } from '../view_controller';
 
 interface ViewProfileProps {
     accountData: AccountData;
+    setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
 }
 
-const ViewProfile: React.FC<ViewProfileProps> = ({ accountData }) => {
+const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }) => {
 
     return(
         <div className="light dark:dark bg-white dark:bg-black flex flex-col h-full min-h-full min-h-screen w-full">

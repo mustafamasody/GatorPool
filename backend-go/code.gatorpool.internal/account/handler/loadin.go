@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+
 	// "os"
 	// "regexp"
 	// "strconv"
@@ -16,6 +17,8 @@ import (
 	riderEntities "code.gatorpool.internal/rider/entities"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
+	"github.com/pborman/uuid"
+
 	// "code.gatorpool.internal/util/requesthydrator"
 	// "github.com/pborman/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -100,8 +103,11 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
 			Title: "Home Address",
 			Description: "Add your home address to get started",
-			Type: "critical",
+			Type: "danger",
 			Action: "rider_add_address",
+			ActionName: "Add Address",
+			UUID: uuid.NewRandom().String(),
+			DisplayType: "drawer",
 		})
 	}
 
@@ -111,6 +117,9 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 			Description: "Enable two-factor authentication for added security",
 			Type: "warning",
 			Action: "account_two_fa",
+			ActionName: "Enable 2FA",
+			UUID: uuid.NewRandom().String(),
+			DisplayType: "modal",
 		})
 	}
 
@@ -118,8 +127,11 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		statusCards = append(statusCards, &accountEntities.ReturnLoadInStatusCard{
 			Title: "Ride Preferences",
 			Description: "Set your ride preferences",
-			Type: "information",
+			Type: "default",
 			Action: "rider_payment_preferences",
+			ActionName: "Set Preferences",
+			UUID: uuid.NewRandom().String(),
+			DisplayType: "drawer",
 		})
 	}
 
