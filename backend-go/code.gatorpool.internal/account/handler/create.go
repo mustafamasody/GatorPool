@@ -12,6 +12,7 @@ import (
 
 	accountEntities "code.gatorpool.internal/account/entities"
 	riderEntities "code.gatorpool.internal/rider/entities"
+	configEntities "code.gatorpool.internal/config/entities"
 	"code.gatorpool.internal/account/validator"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/encryption"
@@ -608,6 +609,16 @@ func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Con
 		Responses: map[string]interface{}{},
 	}
 
+	configCollection := db.Collection(datastores.Config)
+	var config configEntities.ConfigEntity
+	configQuery := bson.D{{Key: "app_id", Value: "gatorpool"}}
+	err = configCollection.FindOne(ctx, configQuery).Decode(&config)
+	if err != nil {
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{"error": "internal server error"})
+	}
+
+	account.AnnouncementVersion = config.Announcement.Version
+
 	_, err = accountsCollection.UpdateOne(ctx, accountQuery, bson.D{{Key: "$set", Value: account}})
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{"error": "internal server error"})
@@ -635,8 +646,9 @@ func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Con
 			Bans: []*string{},
 			Complaints: []*string{},
 		},
+		Address: nil,
 	}
-	
+
 	ridersCollection := db.Collection(datastores.Riders)
 	_, err = ridersCollection.InsertOne(ctx, rider)
 	if err != nil {

@@ -1,5 +1,9 @@
 package entities
 
+import (
+	tripEntities "code.gatorpool.internal/trip/entities"
+)
+
 type RiderEntity struct {
 	// Unique identifier for the rider
 	RiderUUID			*string					`json:"rider_uuid" bson:"rider_uuid"`
@@ -17,6 +21,8 @@ type RiderEntity struct {
 
 	// Disceplanary actions taken/reported against the rider
 	Disceplanary		*RiderDisceplanaryEntity	`json:"disceplanary" bson:"disceplanary"`
+
+	Address				*tripEntities.WaypointEntity `json:"address" bson:"address"`
 }
 
 type RiderOptionsEntity struct {

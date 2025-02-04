@@ -9,6 +9,7 @@ import (
 
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/secrets"
+	"code.gatorpool.internal/guardian/session"
 	"code.gatorpool.internal/util"
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
@@ -16,6 +17,7 @@ import (
 	"github.com/joho/godotenv"
 
 	accountHandler "code.gatorpool.internal/account/handler"
+	configHandler "code.gatorpool.internal/config"
 	"code.gatorpool.internal/account/oauth"
 )
 
@@ -100,6 +102,19 @@ func main() {
 		})
 		r.Post("/auth/password/reset/code", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.CheckCode(r, w, context.Background())
+		})
+
+		r.With(session.VerifyOAuthToken).Get("/loadin", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.LoadIn(r, w, r.Context())
+		})
+	})
+
+	r.Route("/v1/config", func(r chi.Router) {
+		r.With(session.VerifyOAuthToken).Get("/banner", func(w http.ResponseWriter, r *http.Request) {
+			configHandler.GetBannerAnnouncement(r, w, r.Context())
+		})
+		r.With(session.VerifyOAuthToken).Get("/banner/close", func(w http.ResponseWriter, r *http.Request) {
+			configHandler.CloseAnnouncement(r, w, r.Context())
 		})
 	})
 

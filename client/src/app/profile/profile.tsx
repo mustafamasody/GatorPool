@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Avatar, AvatarIcon} from '@heroui/react';
+import { AccountData } from '../view_controller';
 
-const ViewProfile = () => {
+interface ViewProfileProps {
+    accountData: AccountData;
+}
+
+const ViewProfile: React.FC<ViewProfileProps> = ({ accountData }) => {
 
     return(
         <div className="light dark:dark bg-white dark:bg-black flex flex-col h-full min-h-full min-h-screen w-full">

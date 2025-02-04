@@ -165,7 +165,7 @@ import Person2Icon from '@mui/icons-material/Person2';
 <div>
     <div
     className={`relative flex mobile:fixed lg:fixed flex-row items-center text-gray-300 
-      ${announcementData ? " mt-10 h-[calc(100vh-2.8rem)] " : " h-full "}
+      ${announcementData ? " mt-10 h-[calc(100vh-2rem)] " : " h-full "}
         z-20
         bg-black
         border-r-1 dark:border-neutral-800 border-neutral-300

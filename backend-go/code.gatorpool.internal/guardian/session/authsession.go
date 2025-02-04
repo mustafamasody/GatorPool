@@ -309,20 +309,24 @@ func RevokeOAuth2Token(req *http.Request, res http.ResponseWriter, ctx context.C
 
 // MARK: VerifyToken
 func VerifyOAuthToken(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		err := VerifyOAuthTokenInternal(req, res, req.Context())
-		if err != nil {
-			util.JSONResponse(res, 401, map[string]interface{}{
-				"error": err.Error(),
-			})
-			return
-		}
-		next.ServeHTTP(res, req) // Call the next handler if token verification is successful
-	})
+    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        newCtx, err := VerifyOAuthTokenInternal(req, res, req.Context())
+        if err != nil {
+            util.JSONResponse(res, 401, map[string]interface{}{
+                "error": err.Error(),
+            })
+            return
+        }
+        // Update request with new context that contains the account object
+        req = req.WithContext(newCtx)
+
+        next.ServeHTTP(res, req) // Call the next handler with updated request
+    })
 }
 
+
 // MARK: VerifyOAuthTokenInternal
-func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx context.Context) error {
+func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx context.Context) (context.Context, error) {
 
 	// Set the logger
 	logger := log.NewWithOptions(os.Stderr, log.Options{
@@ -339,7 +343,7 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	// Check if 'X-GatorPool-Username' and 'X-GatorPool-Device-Id' are empty
 	if gpFrom == "" || gpDeviceID == "" {
 		logger.Error("X-GatorPool-Username or X-GatorPool-Device-Id or token is empty")
-		return errors.New("X-GatorPool-Username or X-GatorPool-Device-Id or token is empty")
+		return ctx, errors.New("X-GatorPool-Username or X-GatorPool-Device-Id or token is empty")
 	}
 
 	// Get the token cookie, if it doesnt exist, get the header
@@ -357,7 +361,7 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 
 	if token == "" {
 		logger.Error("Token is empty")
-		return errors.New("token is empty")
+		return nil, errors.New("token is empty")
 	}
 
 	var account accountModel.AccountEntity
@@ -369,10 +373,10 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	if err != nil { // Throw an error if the account does not exist
 		// Check if error is no account found
 		if err == mongo.ErrNoDocuments {
-			return errors.New("no account found with the following email: " + gpFrom)
+			return nil, errors.New("no account found with the following email: " + gpFrom)
 		}
 		logger.Error("Error finding account 1: ", err)
-		return errors.New("error finding account 1")
+		return nil, errors.New("error finding account 1")
 	}
 
 	sessions := account.Sessions
@@ -390,13 +394,13 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	if !found {
 		logger.Error("No session found for the following account: ", gpFrom)
 		logger.Error("deviceID: ", gpDeviceID)
-		return errors.New("no session found for the following account: " + gpFrom)
+		return nil, errors.New("no session found for the following account: " + gpFrom)
 	}
 
 	// Check if the tokens match
 	if *foundSession.Token != token {
 		logger.Error("Invalid token for the following account: ", gpFrom)
-		return errors.New("invalid token for the following account: " + gpFrom)
+		return nil, errors.New("invalid token for the following account: " + gpFrom)
 	}
 
 	// Set jwtid & jwtversion
@@ -411,19 +415,19 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	publicKey, retrieved := secrets.GetPublicKeyWithVersion(int32(*publicversion))
 	if !retrieved {
 		logger.Error("Error retrieving public key, version does not exist")
-		return errors.New("error retrieving public key, version does not exist")
+		return nil, errors.New("error retrieving public key, version does not exist")
 	}
 
 	// Parse the public key
 	block, _ := pem.Decode([]byte(publicKey))
 	if block == nil {
 		logger.Error("Error: no PEM data found")
-		return errors.New("no PEM data found")
+		return nil, errors.New("no PEM data found")
 	}
 	rsaPublicKey, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
 		logger.Error("Error parsing public key: ", err)
-		return errors.New("error parsing public key")
+		return nil, errors.New("error parsing public key")
 	}
 
 	// Verify token signature
@@ -435,13 +439,13 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	if err != nil {
 		if err == jwt.ErrTokenExpired {
 			logger.Error("Session expired for the following account: ", gpFrom)
-			return errors.New("session expired for the following account: " + gpFrom)
+			return nil, errors.New("session expired for the following account: " + gpFrom)
 		} else if err == jwt.ErrSignatureInvalid {
 			logger.Error("Invalid token for the following account: ", gpFrom)
-			return errors.New("invalid token for the following account: " + gpFrom)
+			return nil, errors.New("invalid token for the following account: " + gpFrom)
 		} else {
 			logger.Error("Error verifying token: ", err)
-			return errors.New("error verifying token: " + err.Error())
+			return nil, errors.New("error verifying token: " + err.Error())
 		}
 	}
 
@@ -452,12 +456,16 @@ func VerifyOAuthTokenInternal(req *http.Request, res http.ResponseWriter, ctx co
 	// Check if the token has expired
 	if time.Now().Unix() > expirationTime {
 		logger.Error("Session expired for the following account: ", gpFrom)
-		return errors.New("session expired for the following account: " + gpFrom)
+		return nil, errors.New("session expired for the following account: " + gpFrom)
 	}
 
 	go updateLastLoginAt(account, sessions, foundSession) // Asynchronous session update
 
-	return nil
+	// Put the account object in req.Context
+	ctx = context.WithValue(ctx, "account", account)
+	req = req.WithContext(ctx)
+
+	return ctx, nil
 }
 
 func updateLastLoginAt(account accountModel.AccountEntity, sessions []*accountModel.Session, foundSession accountModel.Session) {

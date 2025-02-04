@@ -6,15 +6,24 @@ import fetchBase from '../common/fetchBase';
 import ViewProfile from './profile/profile';
 import useLocalStorage from './utils/useLocalStorage';
 import CloseIcon from '@mui/icons-material/Close';
+import Dashboard from './dashboard/dashboard';
+
+export interface AccountData {
+    first_name: string;
+    last_name: string;
+    email: string;
+    profile_picture: string;
+    user_uuid: string;
+}
 
 const ViewController = ({}) => {
 
-    const [accountData, setAccountData] = useState(null);
+    const [accountData, setAccountData] = useState<AccountData>(null);
     const [announcementData, setAnnouncementData] = useState<any>(null);
 
     useEffect(() => {
 
-        fetch(fetchBase + "/prod/config/v1/banner", {
+        fetch(fetchBase + "/v1/config/banner", {
             method: 'GET', credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
@@ -25,8 +34,8 @@ const ViewController = ({}) => {
             setAnnouncementData(data.announcement);
         }) 
 
-        fetch(fetchBase + "/prod/account/v1/mc_loadin", {
-            method: 'POST', credentials: 'include',
+        fetch(fetchBase + "/v1/account/loadin", {
+            method: 'GET', credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
               'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id'),
@@ -38,22 +47,14 @@ const ViewController = ({}) => {
                 window.location.href = "/authv2"; 
               }
             } else {
-
-                if(data.onboarding_status.state === "onboarding") {
-                    // window.location.href = "/onboarding";
-                } else {
-                    let accountData = {
-                        first_name: data.first_name,
-                        last_name: data.last_name,
-                        email: data.email,
-                        ttid: data.ttid,
-                        profile_picture: data.profile_picture,
-                        user_uuid: data.user_uuid,
-                        influencer: data.influencer,
-                        apps: data.apps,
-                    }
-                    setAccountData(accountData);
+                let accountData = {
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    email: data.email,
+                    profile_picture: data.profile_picture,
+                    user_uuid: data.user_uuid,
                 }
+                setAccountData(accountData);
             }
           })
     }, []);
@@ -74,10 +75,16 @@ const ViewController = ({}) => {
     switch(currentTab) {
         case "profile":
             title = 'Profile';
-            component = <ViewProfile />;
+            component = <ViewProfile accountData={accountData} />;
+            break;
+        case "dashboard":
+            title = 'Dashboard';
+            component = <Dashboard accountData={accountData} />;
+            break;
         default:
             title = 'Profile';
-            component = <ViewProfile  />;
+            component = <ViewProfile accountData={accountData}  />;
+            break;
     }
 
     const sidebarVariants = {
@@ -104,7 +111,7 @@ const ViewController = ({}) => {
             <div  className="relative flex flex-row w-full bg-backgroundDark ">
                         {
                             announcementData && (
-                                <div className={`fixed flex z-40 items-center justify-center top-0 left-0 h-10 w-full ${announcementData.type === "general" ? " bg-accentPrimary text-white " : " bg-amber-500 text-white "}`}>
+                                <div className={`fixed flex z-40 items-center justify-center top-0 left-0 h-10 w-full ${announcementData.type === "general" ? " bg-green-600 text-white " : " bg-amber-500 text-white "}`}>
                                     <h1 className={`my-auto font-PoppinsRegular text-sm text-center
                                     text-white`}>
                                         {announcementData.announcement}
@@ -113,7 +120,7 @@ const ViewController = ({}) => {
                                     <button className="absolute right-0 mr-2 mb-1
                                     hover:opacity-50
                                     " onClick={() => {
-                                        fetch(fetchBase + "/prod/config/v1/banner/close", {
+                                        fetch(fetchBase + "/v1/config/banner/close", {
                                             method: 'GET', credentials: 'include',
                                             headers: {
                                               'Content-Type': 'application/json',

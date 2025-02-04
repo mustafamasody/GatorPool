@@ -47,6 +47,7 @@ function App() {
               <Route path="/verify" element={<Verify />} />
 
               <Route path="/profile" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
           </Routes>
         </div>
       </HeroUIProvider>

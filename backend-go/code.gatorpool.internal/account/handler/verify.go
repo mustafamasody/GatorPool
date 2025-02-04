@@ -96,7 +96,7 @@ func VerifyToken(r *http.Request, w http.ResponseWriter, ctx context.Context) {
 
 	} else {
 		// Verify token flow 
-		err := session.VerifyOAuthTokenInternal(r, w, context.Background())
+		_, err := session.VerifyOAuthTokenInternal(r, w, context.Background())
 		if err != nil {
 			// Get refresh token
 			refreshToken := ""

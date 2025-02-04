@@ -15,6 +15,9 @@ type AccountEntity struct {
 	Password			*Password 				`json:"password,omitempty" bson:"password,omitempty"`
 
 	ProfilePicture 		*bool 					`json:"profile_picture,omitempty" bson:"profile_picture,omitempty"`
+	ProfilePictureObj 	*ProfilePicture 		`json:"profile_picture_obj,omitempty" bson:"profile_picture_obj,omitempty"`
+
+	AnnouncementVersion *int64 					`json:"announcement_version" bson:"announcement_version"`
 
 	TwoFAEnabled		*bool 					`json:"two_fa_enabled,omitempty" bson:"two_fa_enabled,omitempty"`
 	TwoFARequests     []*TwoFARequest      `json:"two_fa_requests" bson:"two_fa_requests"`
@@ -32,6 +35,12 @@ type AccountEntity struct {
 	DriverUUID			*string 				`json:"driver_uuid,omitempty" bson:"driver_uuid,omitempty"`
 	CreatedAt   		*time.Time 				`json:"created_at,omitempty" bson:"created_at,omitempty"`
 	UpdatedAt   		*time.Time 				`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+type ProfilePicture struct {
+	ImageGCSPath     *string `json:"image_gcs_path" bson:"image_gcs_path"`
+	ImageURL         *string `json:"image_url" bson:"image_url"`
+	ImageURLExpiryAt *int64  `json:"image_url_expiry_at" bson:"image_url_expiry_at"`
 }
 
 type OnboardingStatus struct {

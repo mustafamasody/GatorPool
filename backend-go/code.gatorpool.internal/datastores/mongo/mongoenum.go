@@ -6,4 +6,5 @@ const (
 	AccountsMFA 					= "accounts_mfa"
 	AccountsPasswordReset		 	= "accounts-pr"
 	Riders 							= "riders"
+	Config 							= "config"
 )
