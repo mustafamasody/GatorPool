@@ -24,7 +24,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                     </button>
                     <div className="flex flex-col">
                         <h1 className="text-black dark:text-white text-xl font-RobotoSemiBold mr-4">{accountData?.first_name} {accountData?.last_name}</h1>
-                        <h2 className="text-black dark:text-white text-xl font-RobotoBold mr-4"> </h2>
+                        <h2 className="text-black dark:text-white text-l font-Roboto mr-4"> Year:  </h2>
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                 </div>
                 <Textarea 
                         className="max-w-xs text-black dark:text-white font-Roboto mr-6 w-full mb-6" 
-                        defaultValue= {`${accountData?.first_name} ${accountData?.last_name}`}
+                        placeholder = {accountData?.first_name}
                         label="Preferred Name"
                         labelPlacement="outside"
                         variant="bordered"
