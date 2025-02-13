@@ -12,68 +12,60 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
     const [bio, setBio] = useState<string>("");
 
     return(
-        <div className="flex flex-col min-h-screen">
-            <div className="flex bg-white dark:bg-black p-8 items-center">
-                <div className="flex flex-col items-center space-y-8 mr-16">
-                    <div className="flex flex-row items-center">
-                        <div className="flex flex-row items-center space-x-4 mt-32">
-                            <button onClick={()=> console.log("Profile picture clicked!")}>
-                                <img src={accountData.profile_picture}
-                                className="h-32 w-32 rounded-full hover:opacity-50 cursor-pointer mr-8" />
-                            </button>
-                            <div className="flex flex-row">
-                                <h1 className="text-black dark:text-white text-xl font-RobotoSemiBold mr-4">Hello, {accountData?.first_name} {accountData?.last_name}</h1>
-                            </div>
-                        </div>
+        <div className="flex bg-white dark:bg-black p-8 items-center w-full">
+            <div className="flex flex-col w-full ml-16">
+                <h1 className="text-black dark:text-white text-l font-RobotoExtraBold text-2xl mt-20 mb-6">
+                    Profile Details
+                </h1>
+                <div className="flex flex-row items-center mb-6">
+                    <button onClick={()=> console.log("Profile picture clicked!")}>
+                        <img src={accountData.profile_picture}
+                        className="h-40 w-40 rounded-full hover:opacity-50 cursor-pointer mr-6" />
+                    </button>
+                    <div className="flex flex-col">
+                        <h1 className="text-black dark:text-white text-xl font-RobotoSemiBold mr-4">{accountData?.first_name} {accountData?.last_name}</h1>
+                        <h2 className="text-black dark:text-white text-xl font-RobotoBold mr-4"> </h2>
                     </div>
-                    <div className='flex flex-row'>
-                        <div className='flex flex-col'>
-                            <h1 className="text-black dark:text-white text-l font-RobotoMedium mr-8">
-                                Rides
-                            </h1>
-                            <p className="text-black dark:text-white text-l font-Roboto mr-8">000</p>
-                        </div>
-                        <div className='flex flex-col'>
-                            <h1 className="text-black dark:text-white text-l font-RobotoMedium">
-                                Rating
-                            </h1>
-                            <p className="text-black dark:text-white text-l font-Roboto mr-8">000</p>
-                        </div>
-                    </div>
-                    <div className=''></div>
-                    <h1 className="text-black dark:text-white text-l font-RobotoSemiBold mr-4">Your home address: {accountData?.address}</h1>
                 </div>
+
+                <div className="flex flex-row w-full mb-2">
+                    <Textarea 
+                        isReadOnly
+                        className="max-w-xs text-black dark:text-white font-Roboto mr-6 w-full" 
+                        defaultValue= {`${accountData?.first_name} ${accountData?.last_name}`}
+                        label="Name"
+                        labelPlacement="outside"
+                        variant="bordered"
+                        maxRows={1}
+                    />
+                    <Textarea 
+                        isReadOnly
+                        className="max-w-xs text-black dark:text-white font-Roboto w-full" 
+                        defaultValue= {accountData.email}
+                        label="UFL Email"
+                        labelPlacement="outside"
+                        variant="bordered"
+                        maxRows={1}
+                    />
+                </div>
+                <Textarea 
+                        className="max-w-xs text-black dark:text-white font-Roboto mr-6 w-full mb-6" 
+                        defaultValue= {`${accountData?.first_name} ${accountData?.last_name}`}
+                        label="Preferred Name"
+                        labelPlacement="outside"
+                        variant="bordered"
+                        maxRows={1}
+                />
                 <Textarea 
                     onChange={(e) => setBio(e.target.value)}
                     value={bio}
-                    className="max-w-lg" 
-                    label="Edit your bio:" 
+                    className="max-w-lg w-full" 
+                    label="Edit your bio:"
                     errorMessage="The description should not be more than 500 characters long."
                     isInvalid={false}
                     labelPlacement='outside'
                     placeholder="Tell others about yourself..." 
                 />
-            </div>
-            <div className="flex flex-row space-x-2 ml-auto mr-60">
-                <Button 
-                onPress={() => console.log("Saving bio: ", bio)} // Placeholders for now
-                color="primary" 
-                className="text-white font-PoppinsRegular mt-6 px-4 py-1" 
-                size="sm"
-                >
-                Save
-                </Button>
-                <Button
-                onPress={() => {
-                    setBio("");
-                    console.log("Pressed cancel");
-                }}
-                color="default" 
-                className="text-white font-PoppinsRegular mt-6 px-4 py-1" 
-                size="sm"
-                >
-                    Cancel
-                </Button>
             </div>
         </div>
     );
