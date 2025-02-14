@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Textarea, Button} from '@heroui/react';
+import {Textarea, Button, Input} from '@heroui/react';
 import { AccountData } from '../view_controller';
 
 interface ViewProfileProps {
@@ -10,6 +10,21 @@ interface ViewProfileProps {
 const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }) => {
 
     const [bio, setBio] = useState<string>("");
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file=event.target.files?.[0]
+        if (file){
+            console.log("Selected file: ", file);
+        }
+    };
+
+    const handleClick = () => {
+        const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+        if (fileInput) {
+            fileInput.click();
+        }
+    };
+
 
     return(
         <div className="flex bg-white dark:bg-black p-8 items-center w-full">
@@ -23,12 +38,12 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                         className="h-40 w-40 rounded-full hover:opacity-50 cursor-pointer mr-6" />
                     </button>
                     <div className="flex flex-col">
-                        <h1 className="text-black dark:text-white text-xl font-RobotoSemiBold mr-4">{accountData?.first_name} {accountData?.last_name}</h1>
-                        <h2 className="text-black dark:text-white text-l font-Roboto mr-4"> Year:  </h2>
+                        <h1 className="text-black dark:text-white text-2xl font-RobotoSemiBold mr-4">{accountData?.first_name} {accountData?.last_name}</h1>
+                        <h2 className="text-black dark:text-white text-md font-RobotoSemiBold mr-4">Rating: 5.0</h2>
                     </div>
                 </div>
 
-                <div className="flex flex-row w-full mb-2">
+                <div className="flex flex-row w-full mb-6">
                     <Textarea 
                         isReadOnly
                         className="max-w-xs text-black dark:text-white font-Roboto mr-6 w-full" 
@@ -48,14 +63,15 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                         maxRows={1}
                     />
                 </div>
-                <Textarea 
+                <div className="flex flex-row">
+                    <Input
                         className="max-w-xs text-black dark:text-white font-Roboto mr-6 w-full mb-6" 
                         placeholder = {accountData?.first_name}
                         label="Preferred Name"
                         labelPlacement="outside"
                         variant="bordered"
-                        maxRows={1}
-                />
+                    />
+                </div>
                 <Textarea 
                     onChange={(e) => setBio(e.target.value)}
                     value={bio}
