@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import {Textarea, Button, Input} from '@heroui/react';
 import { AccountData } from '../view_controller';
+import PencilIcon from '../components/pencilicon';
+import Modal from "./modal"
 
 interface ViewProfileProps {
     accountData: AccountData;
@@ -10,21 +12,11 @@ interface ViewProfileProps {
 const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }) => {
 
     const [bio, setBio] = useState<string>("");
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file=event.target.files?.[0]
-        if (file){
-            console.log("Selected file: ", file);
-        }
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    
+    const updateAvatar = (imgSrc) => {
+        accountData.profile_picture = imgSrc;
     };
-
-    const handleClick = () => {
-        const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-        if (fileInput) {
-            fileInput.click();
-        }
-    };
-
 
     return(
         <div className="flex bg-white dark:bg-black p-8 items-center w-full">
@@ -33,13 +25,23 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                     Profile Details
                 </h1>
                 <div className="flex flex-row items-center mb-6">
-                    <button onClick={()=> console.log("Profile picture clicked!")}>
-                        <img src={accountData.profile_picture}
-                        className="h-40 w-40 rounded-full hover:opacity-50 cursor-pointer mr-6" />
-                    </button>
+                    <div className="flex flex-col items-center">
+                        <img
+                        src={accountData.profile_picture}
+                        className="w-[150px] h-[150px] rounded-full border-2 border-gray-400 mb-1"
+                        />
+                        <button
+                        className="relative left-0 right-0 m-auto px-4 py-1 rounded-2xl
+                        bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white dark:text-black"
+                        title="Change photo"  
+                        onClick = {()=>setModalOpen(true)}            
+                        >
+                        <PencilIcon/>
+                        </button>
+                    </div>
                     <div className="flex flex-col">
-                        <h1 className="text-black dark:text-white text-2xl font-RobotoSemiBold mr-4">{accountData?.first_name} {accountData?.last_name}</h1>
-                        <h2 className="text-black dark:text-white text-md font-RobotoSemiBold mr-4">Rating: 5.0</h2>
+                        <h1 className="text-black dark:text-white text-2xl font-RobotoSemiBold mr-4 ml-4">{accountData?.first_name} {accountData?.last_name}</h1>
+                        {/*<h2 className="text-black dark:text-white text-md font-RobotoSemiBold mr-4">Rating: 5.0</h2>*/}
                     </div>
                 </div>
 
@@ -83,6 +85,12 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                     placeholder="Tell others about yourself..." 
                 />
             </div>
+            {modalOpen && (
+                <Modal
+                    updateAvatar={updateAvatar}
+                    closeModal={()=>setModalOpen(false)}
+                />
+            )}
         </div>
     );
 };
