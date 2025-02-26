@@ -55,6 +55,8 @@ type TripEntity struct {
 	// Options like letting riders control music, ac, talking.
 	Miscellaneous 		*TripMiscellaneousEntity		`json:"miscellaneous" bson:"miscellaneous"`
 
+	MaxRadiusDropOff	*float64						`json:"max_radius_dropoff" bson:"max_radius_dropoff"`
+
 	// Fields for auditing
 	CreatedAt			*time.Time						`json:"created_at" bson:"created_at"`
 	UpdatedAt			*time.Time						`json:"updated_at" bson:"updated_at"`

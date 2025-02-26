@@ -122,6 +122,8 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 
 	if rider.Address != nil && rider.Address.Name != nil {
 		defaultReturn["address"] = *rider.Address.Name
+		defaultReturn["address_lat"] = *rider.Address.Latitude
+		defaultReturn["address_lng"] = *rider.Address.Longitude
 	}
 		
 	// If they are a driver, validate them. This will control whether or not they can view

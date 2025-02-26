@@ -7,6 +7,10 @@ import ViewProfile from './profile/profile';
 import useLocalStorage from './utils/useLocalStorage';
 import CloseIcon from '@mui/icons-material/Close';
 import Dashboard from './dashboard/dashboard';
+import DriverApply from './driver/apply/apply';
+import ApplicationView from './driver/apply/application-view';
+import { DriverApplicationEntity } from './driver/types';
+import CreateTrip from './driver/create_trip/create_trip';
 
 /**
  *     "status_cards": [
@@ -30,25 +34,6 @@ export interface AccountData {
     driver_verified?: boolean;
     driver_applications?: DriverApplicationEntity[];
 }
-
-export interface DriverApplicationEntity {
-    application_uuid?: string;
-    full_name?: string;
-    email?: string;
-    phone_number?: string;
-    date_of_birth?: string;
-    address?: string;
-    address_line_2?: string;
-    city?: string;
-    state?: string;
-    zip_code?: string;
-    accepted?: boolean;
-    accepted_at?: Date;
-    message?: string;
-    closed?: boolean;
-    created_at?: Date;
-    updated_at?: Date;
-  }
   
 
 export interface StatusCard {
@@ -146,6 +131,18 @@ const ViewController = ({}) => {
         case "dashboard":
             title = 'Dashboard';
             component = <Dashboard accountData={accountData} setAccountData={setAccountData} />;
+            break;
+        case "driver-apply":
+            title = 'Driver Apply';
+            component = <DriverApply accountData={accountData} setAccountData={setAccountData} />;
+            break;
+        case "driver-application":
+            title = 'Driver Application';
+            component = <ApplicationView />;
+            break;
+        case "create-trip":
+            title = 'Create Trip';
+            component = <CreateTrip accountData={accountData} setAccountData={setAccountData} />;
             break;
         default:
             title = 'Profile';

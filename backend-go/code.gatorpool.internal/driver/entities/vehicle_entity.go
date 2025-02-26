@@ -15,7 +15,7 @@ type VehicleEntity struct {
 	Model				*string			`json:"model" bson:"model"`
 
 	// The year the vehicle was made
-	Year				*int			`json:"year" bson:"year"`
+	Year				*string			`json:"year" bson:"year"`
 
 	// The color of the vehicle
 	Color				*string			`json:"color" bson:"color"`

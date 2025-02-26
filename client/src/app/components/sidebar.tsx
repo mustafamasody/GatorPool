@@ -126,6 +126,7 @@ import { AccountData } from '../view_controller';
         {
           accountData?.driver_verified && (
             <>
+              <Tab title="Create Ride" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="create-trip"  />
               <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
               <Tab title="Drive History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
               <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
@@ -135,12 +136,12 @@ import { AccountData } from '../view_controller';
         {
           accountData.driver_applications && accountData?.driver_applications.length > 0 && !accountData.driver_verified && (
             <>
-              <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
               {
                 accountData.driver_applications.map((application, index) => (
                   <Tab
                   key={application.application_uuid}
-                  title={"Application " + (index + 1)} activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="driver-application" secondaryId={application.application_uuid} />
+                  title={"Application " + (index + 1)} activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id={`driver-application?uuid=${application.application_uuid}`}
+                   secondaryId={application.application_uuid} />
                 ))
               }
             </>

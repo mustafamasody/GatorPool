@@ -9,4 +9,5 @@ const (
 	Config 							= "config"
 	Trips 							= "trips"
 	Drivers 						= "drivers"
+	DriverApplications 				= "driver-applications"
 )

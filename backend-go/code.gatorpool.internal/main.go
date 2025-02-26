@@ -18,6 +18,7 @@ import (
 
 	accountHandler "code.gatorpool.internal/account/handler"
 	riderHandler "code.gatorpool.internal/rider/handler"
+	driverHandler "code.gatorpool.internal/driver/handler"
 	configHandler "code.gatorpool.internal/config"
 	"code.gatorpool.internal/account/oauth"
 )
@@ -121,6 +122,16 @@ func main() {
 
 		r.With(session.VerifyOAuthToken).Post("/preferences/save", func(w http.ResponseWriter, r *http.Request) {
 			riderHandler.SetRidePreferences(r, w, r.Context())
+		})
+	})
+
+	r.Route("/v1/driver", func(r chi.Router) {
+		r.With(session.VerifyOAuthToken).Post("/apply", func(w http.ResponseWriter, r *http.Request) {
+			driverHandler.DriverApply(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Get("/application/{application_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			driverHandler.GetIndividualApplication(r, w, r.Context())
 		})
 	})
 
