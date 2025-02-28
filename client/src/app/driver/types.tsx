@@ -30,3 +30,44 @@ interface VehicleEntity {
     lugroom?: number;
     created_at?: Date;
 }
+
+export interface CreateTripDriverFlowOptionsEntity {
+    to?: {
+        text: string;
+        lat: number;
+        lng: number;
+        expected: number;
+    };
+    from?: {
+        text: string;
+        lat: number;
+        lng: number;
+        expected: number;
+    };
+    datetime?: string;
+    radius?: number;
+    fare?: { // 2
+        trip: number;
+        gas: number;
+        food: number;
+    };
+    music_preferences?: { // 2
+        can_be_controlled: boolean;
+        requests: Record<string, string>;
+    };
+    ac_preferences?: { // 2
+        can_be_controlled: boolean;
+        requests: Record<string, string>;
+    };
+    talking_preferences?: { // 2
+        silent: boolean;
+        requests: Record<string, string>;
+    };
+    rider_requirements?: { // 2
+        pay_food: boolean;
+        pay_gas: boolean;
+        females_only: boolean;
+        custom: Record<string, string>;
+    };
+    carpool?: boolean;
+}
