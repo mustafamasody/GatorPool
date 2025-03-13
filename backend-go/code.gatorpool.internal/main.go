@@ -133,6 +133,10 @@ func main() {
 		r.With(session.VerifyOAuthToken).Get("/application/{application_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			driverHandler.GetIndividualApplication(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Get("/gender", func(w http.ResponseWriter, r *http.Request) {
+			driverHandler.GetDriverGender(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/config", func(r chi.Router) {

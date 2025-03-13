@@ -50,6 +50,7 @@ export interface CreateTripDriverFlowOptionsEntity {
         trip: number;
         gas: number;
         food: number;
+        accepted_terms: boolean;
     };
     music_preferences?: { // 2
         can_be_controlled: boolean;
@@ -61,6 +62,7 @@ export interface CreateTripDriverFlowOptionsEntity {
     };
     talking_preferences?: { // 2
         silent: boolean;
+        minimal: boolean;
         requests: Record<string, string>;
     };
     rider_requirements?: { // 2

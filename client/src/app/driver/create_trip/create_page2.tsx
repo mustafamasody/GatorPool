@@ -23,7 +23,7 @@ const CreatePage2: React.FC<CreatePage2Props> = ({ tripOptions, setTripOptions, 
     const [agreedToPaymentTerms, setAgreedToPaymentTerms] = useState<boolean>(false);
 
     return (
-        <div className="grid grid-cols-2 gap-4 h-full">
+        <div className="flex flex-col w-full gap-4 h-full">
             <div className="flex flex-col h-full ">
                 <h1 className="font-RobotoBold text-xl text-black dark:text-white">
                     Set Fare Price
@@ -96,7 +96,16 @@ const CreatePage2: React.FC<CreatePage2Props> = ({ tripOptions, setTripOptions, 
                 </p>
                 
                 <div className="flex flex-row mt-12">
-                    <Checkbox isSelected={agreedToPaymentTerms} onValueChange={setAgreedToPaymentTerms}>
+                    <Checkbox isSelected={tripOptions?.fare?.accepted_terms} onValueChange={(value) => {
+                        setTripOptions((prev) => ({
+                            ...prev,
+                            fare: {
+                                ...prev.fare,
+                                accepted_terms: value,
+                            },
+                        }));
+                    }
+                    }>
 
                     </Checkbox>
                     <p className="font-RobotoRegular text-sm max-w-sm text-black dark:text-white">
@@ -118,8 +127,9 @@ const CreatePage2: React.FC<CreatePage2Props> = ({ tripOptions, setTripOptions, 
                         className=""
                         color="primary"
                         onClick={() => {
-                            if (!agreedToPaymentTerms) {
-                                alert("You must agree to the payment terms.");
+                            if(!tripOptions?.fare?.accepted_terms) {
+                                console.log("tripOptions", tripOptions);
+                                alert("You must agree to the payment terms to continue.");
                                 return;
                             }
                             setCurrentPage(3);

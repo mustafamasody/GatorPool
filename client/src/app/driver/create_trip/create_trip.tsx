@@ -10,6 +10,8 @@ import { Feature, Polygon } from "geojson";
 import { CreateTripDriverFlowOptionsEntity } from '../types';
 import CreatePage2 from './create_page2';
 import {Progress} from "@heroui/react";
+import CreatePage3 from './create_page3';
+import CreatePage4 from './create_page4';
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
@@ -59,7 +61,7 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
 
     const [tripOptions, setTripOptions] = useState<CreateTripDriverFlowOptionsEntity>(JSON.parse(testObject));
 
-    const [currentPage, setCurrentPage] = useState<number>(2);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
     // Updated search function
     const searchAddress = async (query: string, type: string) => {
@@ -344,17 +346,18 @@ useEffect(() => {
 
     return (
         <div className="flex flex-col space-y- bg-white dark:bg-black h-screen p-8">
-            <Progress aria-label="Loading..." className="max-w-full" value={
+            <Progress aria-label="Loading..." className="mb-4 max-w-full" value={
                 currentPage === 1 ? 20 : 
                 currentPage === 2 ? 40 :
                 currentPage === 3 ? 60 :
                 currentPage === 4 ? 80 :
                 currentPage === 5 ? 100 : 0
-            } />;
-            {
+            } />
+            <div className="flex flex-row w-full space-x-12">
+                <div className="flex w-1/2">
+                {
                 currentPage === 1 && (
-                    <div className="flex flex-row w-full space-x-12">
-                        <div className="flex flex-col w-5/12 h-[24rem] my-auto items-center justify-center border border-1 border-neutral-700 rounded-xl p-8">
+                        <div className="flex flex-col w-full h-[24rem] my-auto items-center justify-center border border-1 border-neutral-700 rounded-xl p-8">
                             <p className="text-xl font-RobotoBold  text-left mr-auto mb-4 text-black dark:text-white">Create a Trip</p>
                             <div className="relative mt- w-full">
                                 <Input
@@ -454,10 +457,6 @@ useEffect(() => {
                                 Next
                             </Button>
                         </div>
-                        <div className="flex flex-col w-full h-full items-center justify-center">
-                            {/* <div id="map-container" ref={mapContainerRef} className="rounded-xl w-full h-[1000px]" /> */}
-                        </div>
-                    </div>
                 )
             }
 
@@ -471,6 +470,34 @@ useEffect(() => {
                     />
                 )
             }
+
+            {
+                currentPage === 3 && (
+                    <CreatePage3
+                    tripOptions={tripOptions}
+                    setTripOptions={setTripOptions}
+                    accountData={accountData}
+                    setCurrentPage={setCurrentPage}
+                    />
+                )
+            }
+
+            {
+                currentPage === 4 && (
+                    <CreatePage4
+                    tripOptions={tripOptions}
+                    setTripOptions={setTripOptions}
+                    accountData={accountData}
+                    setCurrentPage={setCurrentPage}
+                    />
+                )
+            }
+                </div>
+
+            <div className="flex flex-col w-full h-full items-center justify-center">
+                <div id="map-container" ref={mapContainerRef} className="rounded-xl w-full h-[400px] lg:h-[500px] xl:h-[700px] threequarterxl3:h-[950px]" />
+            </div>
+            </div>
         </div>
     )
 }
