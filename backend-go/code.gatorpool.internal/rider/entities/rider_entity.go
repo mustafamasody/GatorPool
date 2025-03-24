@@ -23,6 +23,8 @@ type RiderEntity struct {
 	Disceplanary		*RiderDisceplanaryEntity	`json:"disceplanary" bson:"disceplanary"`
 
 	Address				*tripEntities.WaypointEntity `json:"address" bson:"address"`
+
+	Queries				[]*RiderQueryEntity		`json:"queries" bson:"queries"`
 }
 
 type RiderOptionsEntity struct {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"time"
 
@@ -30,6 +31,7 @@ type QueryTripsBodyRequest struct {
 	} `json:"to"`
 	Datetime    string `json:"datetime"`
 	FemalesOnly *bool   `json:"females_only"`
+	FlexibleDates *bool `json:"flexible_dates"`
 }
 
 func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
@@ -78,25 +80,41 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 	}
 
 	// Find trips where the driver's destination waypoint is within 50 miles
+	round := func(val float64) float64 {
+		return math.Round(val*1e6) / 1e6
+	}
+	
+	lat := round(body.To.Lat)
+	lng := round(body.To.Lng)
+	
 	query["waypoints"] = bson.M{
 		"$elemMatch": bson.M{
 			"type": "destination",
 			"for":  "driver",
 			"latitude": bson.M{
-				"$gte": body.To.Lat - 0.725, // approximately 50 miles in degrees
-				"$lte": body.To.Lat + 0.725,
+				"$gte": lat - 0.725,
+				"$lte": lat + 0.725,
 			},
 			"longitude": bson.M{
-				"$gte": body.To.Lng - 0.725,
-				"$lte": body.To.Lng + 0.725,
+				"$gte": lng - 0.725,
+				"$lte": lng + 0.725,
 			},
 		},
 	}
+	
 
-	// Filter the trips that are within 8 hours of the datetime
-	query["datetime"] = bson.M{
-		"$gte": datetime.Add(-8 * time.Hour),
-		"$lte": datetime.Add(8 * time.Hour),
+	if body.FlexibleDates != nil && *body.FlexibleDates {
+		// Filter the trips that are within 48 hours of the datetime
+		query["datetime"] = bson.M{
+			"$gte": datetime.Add(-48 * time.Hour),
+			"$lte": datetime.Add(48 * time.Hour),
+		}
+	} else {
+		// Filter the trips that are within 8 hours of the datetime
+		query["datetime"] = bson.M{
+			"$gte": datetime.Add(-8 * time.Hour),
+			"$lte": datetime.Add(8 * time.Hour),
+		}
 	}
 
 	cursor, err := tripsCollection.Find(ctx, query)
@@ -114,6 +132,10 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": "error decoding trips",
 		})
+	}
+
+	if trips == nil {
+		trips = []tripEntities.TripEntity{}
 	}
 
 	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{

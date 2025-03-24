@@ -49,6 +49,7 @@ function App() {
               <Route path="/profile" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/driver-apply" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/find-ride" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/driver-application" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/create-trip" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
           </Routes>

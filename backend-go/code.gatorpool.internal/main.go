@@ -124,6 +124,14 @@ func main() {
 		r.With(session.VerifyOAuthToken).Post("/preferences/save", func(w http.ResponseWriter, r *http.Request) {
 			riderHandler.SetRidePreferences(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Get("/queries", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.GetRiderFlowQueries(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Get("/gender", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.GetRiderGender(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/driver", func(r chi.Router) {

@@ -1,40 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Button, Input, Checkbox } from '@heroui/react';
+import { useNavigate } from 'react-router-dom';
+import { RiderQueryEntity } from '../../../common/types/rider_query';
+import { REQUEST_HEADERS } from '../../utils/headers';
 import { AccountData } from '../../view_controller';
-import { Button, Input } from '@heroui/react';
-import {DatePicker} from "@heroui/react";
-import {parseDate, getLocalTimeZone} from "@internationalized/date";
 import fetchBase from '../../../common/fetchBase';
 import {now, parseAbsoluteToLocal, today} from "@internationalized/date";
+import {DatePicker} from "@heroui/react";
+import {parseDate, getLocalTimeZone} from "@internationalized/date";
 import mapboxgl from 'mapbox-gl';
-import { Feature, Polygon } from "geojson";
-import { CreateTripDriverFlowOptionsEntity } from '../types';
-import CreatePage2 from './create_page2';
-import {Progress} from "@heroui/react";
-import CreatePage3 from './create_page3';
-import CreatePage4 from './create_page4';
-import CreatePage5 from './create_page5';
-
+import { WaypointEntity } from '../../../common/types/waypoint';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
 
-interface CreateTripProps {
+interface RiderFlowQueryProps {
     accountData: AccountData;
     setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
 }
 
-let testObject = `
-{
-    "from": {
-        "text": "University of Florida",
-        "lat": 29.644906,
-        "lng": -82.350441,
-        "expected": 1742409922000
-    },
-    "radius": 15,
-    "carpool": false
-}`;
+const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) => {
 
-const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) => {
+    const [pastQueries, setPastQueries] = useState<RiderQueryEntity[]>([]); 
+
+    const fetchQueries = async () => {
+        fetch(`${fetchBase}/v1/rider/queries`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: REQUEST_HEADERS
+        }).then(res => res.json()).then(data => {
+            if(data.success) {
+                setPastQueries(data.queries);
+            } else {
+                console.error(data.error);
+            }
+        }).catch(err => {
+            console.error(err);
+        })
+    };
 
     const [from, setFrom] = useState<{ lat: number, lng: number }>({
         lat: 29.6436,
@@ -49,14 +52,21 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
     const [destinationRadius, setDestinationRadius] = useState<any>(0);
     let [date, setDate] = React.useState(parseAbsoluteToLocal(new Date().toISOString()));
 
+    const [tripDate, setTripDate] = useState<Date>(new Date());
+
+    const [fromWaypoint, setFromWaypoint] = useState<WaypointEntity>({});
+    const [toWaypoint, setToWaypoint] = useState<WaypointEntity>({});
+
+    const [isFemale, setIsFemale] = useState<boolean>(false);
+
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
     const [fromSearchResults, setFromSearchResults] = useState<any[]>([]);
     const [toSearchResults, setToSearchResults] = useState<any[]>([]);
 
-    const [tripOptions, setTripOptions] = useState<CreateTripDriverFlowOptionsEntity>(JSON.parse(testObject));
-
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [filtersDropdownOpen, setFiltersDropdownOpen] = useState<boolean>(false);
+    const [flexibleDatesOption, setFlexibleDatesOption] = useState<boolean>(false);
+    const [femaleDriversOnlyOption, setFemaleDriversOnlyOption] = useState<boolean>(false);
 
     // Updated search function
     const searchAddress = async (query: string, type: string) => {
@@ -170,21 +180,10 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
             console.error("Error fetching route:", error);
         }
     };
-    
-    useEffect(() => {
-        setTripOptions({
-            ...tripOptions,
-            from: {
-                ...tripOptions.from,
-                expected: date.toDate().getTime(),
-            },
-            datetime: date.toDate().toISOString(),
-        });
-    }, [date]);
 
     useEffect(() => {
-        console.log(tripOptions)
-    }, [tripOptions])
+        setTripDate(date.toDate());
+    }, [date]);
 
     // Handle Address Selection
     const handleAddressSelect = async (place: any, type: string) => {
@@ -193,15 +192,12 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
             const destination = { lat: place.center[1], lng: place.center[0] };
             setFrom(destination);
             setFromSearchResults([]);
-            setTripOptions({
-                ...tripOptions,
-                from: {
-                    text: place.place_name,
-                    lat: place.center[1],
-                    lng: place.center[0],
-                    expected: date.toDate().getTime(),
-                }
-            });
+            setFromWaypoint({
+                geo_text: place.place_name,
+                latitude: place.center[1],
+                longitude: place.center[0],
+                expected: date.toDate(),
+            })
     
             if (mapRef.current) {
                 new mapboxgl.Marker()
@@ -220,6 +216,13 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
             const destination = { lat: place.center[1], lng: place.center[0] };
             setTo(destination);
             setToSearchResults([]);
+            // let expectedTime: Date = await fetchRoute(destination); // Fetch the best route
+            setToWaypoint({
+                geo_text: place.place_name,
+                latitude: place.center[1],
+                longitude: place.center[0],
+                expected: null,
+            })
     
             if (mapRef.current) {
                 new mapboxgl.Marker()
@@ -232,85 +235,9 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
                     zoom: 14,
                 });
     
-                let expectedTime: Date = await fetchRoute(destination); // Fetch the best route
-                setTripOptions({
-                    ...tripOptions,
-                    to: {
-                        text: place.place_name,
-                        lat: place.center[1],
-                        lng: place.center[0],
-                        expected: expectedTime.getTime(),
-                    },
-                });
             }
         }
     };
-
-    // Function to generate a circular GeoJSON around a point
-
-    const createCircle = (center: { lat: number; lng: number }, radius: number): Feature<Polygon> => {
-        const points = 64; // Smooth circle
-        const coords: [number, number][] = [];
-        const earthRadius = 6371; // Earth radius in km
-        const radiusKm = radius * 1.60934; // Convert miles to km
-    
-        for (let i = 0; i < points; i++) {
-            const angle = (i / points) * (2 * Math.PI);
-            const dx = radiusKm / earthRadius * Math.cos(angle);
-            const dy = radiusKm / earthRadius * Math.sin(angle);
-    
-            const newLng = center.lng + (dx * (180 / Math.PI));
-            const newLat = center.lat + (dy * (180 / Math.PI));
-    
-            coords.push([newLng, newLat]);
-        }
-    
-        coords.push(coords[0]); // Close the polygon
-    
-        return {
-            type: "Feature",
-            properties: {}, // ✅ Ensure 'properties' is included
-            geometry: {
-                type: "Polygon",
-                coordinates: [coords],
-            },
-        };
-    };
-    
-    
-
-// Add/Update the circle when the "To" destination or radius changes
-useEffect(() => {
-    if (!mapRef.current || !to) return;
-
-    const map = mapRef.current;
-    const circleData = createCircle(to, destinationRadius);
-    setTripOptions({
-        ...tripOptions,
-        radius: destinationRadius,
-    });
-
-    if (map.getSource("destinationCircle")) {
-        (map.getSource("destinationCircle") as mapboxgl.GeoJSONSource).setData(circleData);
-    } else {
-        map.addSource("destinationCircle", {
-            type: "geojson",
-            data: circleData,
-        });
-
-        map.addLayer({
-            id: "destinationCircle",
-            type: "fill",
-            source: "destinationCircle",
-            layout: {},
-            paint: {
-                "fill-color": "#007AFF",
-                "fill-opacity": 0.3,
-            },
-        });
-    }
-}, [to, destinationRadius]); // ✅ Updates the shaded circle dynamically when 'to' or 'destinationRadius' changes
-
 
     // Add route layer when the map loads
     useEffect(() => {
@@ -339,35 +266,32 @@ useEffect(() => {
         }
     }, [route]);
 
+    useEffect(() => {
+        fetchQueries();
+        fetch(`${fetchBase}/v1/rider/gender`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: REQUEST_HEADERS
+        }).then(res => res.json()).then(data => {
+            setIsFemale(data.gender === "female");
+        })
+    }, []);
+
     return (
-        <div className="flex flex-col space-y- bg-white dark:bg-black h-screen p-8">
-            <Progress aria-label="Loading..." className="mb-4 max-w-full" value={
-                currentPage === 1 ? 20 : 
-                currentPage === 2 ? 40 :
-                currentPage === 3 ? 60 :
-                currentPage === 4 ? 80 :
-                currentPage === 5 ? 100 : 0
-            } />
-            <div className="flex flex-col md:flex-row w-full space-x-12">
-                <div className={`flex ${currentPage === 5 ? "w-full" : "w-full lg:w-1/2"}`}>
-                {
-                currentPage === 1 && (
-                        <div className="flex flex-col w-full h-[24rem] my-auto items-center justify-center border border-1 border-neutral-700 rounded-xl p-8">
-                            <p className="text-xl font-RobotoBold  text-left mr-auto mb-4 text-black dark:text-white">Create a Trip</p>
+        <div>
+            <div className="flex flex-col h-screen items-center justify-center w-full bg-white dark:bg-black p-6">
+            <div className="relative flex flex-col w-full h-full items-center justify-center">
+                <div id="map-container" className="relativerounded-xl w-full h-full" />
+                    <div className="absolute top-4 left-4 flex flex-col w-[24rem] items-center justify-center border border-1 border-neutral-300 dark:border-neutral-800 rounded-xl p-8 bg-white dark:bg-black">
+                        <p className="text-xl font-RobotoBold  text-left mr-auto mb-4 text-black dark:text-white">Find a ride</p>
                             <div className="relative mt- w-full">
                                 <Input
                                     label="From"
                                     placeholder="From where?"
-                                    value={tripOptions?.from?.text}
+                                    value={fromText}
                                     className="w-full"
                                     onChange={(e) => {
-                                        setTripOptions({
-                                            ...tripOptions,
-                                            from: {
-                                                ...tripOptions.from,
-                                                text: e.target.value,
-                                            }
-                                        });
+                                        setFromText(e.target.value);
                                         searchAddress(e.target.value, "from");
                                     }}
                                 />
@@ -389,16 +313,10 @@ useEffect(() => {
                                 <Input
                                     label="To"
                                     placeholder="To where?"
-                                    value={tripOptions?.to?.text}
+                                    value={toText}
                                     className="w-[]"
                                     onChange={(e) => {
-                                        setTripOptions({
-                                            ...tripOptions,
-                                            to: {
-                                                ...tripOptions.to,
-                                                text: e.target.value,
-                                            }
-                                        });
+                                        setToText(e.target.value);
                                         searchAddress(e.target.value, "to");
                                     }}
                                 />
@@ -418,95 +336,87 @@ useEffect(() => {
                             </div>
                             <div className="flex flex-row w-full mt-4 space-x-4">
                                 <DatePicker
-                                    className="w-2/3 "
+                                    className="w-full "
                                     granularity="second"
                                     label="Date and time"
                                     minValue={today(getLocalTimeZone())}
-                                    value={parseAbsoluteToLocal(new Date(tripOptions?.datetime || new Date()).toISOString())}
+                                    value={parseAbsoluteToLocal(new Date(tripDate || new Date()).toISOString())}
                                     onChange={setDate}
                                 />
-                                <Input
-                                    label="Radius (miles)"
-                                    type="number"
-        
-                                    placeholder="Enter the radius number"
-                                    value={"" + tripOptions?.radius}
-                                    className="text-black dark:text-white w-1/3"
-                                    onChange={(e) => {
-                                        setDestinationRadius(parseInt(e.target.value));
-                                        setTripOptions({
-                                            ...tripOptions,
-                                            radius: parseInt(e.target.value),
-                                        });
-                                    }}
-                                />
                             </div>
+
+                            <button
+                                onClick={() => setFiltersDropdownOpen(!filtersDropdownOpen)}
+                                className="w-fit px-4 py-2 rounded-xl mr-auto mt-4 flex bg-neutral-100 hover:bg-slate-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 flex-row items-center space-x-2 justify-start text-black dark:text-white"
+                            >
+                                <span>Additional Filters</span>
+                                {
+                                    filtersDropdownOpen ? (
+                                        <ChevronUpIcon className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronDownIcon className="w-4 h-4" />
+                                    )
+                                }
+                            </button>
+
+                            {
+                                filtersDropdownOpen && (
+                                    <div className="flex flex-col w-full mt-1">
+                                        <Checkbox
+                                            className="text-black dark:text-white"
+                                            checked={flexibleDatesOption}
+                                            onChange={() => setFlexibleDatesOption(!flexibleDatesOption)}
+                                        >Flexible dates</Checkbox>
+                                        {
+                                            isFemale && (
+                                                <Checkbox
+                                                    className="text-black dark:text-white"
+                                                    checked={femaleDriversOnlyOption}
+                                                    onChange={() => setFemaleDriversOnlyOption(!femaleDriversOnlyOption)}
+                                                >Female drivers only</Checkbox>
+                                            )
+                                        }
+                                    </div>
+                                )
+                            }
         
                             <Button
                                 className="w-full mt-4"
                                 color="primary"
-                                onClick={() => {
-                                    setCurrentPage(2);
+                                onPress={() => {
+                                    fetch(`${fetchBase}/v1/trip/rider/query`, {
+                                        method: 'POST',
+                                        credentials: 'include',
+                                        headers: REQUEST_HEADERS,
+                                        body: JSON.stringify({
+                                            body: {
+                                                from: {
+                                                    lat: fromWaypoint.latitude,
+                                                    lng: fromWaypoint.longitude,
+                                                },
+                                                to: {
+                                                    lat: toWaypoint.latitude,
+                                                    lng: toWaypoint.longitude,
+                                                },
+                                                datetime: tripDate.toISOString(),
+                                                flexible_dates: flexibleDatesOption,
+                                                females_only: femaleDriversOnlyOption,
+                                            }
+                                        })
+                                    }).then(res => res.json()).then(data => {
+                                        console.log(data);
+                                    }).catch(err => {
+                                        console.error(err);
+                                    })
                                 }}
                             >
-                                Next
+                                Find
                             </Button>
                         </div>
-                )
-            }
-
-            {
-                currentPage === 2 && (
-                    <CreatePage2
-                    tripOptions={tripOptions}
-                    setTripOptions={setTripOptions}
-                    accountData={accountData}
-                    setCurrentPage={setCurrentPage}
-                    />
-                )
-            }
-
-            {
-                currentPage === 3 && (
-                    <CreatePage3
-                    tripOptions={tripOptions}
-                    setTripOptions={setTripOptions}
-                    accountData={accountData}
-                    setCurrentPage={setCurrentPage}
-                    />
-                )
-            }
-
-            {
-                currentPage === 4 && (
-                    <CreatePage4
-                    tripOptions={tripOptions}
-                    setTripOptions={setTripOptions}
-                    accountData={accountData}
-                    setCurrentPage={setCurrentPage}
-                    />
-                )
-            }
-
-            {
-                currentPage === 5 && (
-                    <CreatePage5
-                    tripOptions={tripOptions}
-                    setTripOptions={setTripOptions}
-                    accountData={accountData}
-                    setCurrentPage={setCurrentPage}
-                    />
-                )
-            }
-                </div>
-
-                    <div className="flex flex-col w-full h-full items-center justify-center">
-                        <div id="map-container" ref={mapContainerRef} className="rounded-xl w-10/12 md:w-full h-[400px] lg:h-[500px] xl:h-[700px] threequarterxl3:h-[950px]" />
                     </div>
-
+                </div>
             </div>
-        </div>
     )
 }
 
-export default CreateTrip
+export default RiderFlowQuery
