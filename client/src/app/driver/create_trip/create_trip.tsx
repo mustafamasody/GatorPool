@@ -12,6 +12,7 @@ import CreatePage2 from './create_page2';
 import {Progress} from "@heroui/react";
 import CreatePage3 from './create_page3';
 import CreatePage4 from './create_page4';
+import CreatePage5 from './create_page5';
 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
@@ -24,19 +25,13 @@ interface CreateTripProps {
 let testObject = `
 {
     "from": {
-        "text": "Miami, Florida, United States",
-        "lat": 25.773357,
-        "lng": -80.1919,
+        "text": "University of Florida",
+        "lat": 29.644906,
+        "lng": -82.350441,
         "expected": 1742409922000
     },
-    "datetime": "2025-03-19T18:45:22.000Z",
-    "to": {
-        "text": "Jacksonville, Florida, United States",
-        "lat": 30.326471,
-        "lng": -81.65535,
-        "expected": 1742428964980
-    },
-    "radius": 15
+    "radius": 15,
+    "carpool": false
 }`;
 
 const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) => {
@@ -46,13 +41,13 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
         lng: -82.3549
     });
     const [to, setTo] = useState<{ lat: number, lng: number } | null>(null);
-    const [fromText, setFromText] = useState("Near Reitz Union");
+    const [fromText, setFromText] = useState("University of Florida");
     const [toText, setToText] = useState("");
     const [route, setRoute] = useState<any>(null); // Stores route GeoJSON
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const [destinationRadius, setDestinationRadius] = useState<any>(0);
-    let [date, setDate] = React.useState(parseAbsoluteToLocal("2025-03-19T18:45:22Z"));
+    let [date, setDate] = React.useState(parseAbsoluteToLocal(new Date().toISOString()));
 
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -353,8 +348,8 @@ useEffect(() => {
                 currentPage === 4 ? 80 :
                 currentPage === 5 ? 100 : 0
             } />
-            <div className="flex flex-row w-full space-x-12">
-                <div className="flex w-1/2">
+            <div className="flex flex-col md:flex-row w-full space-x-12">
+                <div className={`flex ${currentPage === 5 ? "w-full" : "w-full lg:w-1/2"}`}>
                 {
                 currentPage === 1 && (
                         <div className="flex flex-col w-full h-[24rem] my-auto items-center justify-center border border-1 border-neutral-700 rounded-xl p-8">
@@ -492,11 +487,27 @@ useEffect(() => {
                     />
                 )
             }
+
+            {
+                currentPage === 5 && (
+                    <CreatePage5
+                    tripOptions={tripOptions}
+                    setTripOptions={setTripOptions}
+                    accountData={accountData}
+                    setCurrentPage={setCurrentPage}
+                    />
+                )
+            }
                 </div>
 
-            <div className="flex flex-col w-full h-full items-center justify-center">
-                <div id="map-container" ref={mapContainerRef} className="rounded-xl w-full h-[400px] lg:h-[500px] xl:h-[700px] threequarterxl3:h-[950px]" />
-            </div>
+            {
+                currentPage !== 5 && (
+                    <div className="flex flex-col w-full h-full items-center justify-center">
+                        <div id="map-container" ref={mapContainerRef} className="rounded-xl w-10/12 md:w-full h-[400px] lg:h-[500px] xl:h-[700px] threequarterxl3:h-[950px]" />
+                    </div>
+                )
+            }
+
             </div>
         </div>
     )

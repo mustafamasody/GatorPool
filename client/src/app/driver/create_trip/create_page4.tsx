@@ -21,7 +21,7 @@ const CreatePage4: React.FC<CreatePage4Props> = ({ tripOptions, setTripOptions, 
         
     return (
             <div className="flex flex-col w-full gap-4 h-full">
-                <div className="flex flex-col w-full max-h-[28rem] overflow-y-scroll">
+                <div className="flex flex-col w-full h-full overflow-y-auto">
                 <h1 className="font-RobotoBold text-xl text-black dark:text-white">
                     Carpooling
                 </h1>

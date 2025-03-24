@@ -47,31 +47,32 @@ import (
 
 type WaypointEntity struct {
 	// Type: Destination, Pickup, Stopover
-	Type			*string					`json:"type,omitempty" bson:"type"`
+	Type			*string					`json:"type,omitempty" bson:"type,omitempty"`
 
 	// For: rider, driver, food, gas
-	For 			*string					`json:"for,omitempty" bson:"for"`
+	For 			*string					`json:"for,omitempty" bson:"for,omitempty"`
 
 	// Data, optional data for the waypoint
-	Data			map[string]interface{}	`json:"data,omitempty" bson:"data"`
+	Data			map[string]interface{}	`json:"data,omitempty" bson:"data,omitempty"`
 
 	// Latitude of the waypoint
-	Latitude		*float64				`json:"latitude,omitempty" bson:"latitude"`
+	Latitude		*float64				`json:"latitude,omitempty" bson:"latitude,omitempty"`
 
 	// Longitude of the waypoint
-	Longitude		*float64				`json:"longitude,omitempty" bson:"longitude"`
+	Longitude		*float64				`json:"longitude,omitempty" bson:"longitude,omitempty"`
 
 	// Geographical location of the waypoint
-	Name			*string					`json:"name,omitempty" bson:"name"`
-	Address			*string					`json:"address,omitempty" bson:"address"`
-	Address2		*string					`json:"address2,omitempty" bson:"address2"`
-	City			*string					`json:"city,omitempty" bson:"city"`
-	State			*string					`json:"state,omitempty" bson:"state"`
-	Zip				*string					`json:"zip,omitempty" bson:"zip"`
+	Name			*string					`json:"name,omitempty" bson:"name,omitempty"`
+	Address			*string					`json:"address,omitempty" bson:"address,omitempty"`
+	Address2		*string					`json:"address2,omitempty" bson:"address2,omitempty"`
+	City			*string					`json:"city,omitempty" bson:"city,omitempty"`
+	State			*string					`json:"state,omitempty" bson:"state,omitempty"`
+	Zip				*string					`json:"zip,omitempty" bson:"zip,omitempty"`
+	GeoText			*string					`json:"geo_text,omitempty" bson:"geo_text,omitempty"`
 
 	// Expected time of arrival
-	Expected 		*time.Time				`json:"expected,omitempty" bson:"expected"`
+	Expected 		*time.Time				`json:"expected,omitempty" bson:"expected,omitempty"`
 
 	// Actual time of arrival
-	Actual			*time.Time				`json:"actual,omitempty" bson:"actual"`
+	Actual			*time.Time				`json:"actual,omitempty" bson:"actual,omitempty"`
 }

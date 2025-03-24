@@ -20,6 +20,7 @@ import (
 	riderHandler "code.gatorpool.internal/rider/handler"
 	driverHandler "code.gatorpool.internal/driver/handler"
 	configHandler "code.gatorpool.internal/config"
+	tripHandler "code.gatorpool.internal/trip/handler"
 	"code.gatorpool.internal/account/oauth"
 )
 
@@ -136,6 +137,12 @@ func main() {
 
 		r.With(session.VerifyOAuthToken).Get("/gender", func(w http.ResponseWriter, r *http.Request) {
 			driverHandler.GetDriverGender(r, w, r.Context())
+		})
+	})
+
+	r.Route("/v1/trip", func(r chi.Router) {
+		r.With(session.VerifyOAuthToken).Post("/", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.CreateTrip(r, w, r.Context())
 		})
 	})
 

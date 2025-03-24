@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -60,4 +61,23 @@ func ParseJSONBodyMultipart(r *http.Request) (map[string]interface{}, error) {
 	}
 
 	return result, nil
+}
+
+func JSONGzipResponse(w http.ResponseWriter, status int, payload interface{}) *http.Response {
+	response, err := json.Marshal(payload)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Encoding", "gzip")
+	gz := gzip.NewWriter(w)
+	gz.Write(response)
+	gz.Close()
+
+	return &http.Response{
+		StatusCode: status,
+		Body:       ioutil.NopCloser(bytes.NewReader(response)),
+	}
 }
