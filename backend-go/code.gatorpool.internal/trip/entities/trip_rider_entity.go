@@ -34,6 +34,7 @@ type TripRiderWillingEntity struct {
 }
 
 type TripRiderRequirementsEntity struct {
+	FemalesOnly			*bool							`json:"females_only,omitempty" bson:"females_only"`
 	PayFood				*bool							`json:"pay_food,omitempty" bson:"pay_food"`
 	PayGas				*bool							`json:"pay_gas,omitempty" bson:"pay_gas"`
 	Custom 				map[string]interface{}			`json:"custom,omitempty" bson:"custom"`

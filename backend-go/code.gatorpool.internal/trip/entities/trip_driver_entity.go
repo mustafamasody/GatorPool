@@ -31,6 +31,9 @@ type TripAssignedDriverEntity struct {
 	// Where the driver is headed to
 	Address				*WaypointEntity					`json:"address,omitempty" bson:"address"`
 
+	// Gender of the driver
+	Gender				*string							`json:"gender,omitempty" bson:"gender"`
+
 	// Timestamp of when the driver was assigned to the trip
 	AssignedAt			*time.Time						`json:"assigned_at,omitempty" bson:"assigned_at"`
 }

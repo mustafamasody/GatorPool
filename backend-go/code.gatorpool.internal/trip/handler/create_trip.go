@@ -53,6 +53,9 @@ type CreateTripBodyRequest struct {
 		Trip float64 `json:"trip"`
 		Food float64 `json:"food"`
 	} `json:"fare"`
+	RiderRequirements struct {
+		FemalesOnly bool `json:"females_only"`
+	} `json:"rider_requirements"`
 }
 
 func CreateTrip(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
@@ -123,6 +126,7 @@ func CreateTrip(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		UserUUID:   driver.DriverUUID,
 		Address:    toWaypoint,
 		AssignedAt: ptr.Time(time.Now()),
+		Gender:     account.Gender,
 	}
 
 	// body.Datetime is: 2025-03-19T18:45:22.000Z
@@ -197,6 +201,16 @@ func CreateTrip(req *http.Request, res http.ResponseWriter, ctx context.Context)
 
 	if body.TalkingPreferences.Silent {
 		newTrip.Miscellaneous.Talking.Type = ptr.String("silent")
+	}
+
+	if body.RiderRequirements.FemalesOnly {
+		if *account.Gender != "female" {
+			return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+				"error": "you are not a female",
+			})
+		} else {
+			newTrip.RiderRequirements.FemalesOnly = ptr.Bool(true)
+		}
 	}
 
 	_, err = tripsCollection.InsertOne(ctx, newTrip)

@@ -1,0 +1,123 @@
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
+
+	accountEntities "code.gatorpool.internal/account/entities"
+	datastores "code.gatorpool.internal/datastores/mongo"
+	tripEntities "code.gatorpool.internal/trip/entities"
+	"code.gatorpool.internal/util"
+
+	"go.mongodb.org/mongo-driver/bson"
+)
+
+type QueryTripsRequestBody struct {
+	Body QueryTripsBodyRequest `json:"body"`
+}
+
+type QueryTripsBodyRequest struct {
+	From struct {
+		Lat float64 `json:"lat"`
+		Lng float64 `json:"lng"`
+	} `json:"from"`
+	To struct {
+		Lat float64 `json:"lat"`
+		Lng float64 `json:"lng"`
+	} `json:"to"`
+	Datetime    string `json:"datetime"`
+	FemalesOnly *bool   `json:"females_only"`
+}
+
+func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, ok := req.Context().Value("account").(accountEntities.AccountEntity) // No pointer
+	if !ok {
+		fmt.Println("Account object is missing in context")
+		return util.JSONResponse(res, http.StatusUnauthorized, map[string]interface{}{
+			"error": "no account in context",
+		})
+	}
+
+	var requestBody QueryTripsRequestBody
+	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	if err != nil {
+		fmt.Println("Error decoding body: ", err)
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": "invalid body",
+		})
+	}
+
+	body := requestBody.Body
+
+	db := datastores.GetMongoDatabase(ctx)
+
+	tripsCollection := db.Collection(datastores.Trips)
+
+	datetime, err := time.Parse(time.RFC3339, body.Datetime)
+	if err != nil {
+		fmt.Println("Error parsing datetime: ", err)
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": "invalid datetime",
+		})
+	}
+
+	query := bson.M{}
+
+	if body.FemalesOnly != nil && *body.FemalesOnly {
+		if *account.Gender != "female" {
+			return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+				"error": "you are not a female",
+			})
+		} else {
+			query["assigned_driver.gender"] = "female"
+		}
+	}
+
+	// Find trips where the driver's destination waypoint is within 50 miles
+	query["waypoints"] = bson.M{
+		"$elemMatch": bson.M{
+			"type": "destination",
+			"for":  "driver",
+			"latitude": bson.M{
+				"$gte": body.To.Lat - 0.725, // approximately 50 miles in degrees
+				"$lte": body.To.Lat + 0.725,
+			},
+			"longitude": bson.M{
+				"$gte": body.To.Lng - 0.725,
+				"$lte": body.To.Lng + 0.725,
+			},
+		},
+	}
+
+	// Filter the trips that are within 8 hours of the datetime
+	query["datetime"] = bson.M{
+		"$gte": datetime.Add(-8 * time.Hour),
+		"$lte": datetime.Add(8 * time.Hour),
+	}
+
+	cursor, err := tripsCollection.Find(ctx, query)
+	if err != nil {
+		fmt.Println("Error finding trips: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error finding trips",
+		})
+	}
+	defer cursor.Close(ctx)
+
+	var trips []tripEntities.TripEntity
+	if err = cursor.All(ctx, &trips); err != nil {
+		fmt.Println("Error decoding trips: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error decoding trips",
+		})
+	}
+
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"trips":   trips,
+		"success": true,
+	})
+}

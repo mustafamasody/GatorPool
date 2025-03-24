@@ -13,7 +13,9 @@ import QueryStatsOutlinedIcon from '@mui/icons-material/QueryStatsOutlined';
 import { AlarmSmoke } from 'lucide-react';
 import Person2Icon from '@mui/icons-material/Person2';
 import { AccountData } from '../view_controller';
-
+import { Button } from '@heroui/react';
+import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
 
     interface SidebarProps {
         setSidebarState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,6 +32,7 @@ import { AccountData } from '../view_controller';
 
     const [activeTab, setActiveTab] = useState<string>(window.location.pathname.split('/')[1]);
     const sidebarOpenRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
 
     interface MainTab {
       id: string;
@@ -126,9 +129,19 @@ import { AccountData } from '../view_controller';
         {
           accountData?.driver_verified && (
             <>
-              <Tab title="Create Ride" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="create-trip"  />
+            <Button
+              variant="bordered"
+              color="primary"
+              // startContent={<AddIcon className="text-green-400 " sx={{ fontSize: 24 }} />}
+              className="w-full rounded-full py-6 mb-2 font-RobotoBold text-md"
+              onClick={() => {
+                navigate('/create-trip');
+              }}
+            >
+              Create Ride
+            </Button>
+              <Tab title="My Trips" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
               <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
-              <Tab title="Drive History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
               <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
             </>
           )

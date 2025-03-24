@@ -144,6 +144,10 @@ func main() {
 		r.With(session.VerifyOAuthToken).Post("/", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.CreateTrip(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Post("/rider/query", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.QueryTrips(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/config", func(r chi.Router) {
