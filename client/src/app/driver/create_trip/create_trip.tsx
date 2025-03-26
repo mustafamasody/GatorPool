@@ -54,6 +54,8 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
     const [fromSearchResults, setFromSearchResults] = useState<any[]>([]);
     const [toSearchResults, setToSearchResults] = useState<any[]>([]);
 
+    const [canCreateTrip, setCanCreateTrip] = useState<boolean>(false);
+
     const [tripOptions, setTripOptions] = useState<CreateTripDriverFlowOptionsEntity>(JSON.parse(testObject));
 
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -86,28 +88,29 @@ const CreateTrip: React.FC<CreateTripProps> = ({ accountData, setAccountData }) 
     };
     
     useEffect(() => {
+        if (!canCreateTrip || !mapContainerRef.current) return;
+    
         mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-
-        if (!mapContainerRef.current) return;
-
+    
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: 'mapbox://styles/mustafamasody/cm6olrhpt000k01qrebc2e55u',
             center: [from.lng, from.lat],
             zoom: 14,
         });
-
+    
         new mapboxgl.Marker()
             .setLngLat([from.lng, from.lat])
             .setPopup(new mapboxgl.Popup().setHTML("<b>University of Florida</b><br>Reitz Union"))
             .addTo(map);
-
+    
         mapRef.current = map;
-
+    
         return () => {
             map.remove();
         };
-    }, []);
+    }, [canCreateTrip]); // <- rerun this when canCreateTrip becomes true
+    
 
     // Fetch Route from Mapbox Directions API
     const fetchRoute = async (destination: { lat: number, lng: number }) => {
@@ -339,9 +342,33 @@ useEffect(() => {
         }
     }, [route]);
 
+    useEffect(() => {
+
+        fetch(`${fetchBase}/v1/driver/fulfillment/dfcr`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                "X-GatorPool-Device-Id": localStorage.getItem("X-GatorPool-Device-Id") || "",
+                "X-GatorPool-Username": localStorage.getItem("X-GatorPool-Username") || "",
+            }
+        }).then((res) => res.json()).then((data) => {
+            if(data.success) {
+                setCanCreateTrip(data.can_create_trip);
+            } else {
+                console.error(data.error);
+            }
+        }).catch(err => {
+            console.error(err);
+        }) 
+    }, []);
+
     return (
         <div className="flex flex-col space-y- bg-white dark:bg-black h-screen p-8">
-            <Progress aria-label="Loading..." className="mb-4 max-w-full" value={
+            {
+                canCreateTrip ? (
+                    <div className="flex flex-col h-full w-full">
+                                    <Progress aria-label="Loading..." className="mb-4 max-w-full" value={
                 currentPage === 1 ? 20 : 
                 currentPage === 2 ? 40 :
                 currentPage === 3 ? 60 :
@@ -505,6 +532,18 @@ useEffect(() => {
                     </div>
 
             </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col h-full w-full items-center justify-center">
+                        <p className="text-xl font-RobotoBold text-black dark:text-white">
+                            Due to your account standing, you are not able to create a trip.
+                        </p>
+                        <p className="text-md font-RobotoMedium text-black dark:text-white">
+                            Please resolve your account standing to create a trip.
+                        </p>
+                    </div>
+                )
+            }
         </div>
     )
 }

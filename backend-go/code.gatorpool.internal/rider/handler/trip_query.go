@@ -84,23 +84,56 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		return math.Round(val*1e6) / 1e6
 	}
 	
-	lat := round(body.To.Lat)
-	lng := round(body.To.Lng)
+	// lat := round(body.To.Lat)
+	// lng := round(body.To.Lng)
 	
+	// query["waypoints"] = bson.M{
+	// 	"$elemMatch": bson.M{
+	// 		"type": "destination",
+	// 		"for":  "driver",
+	// 		"latitude": bson.M{
+	// 			"$gte": lat - 0.725,
+	// 			"$lte": lat + 0.725,
+	// 		},
+	// 		"longitude": bson.M{
+	// 			"$gte": lng - 0.725,
+	// 			"$lte": lng + 0.725,
+	// 		},
+	// 	},
+	// }
+
 	query["waypoints"] = bson.M{
-		"$elemMatch": bson.M{
-			"type": "destination",
-			"for":  "driver",
-			"latitude": bson.M{
-				"$gte": lat - 0.725,
-				"$lte": lat + 0.725,
+		"$all": []bson.M{
+			{
+				"$elemMatch": bson.M{
+					"type": "pickup",
+					"for":  "driver",
+					"latitude": bson.M{
+						"$gte": round(body.From.Lat - 0.725),
+						"$lte": round(body.From.Lat + 0.725),
+					},
+					"longitude": bson.M{
+						"$gte": round(body.From.Lng - 0.725),
+						"$lte": round(body.From.Lng + 0.725),
+					},
+				},
 			},
-			"longitude": bson.M{
-				"$gte": lng - 0.725,
-				"$lte": lng + 0.725,
+			{
+				"$elemMatch": bson.M{
+					"type": "destination",
+					"for":  "driver",
+					"latitude": bson.M{
+						"$gte": round(body.To.Lat - 0.725),
+						"$lte": round(body.To.Lat + 0.725),
+					},
+					"longitude": bson.M{
+						"$gte": round(body.To.Lng - 0.725),
+						"$lte": round(body.To.Lng + 0.725),
+					},
+				},
 			},
 		},
-	}
+	}	
 	
 
 	if body.FlexibleDates != nil && *body.FlexibleDates {

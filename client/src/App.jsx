@@ -13,6 +13,7 @@ import Verify from './app/auth/verify';
 import FinishSignup from './app/auth/finish_signup';
 import ProtectedRoute from './app/auth/auth_provider';
 import ViewController from './app/view_controller';
+import {addToast, ToastProvider} from "@heroui/toast";
 
 function App() {
 
@@ -38,9 +39,10 @@ function App() {
 
     return (
       <HeroUIProvider>
-        <div className="light:light dark:dark">
-          <Routes>
-              <Route path="/" element={<HomePage />} />
+        <ToastProvider/>
+          <div className="light:light dark:dark">
+            <Routes>
+                <Route path="/" element={<HomePage />} />
               <Route path="/auth/signup" element={<SignUp />} />
               <Route path="/auth/signin" element={<SignIn />} />
               <Route path="/auth/finish" element={<FinishSignup />} />
@@ -52,6 +54,8 @@ function App() {
               <Route path="/find-ride" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/driver-application" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/create-trip" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/my-trips" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/drivertrip/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
           </Routes>
         </div>
       </HeroUIProvider>

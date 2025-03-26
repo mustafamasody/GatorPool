@@ -39,6 +39,7 @@ import AddIcon from '@mui/icons-material/Add';
       icon: React.ReactElement;
       title: string;
       tabgroup: React.ReactElement;
+      mapArray: string[];
     }
 
     const Tab: React.FC<{
@@ -119,7 +120,8 @@ import AddIcon from '@mui/icons-material/Add';
             <Tab title="Dashboard" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="dashboard"  />
             <Tab title="Find a ride" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-ride"  />
             <Tab title="Ride History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  />
-        </>
+        </>,
+        mapArray: ["dashboard", "find-ride", "ride-history"]
       },
       {
         id: "drive",
@@ -140,7 +142,7 @@ import AddIcon from '@mui/icons-material/Add';
             >
               Create Ride
             </Button>
-              <Tab title="My Trips" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="drive-history"  />
+              <Tab title="My Trips" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="my-trips"  />
               <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
               <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
             </>
@@ -167,7 +169,8 @@ import AddIcon from '@mui/icons-material/Add';
             </>
           )
         }
-        </>
+        </>,
+        mapArray: ["my-trips", "find-riders", "ratings"]
       },
       {
         id: "settings",
@@ -175,12 +178,23 @@ import AddIcon from '@mui/icons-material/Add';
         title: "Settings",
         tabgroup: <>
             <Tab title="Profile" activeIcon={<Person2Icon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<Person2Icon  sx={{ fontSize: 24 }} />} id="profile"  />
-        </>
+        </>,
+        mapArray: ["profile"]
       },
     ]
 
     const [activeMainTab, setActiveMainTab] = useState<string>("ride");
   
+    useEffect(() => {
+
+      // set the current active tab to whichever one the window.location.pathname is in (without the /)
+      const activeTab = mainTabs.find(tab => tab.mapArray.includes(window.location.pathname.split('/')[1].replace("/", "")));
+      if(activeTab) {
+        setActiveMainTab(activeTab.id);
+      }
+
+    }, [window.location.pathname])
+
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (sidebarOpenRef.current && !sidebarOpenRef.current.contains(event.target as Node) && mobile) {
@@ -234,17 +248,19 @@ import AddIcon from '@mui/icons-material/Add';
           dark:rounded-xs`} alt="GatorPool" />
           {
             mainTabs.map((tab) => (
-              <button
+              <Link
                 key={tab.id}
+                to={`/${tab.mapArray[0]}`}
                 onClick={() => {
                   setActiveMainTab(tab.id);
+                  handleTabClick(tab.mapArray[0]);
                 }}
                 className={`
                 ${activeMainTab === tab.id ? ' bg-neutral-900 text-white ' : ' hover:bg-foregroundDark '}
                 p-3 rounded-full mt-2
                 `}>
                   {tab.icon}
-              </button>
+              </Link>
             ))
           }
 

@@ -12,7 +12,8 @@ import ApplicationView from './driver/apply/application-view';
 import { DriverApplicationEntity } from './driver/types';
 import CreateTrip from './driver/create_trip/create_trip';
 import RiderFlowQuery from './rider/query/query';
-
+import MyTrips from './driver/my_trips/my_trips';
+import DriverTrip from './driver/drivertrip/drivertrip';
 /**
  *     "status_cards": [
         {
@@ -148,6 +149,14 @@ const ViewController = ({}) => {
         case "find-ride":
             title = 'Find Ride';
             component = <RiderFlowQuery accountData={accountData} setAccountData={setAccountData} />;
+            break;
+        case "my-trips":
+            title = 'My Trips';
+            component = <MyTrips accountData={accountData} setAccountData={setAccountData} />;
+            break;
+        case "drivertrip":
+            title = 'Driver Trip';
+            component = <DriverTrip accountData={accountData} setAccountData={setAccountData} />;
             break;
         default:
             title = 'Profile';
