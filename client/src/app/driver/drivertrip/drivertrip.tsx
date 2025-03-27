@@ -98,10 +98,16 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                 </h1>
                 <div className="flex flex-row space-x-2 items-center">
                     {
-                        new Date(trip?.datetime) > new Date() && (
-                            <div className="flex items-center justify-center bg-green-700 text-white rounded-full px-4 py-2">
-                                <p className="text-sm font-RobotoBold">Upcoming</p>
+                        trip?.status === "cancelled" ? (
+                            <div className="flex items-center justify-center bg-red-700 text-white rounded-full px-4 py-2">
+                                <p className="text-sm font-RobotoBold">Cancelled</p>
                             </div>
+                        ) : (
+                            new Date(trip?.datetime) > new Date() && (
+                                <div className="flex items-center justify-center bg-green-700 text-white rounded-full px-4 py-2">
+                                    <p className="text-sm font-RobotoBold">Upcoming</p>
+                                </div>
+                            )
                         )
                     }
                 </div>
@@ -410,7 +416,7 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                         Danger Zone
                         <br></br>
                         <span className="text-red-500 font-RobotoRegular text-sm">
-                            Actions done here are irreversible and may affect your account.
+                            Actions done here are irreversible and may affect your account. You may cancel trips up to 3 days before the trip.
                         </span>
                     </h1>
 
@@ -435,6 +441,45 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     className="w-48"
                                     onPress={() => {
                                         setConfirmCancelTrip(false);
+                                        fetch(`${fetchBase}/v1/trip/${trip_uuid}`, {
+                                            method: 'DELETE',
+                                            credentials: 'include',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
+                                                'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
+                                            }
+                                        }).then(res => res.json()).then(data => {
+                                            if(data.success) {
+                                                setTrip(data.trip);
+                                                setTripCopy(data.trip);
+                                                if(data.issue_warning) {
+                                                    addToast({
+                                                        title: "Trip cancelled",
+                                                        description: "The trip has been cancelled. You will receive a warning on your account.",
+                                                        color: "danger"
+                                                    });
+                                                } else {
+                                                    addToast({
+                                                        title: "Trip cancelled",
+                                                        description: "The trip has been cancelled with no penalty.",
+                                                        color: "success"
+                                                    });
+                                                }
+                                            } else {
+                                                addToast({
+                                                    title: "Error",
+                                                    description: data.error,
+                                                    color: "danger"
+                                                });
+                                            }
+                                        }).catch(err => {
+                                            addToast({
+                                                title: "Error",
+                                                description: "An error occured.",
+                                                color: "danger"
+                                            });
+                                        });
                                     }}
                                 >
                                     Confirm

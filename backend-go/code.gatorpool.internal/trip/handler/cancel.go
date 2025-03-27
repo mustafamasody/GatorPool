@@ -59,29 +59,41 @@ func CancelTripDriverFlow(req *http.Request, res http.ResponseWriter, ctx contex
 		})
 	}
 
-	go func() {
+	currentTime := time.Now()
 
+	// if the trip is cancelled 3 or more days before the trip, dont do anything
+	issueWarning := true
+	if currentTime.AddDate(0, 0, 3).Before(*trip.Datetime) {
+		issueWarning = false
+	}
+
+	go func() {
 		util.JSONResponse(res, http.StatusOK, map[string]interface{}{
 			"success": true,
+			"issue_warning": issueWarning,
+			"trip": trip,
 		})
 	}()
 
-	warning := &warningEntities.WarningEntity{
-		WarningUUID: ptr.String(uuid.NewRandom().String()),
-		UserUUID: account.UserUUID,
-		Type: ptr.String("warning"),
-		Points: ptr.Int(1),
-		IssuedAt: ptr.Time(time.Now()),
-		Reason: ptr.String("Trip cancelled"),
-		IssuedBy: ptr.String(*account.UserUUID),
-		Resolved: ptr.Bool(false),
-		ResolvesAt: ptr.Time(time.Now().Add(time.Hour * 24 * 30)),
-		ResolvedAt: nil,
-		CreatedAt: ptr.Time(time.Now()),
-		UpdatedAt: ptr.Time(time.Now()),
-	}
 
-	dispatch.DispatchWarningEvent(warning, *trip.AssignedDriver.UserUUID)
+	if issueWarning {
+		warning := &warningEntities.WarningEntity{
+			WarningUUID: ptr.String(uuid.NewRandom().String()),
+			UserUUID: account.UserUUID,
+			Type: ptr.String("warning"),
+			Points: ptr.Int(1),
+			IssuedAt: ptr.Time(time.Now()),
+			Reason: ptr.String("Trip cancelled"),
+			IssuedBy: ptr.String(*account.UserUUID),
+			Resolved: ptr.Bool(false),
+			ResolvesAt: ptr.Time(time.Now().Add(time.Hour * 24 * 30)),
+			ResolvedAt: nil,
+			CreatedAt: ptr.Time(time.Now()),
+			UpdatedAt: ptr.Time(time.Now()),
+		}
+
+		dispatch.DispatchWarningEvent(warning, *trip.AssignedDriver.UserUUID)
+	}
 
 	return nil
 }
