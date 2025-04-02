@@ -44,7 +44,8 @@ const MyTrips: React.FC<MyTripsProps> = ({ accountData, setAccountData }) => {
         <div className="flex flex-col space-y- bg-white dark:bg-black h-screen">
             <p className="text-xl font-RobotoBold p-8  text-left mr-auto mb-4 text-black dark:text-white">My Trips</p>
 
-            <table>
+            <div className="flex overflow-x-auto max-w-screen">
+            <table className="w-full">
                 <thead>
                     <tr>
                         <th className="text-left px-6 py-4 text-black dark:text-white">To</th>
@@ -78,6 +79,7 @@ const MyTrips: React.FC<MyTripsProps> = ({ accountData, setAccountData }) => {
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     )
 }
