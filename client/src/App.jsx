@@ -45,6 +45,7 @@ function App() {
               <Route path="/auth/signin" element={<SignIn />} />
               <Route path="/auth/finish" element={<FinishSignup />} />
               <Route path="/verify" element={<Verify />} />
+              <Route path="/feed-display" element={<FeedDisplay/>} />
 
               <Route path="/profile" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
@@ -54,6 +55,7 @@ function App() {
               <Route path="/create-trip" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/my-trips" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/drivertrip/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              
           </Routes>
         </div>
       </HeroUIProvider>
