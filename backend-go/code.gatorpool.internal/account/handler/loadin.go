@@ -68,6 +68,7 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 	defaultReturn["email"] = account.Email
 	defaultReturn["user_uuid"] = account.UserUUID
 	defaultReturn["onboarding_status"] = account.OnboardingStatus
+	defaultReturn["is_female"] = *account.Gender == "female"
 
 	db := datastores.GetMongoDatabase(ctx)
 

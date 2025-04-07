@@ -15,6 +15,7 @@ import RiderFlowQuery from './rider/query/query';
 import MyTrips from './driver/my_trips/my_trips';
 import DriverTrip from './driver/drivertrip/drivertrip';
 import RiderFlowRequest from './rider/query/rider_flow_request';
+import MyTripsRider from './rider/my_trips/my_trips';
 /**
  *     "status_cards": [
         {
@@ -36,6 +37,7 @@ export interface AccountData {
     bottom_actions: ReturnLoadInBottomAction[];
     driver_verified?: boolean;
     driver_applications?: DriverApplicationEntity[];
+    is_female?: boolean;
 }
   
 
@@ -107,6 +109,7 @@ const ViewController = ({}) => {
                     bottom_actions: data.bottom_actions,
                     driver_verified: data.driver_verified,
                     driver_applications: data.driver_applications,
+                    is_female: data.is_female,
                 }
                 setAccountData(accountData);
             }
@@ -147,12 +150,25 @@ const ViewController = ({}) => {
             title = 'Create Trip';
             component = <CreateTrip accountData={accountData} setAccountData={setAccountData} />;
             break;
+        case "rider-flow":
+
+            if(secondaryTab) {
+                if(secondaryTab === "trips") {
+                    title = 'My Trips';
+                    component = <MyTripsRider accountData={accountData} setAccountData={setAccountData} />;
+                    break;
+                }
+            }
+
+            title = 'My Trips';
+            component = <MyTrips accountData={accountData} setAccountData={setAccountData} />;
+            break;
         case "find-ride":
 
             if(secondaryTab) {
                 if(secondaryTab === "rider-flow") {
                     title = 'Find Ride';
-                    component = <RiderFlowRequest accountData={accountData} setAccountData={setAccountData} />;
+                    component = <RiderFlowRequest accountData={accountData} setAccountData={setAccountData} isFemale={accountData?.is_female} />;
                     break;
                 }
             }

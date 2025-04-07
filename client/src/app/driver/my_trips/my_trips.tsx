@@ -41,7 +41,7 @@ const MyTrips: React.FC<MyTripsProps> = ({ accountData, setAccountData }) => {
     }, []);
 
     return (
-        <div className="flex flex-col space-y- bg-white dark:bg-black h-screen">
+        <div className="flex flex-col space-y- bg-white dark:bg-[#0c0c0c] h-screen">
             <p className="text-xl font-RobotoBold p-8  text-left mr-auto mb-4 text-black dark:text-white">My Trips</p>
 
             <div className="flex overflow-x-auto max-w-screen">

@@ -88,13 +88,13 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
     }, [tripCopy?.fare?.food, tripCopy?.fare?.gas, tripCopy?.fare?.trip]);
 
     return (
-        <div className="flex flex-col bg-white dark:bg-black space-y-4 h-screen overflow-y-auto p-8">
+        <div className="flex flex-col bg-white dark:bg-[#0c0c0c] space-y-4 h-screen overflow-y-auto p-8">
             <div className="flex flex-row space-x-4 items-center">
                 <button onClick={() => navigate('/my-trips')} className="flex items-center justify-center bg-gray-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 rounded-full p-2">
                     <ArrowLeft className="w-8 h-8 text-black dark:text-white" />
                 </button>
                 <h1 className="text-2xl lg:text-4xl font-RobotoBold text-black dark:text-white">
-                    Your trip to {trip?.waypoints.find(waypoint => waypoint.type === "destination")?.geo_text}
+                    Your trip to {trip?.waypoints.find(waypoint => waypoint.type === "destination")?.geo_text} on {new Date(trip?.datetime).toLocaleString()}
                 </h1>
                 <div className="flex flex-row space-x-2 items-center">
                     {

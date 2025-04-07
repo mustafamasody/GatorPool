@@ -132,6 +132,10 @@ func main() {
 		r.With(session.VerifyOAuthToken).Get("/gender", func(w http.ResponseWriter, r *http.Request) {
 			riderHandler.GetRiderGender(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Get("/trips", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.GetTripsRiderFlow(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/driver", func(r chi.Router) {
@@ -175,6 +179,10 @@ func main() {
 
 		r.With(session.VerifyOAuthToken).Delete("/{trip_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.CancelTripDriverFlow(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/rider/request", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderRequestTrip(r, w, r.Context())
 		})
 	})
 

@@ -29,6 +29,8 @@ import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AirlinesIcon from '@mui/icons-material/Airlines';
+import AirlinesOutlinedIcon from '@mui/icons-material/AirlinesOutlined';
 
     interface SidebarProps {
         setSidebarState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -112,6 +114,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
         title: "Ride",
         tabgroup: <>
             <Tab title="Dashboard" activeIcon={<HomeSharpIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="dashboard"  />
+            <Tab title="My Rides" activeIcon={<AirlinesIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<AirlinesOutlinedIcon  sx={{ fontSize: 24 }} />} id="rider-flow/trips"  />
             <Tab title="Find a ride" activeIcon={<TravelExploreIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<TravelExploreOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-ride"  />
             <Tab title="Ride History" activeIcon={<WorkHistoryIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<WorkHistoryOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  />
         </>,

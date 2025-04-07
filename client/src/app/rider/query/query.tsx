@@ -83,6 +83,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
     const [tripDate, setTripDate] = useState<Date>(new Date());
 
     const [tripsResult, setTripsResult] = useState<TripEntity[] | null>(null);
+    const [riderFlowBody, setRiderFlowBody] = useState<any>(null);
 
     const [fromWaypoint, setFromWaypoint] = useState<WaypointEntity>({
         geo_text: "University of Florida",
@@ -125,68 +126,6 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
             map.remove();
         };
     }, []);
-
-    // Fetch Route from Mapbox Directions API
-    const fetchRoute = async (destination: { lat: number, lng: number }) => {
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from.lng},${from.lat};${destination.lng},${destination.lat}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`;
-    
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            const routeGeoJSON = data.routes[0]?.geometry;
-    
-            if (routeGeoJSON && mapRef.current) {
-                const map = mapRef.current;
-    
-                // Check if source exists
-                const existingSource = map.getSource("route") as mapboxgl.GeoJSONSource;
-    
-                if (existingSource) {
-                    // ✅ Set new route data if source already exists
-                    existingSource.setData({
-                        type: "FeatureCollection",
-                        features: [{ type: "Feature", geometry: routeGeoJSON, properties: {} }]
-                    });
-                } else {
-                    // ✅ If source does not exist, create it
-                    map.addSource("route", {
-                        type: "geojson",
-                        data: {
-                            type: "FeatureCollection",
-                            features: [{ type: "Feature", geometry: routeGeoJSON, properties: {} }]
-                        }
-                    });
-    
-                    map.addLayer({
-                        id: "route",
-                        type: "line",
-                        source: "route",
-                        layout: { "line-cap": "round", "line-join": "round" },
-                        paint: {
-                            "line-color": "#007AFF",
-                            "line-width": 5,
-                            "line-opacity": 0.75
-                        }
-                    });
-                }
-    
-                // ✅ Adjust map to fit the route
-                map.fitBounds(
-                    [
-                        [from.lng, from.lat],
-                        [destination.lng, destination.lat]
-                    ],
-                    { padding: 50, maxZoom: 14 }
-                );
-
-                // Get the expected arrival time
-                const expectedArrivalTime = new Date(date.toDate().getTime() + data.routes[0].duration * 1000);
-                return expectedArrivalTime;
-            }
-        } catch (error) {
-            console.error("Error fetching route:", error);
-        }
-    };
 
     useEffect(() => {
         setTripDate(date.toDate());
@@ -245,33 +184,6 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
             }
         }
     };
-
-    // Add route layer when the map loads
-    useEffect(() => {
-        if (mapRef.current && route) {
-            if (!mapRef.current.getSource("route")) {
-                mapRef.current.addSource("route", {
-                    type: "geojson",
-                    data: {
-                        type: "FeatureCollection",
-                        features: [{ type: "Feature", geometry: route, properties: {} }]
-                    }
-                });
-
-                mapRef.current.addLayer({
-                    id: "route",
-                    type: "line",
-                    source: "route",
-                    layout: { "line-cap": "round", "line-join": "round" },
-                    paint: {
-                        "line-color": "#007AFF",
-                        "line-width": 5,
-                        "line-opacity": 0.75
-                    }
-                });
-            }
-        }
-    }, [route]);
 
     useEffect(() => {
         fetchQueries();
@@ -391,25 +303,29 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                                     className="w-full mt-4"
                                     color="primary"
                                     onPress={() => {
+                                        const body = {
+                                            body: {
+                                                from: {
+                                                    lat: fromWaypoint.latitude,
+                                                    lng: fromWaypoint.longitude,
+                                                    text: fromWaypoint.geo_text,
+                                                },
+                                                to: {
+                                                    lat: toWaypoint.latitude,
+                                                    lng: toWaypoint.longitude,
+                                                    text: toWaypoint.geo_text,
+                                                },
+                                                datetime: tripDate.toISOString(),
+                                                flexible_dates: flexibleDatesOption,
+                                                females_only: femaleDriversOnlyOption,
+                                            }
+                                        }
+                                        setRiderFlowBody(body);
                                         fetch(`${fetchBase}/v1/trip/rider/query`, {
                                             method: 'POST',
                                             credentials: 'include',
                                             headers: REQUEST_HEADERS,
-                                            body: JSON.stringify({
-                                                body: {
-                                                    from: {
-                                                        lat: fromWaypoint.latitude,
-                                                        lng: fromWaypoint.longitude,
-                                                    },
-                                                    to: {
-                                                        lat: toWaypoint.latitude,
-                                                        lng: toWaypoint.longitude,
-                                                    },
-                                                    datetime: tripDate.toISOString(),
-                                                    flexible_dates: flexibleDatesOption,
-                                                    females_only: femaleDriversOnlyOption,
-                                                }
-                                            })
+                                            body: JSON.stringify(body)
                                         }).then(res => res.json()).then(data => {
                                             if(data.success) {
                                                 setTripsResult(data.trips);
@@ -464,7 +380,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                         <button
                             className="flex flex-row rounded-xl px-4 py-2 items-center w-full mt- justify-start bg-slate-100 hover:bg-slate-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 transition-all duration-300 "
                             onClick={() => {
-                                navigate('/find-ride/rider-flow')
+                                navigate(`/find-ride/rider-flow?${new URLSearchParams(JSON.stringify(riderFlowBody) || {}).toString()}`)
                             }}
                         >
                             <HailIcon

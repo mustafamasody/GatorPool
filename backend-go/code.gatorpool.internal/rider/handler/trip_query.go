@@ -182,6 +182,10 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		}
 	}
 
+	if newTrips == nil {
+		newTrips = []tripEntities.TripEntity{}
+	}
+
 	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
 		"trips":   newTrips,
 		"success": true,

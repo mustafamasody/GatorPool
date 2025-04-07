@@ -17,6 +17,9 @@ type TripEntity struct {
 	// The driver requests for a trip, since riders can post ride requests
 	DriverRequests		[]*TripDriverRequestEntity		`json:"driver_requests,omitempty" bson:"driver_requests,omitempty"`
 
+	// The driver requirements for a trip, since riders can post ride requests
+	DriverRequirements 	*TripDriverRequirementsEntity	`json:"driver_requirements,omitempty" bson:"driver_requirements,omitempty"`
+
 	// Posted by (UserUUID) for the trip
 	PostedBy			*string							`json:"posted_by,omitempty" bson:"posted_by,omitempty"`
 
@@ -60,4 +63,8 @@ type TripEntity struct {
 	// Fields for auditing
 	CreatedAt			*time.Time						`json:"created_at,omitempty" bson:"created_at,omitempty"`
 	UpdatedAt			*time.Time						`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+type TripDriverRequirementsEntity struct {
+	FemalesOnly			*bool							`json:"females_only,omitempty" bson:"females_only,omitempty"`
 }
