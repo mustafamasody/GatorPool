@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import {Button, CircularProgress} from "@heroui/react";
 import fetchBase from '../../common/fetchBase';
-
+import logo from '../../assets/images/logo.png';
 const Verify: React.FC = () => {
 
     let id: string = '';
@@ -50,7 +50,7 @@ const Verify: React.FC = () => {
                         {
                             status === "verified" ? (
                                 <div className="flex flex-col items-center rounded-xl p-9">
-                                                      <img src={require("../../assets/images/logo.png")} alt="logo" className="w-24 h-24" />
+                                    <img src={logo} alt="logo" className="w-24 h-24" />
 
                                     <h1 className="font-RobotoBold text-xl mt-4 text-green-500">
                                         Verification successful

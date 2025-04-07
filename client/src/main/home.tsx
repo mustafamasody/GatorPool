@@ -6,7 +6,7 @@ import { parseDate, parseAbsoluteToLocal } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import mapboxgl from 'mapbox-gl';
 import { SvgBlob } from "react-svg-blob";
-
+import image_1 from "../assets/images/login.png";
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Link } from 'react-router-dom';
@@ -300,7 +300,7 @@ const HomePage = () => {
                         </div>
                         
                         {/* Image positioned above the blob */}
-                        <img src={require("../assets/images/login.png")}
+                        <img src={image_1}
                         className="relative w-full rounded-xl z-20 mt-4 shadow-[0px_10px_30px_rgba(0,0,0,0.3)] custom-3d-tilt" />
 
                     </div>

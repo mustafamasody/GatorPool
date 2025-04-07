@@ -9,7 +9,7 @@ import Park from '../../assets/svg/park';
 import CarSignIn from '../../assets/svg/car-sign-in';
 import { motion } from 'framer-motion';
 import { EyeFilledIcon, EyeSlashFilledIcon } from '../../assets/svg/eye';
-
+import logo from '../../assets/images/logo.png';
 const SignIn = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -148,7 +148,7 @@ const SignIn = () => {
     
                 {/* GatorPool Logo */}
                 <div className="flex flex-row items-center z-10">
-                    <img src={require("../../assets/images/logo.png")} alt="GatorPool Logo" className="w-20" />
+                    <img src={logo} alt="GatorPool Logo" className="w-20" />
                     <h1 className="text-xl text-black dark:text-white font-RobotoSemiBold text-left">
                     GatorPool
                     </h1>

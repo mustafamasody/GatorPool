@@ -16,7 +16,7 @@ import { AccountData } from '../view_controller';
 import { Button } from '@heroui/react';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-
+import logo from '../../assets/images/logo.png';
     interface SidebarProps {
         setSidebarState: React.Dispatch<React.SetStateAction<boolean>>;
         sidebarState: boolean;
@@ -239,11 +239,7 @@ import AddIcon from '@mui/icons-material/Add';
                   onClick={() => {
                     window.location.href = '/';
                   }}
-                  src={
-
-          require('../../assets/images/logo.png')
-
-          } className={`w-12 h-12 items-center
+                  src={logo} className={`w-12 h-12 items-center
           rounded-md
           dark:rounded-xs`} alt="GatorPool" />
           {
@@ -308,11 +304,7 @@ import AddIcon from '@mui/icons-material/Add';
                   {mainTabs.find(tab => tab.id === activeMainTab)?.title}
                 </h1>
                 ) : (
-                  <img src={
-
-                    require('../../assets/images/logo.png')
-          
-                    } className={`w-12 h-12 mx-auto mt-2 items-center
+                  <img src={logo} className={`w-12 h-12 mx-auto mt-2 items-center
                     rounded-md
                     dark:rounded-xs`} alt="GatorPool" />
                 )
@@ -323,7 +315,7 @@ import AddIcon from '@mui/icons-material/Add';
                   {
                     mainTabs.map((tab) => (
                       activeMainTab === tab.id && (
-                        <div className="flex flex-col space-y-1 items-center w-full px-4">
+                        <div key={Math.random()} className="flex flex-col space-y-1 items-center w-full px-4">
                             {tab.tabgroup}
                         </div>
                       )

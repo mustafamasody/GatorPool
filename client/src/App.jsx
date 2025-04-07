@@ -19,8 +19,6 @@ function App() {
 
     let deviceID = '';
 
-    const location = useLocation();
-
     useEffect(() => {
       if(localStorage.getItem('X-GatorPool-Device-Id') !== null){
           if(localStorage.getItem('X-GatorPool-Device-Id') === '' || localStorage.getItem('X-GatorPool-Device-Id') === 'null') {

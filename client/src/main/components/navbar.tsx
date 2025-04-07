@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import fetchBase from '../../common/fetchBase';
-
+import logo from '../../assets/images/logo.png';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,7 +40,7 @@ export default function Navbar() {
                 <div className="flex flex-row space-x-6 items-center">
                   <div className="flex flex-row items-center">
                     <img
-                      src={require("../../assets/images/logo.png")}
+                      src={logo}
                       alt="GatorPool"
                       className="w-12 h-12 rounded-full bg-secondary"
                     />

@@ -4,6 +4,7 @@ import { Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } 
 import { Check, X, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import fetchBase from '../../common/fetchBase';
+import logo from '../../assets/images/logo.png';
 
 const FinishSignup = () => {
 
@@ -71,7 +72,7 @@ const FinishSignup = () => {
             <div className="flex flex-col py-10 mobile:px-12 xl:px-24 mobile:w-full md:w-1/2 border-r-1 light:border-neutral-400 dark:border-neutral-800">
 
                 <div className="flex flex-row items-center ">
-                    <img src={require("../../assets/images/logo.png")} alt="GatorPool Logo" className="w-20" />
+                    <img src={logo} alt="GatorPool Logo" className="w-20" />
                     <h1 className="text-xl text-black dark:text-white font-RobotoSemiBold text-left">GatorPool</h1>
                 </div>
 

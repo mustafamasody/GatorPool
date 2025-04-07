@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import fetchBase from '../../common/fetchBase';
+import logo from '../../assets/images/logo.png';
 
 function ProtectedRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading, true/false = loaded
@@ -61,7 +62,7 @@ function ProtectedRoute({ children }) {
   if (isAuthenticated === null) {
     // Show a loading spinner while the token is being verified
     return <div className="flex flex-col h-screen bg-white dark:bg-black w-full items-center justify-center">
-      <img src={require('../../assets/images/logo.png')} alt="GatorPool" className="w-32 h-32" />
+      <img src={logo} alt="GatorPool" className="w-32 h-32" />
     </div>;
   }
 
