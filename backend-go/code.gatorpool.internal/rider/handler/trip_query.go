@@ -29,9 +29,9 @@ type QueryTripsBodyRequest struct {
 		Lat float64 `json:"lat"`
 		Lng float64 `json:"lng"`
 	} `json:"to"`
-	Datetime    string `json:"datetime"`
-	FemalesOnly *bool   `json:"females_only"`
-	FlexibleDates *bool `json:"flexible_dates"`
+	Datetime      string `json:"datetime"`
+	FemalesOnly   *bool  `json:"females_only"`
+	FlexibleDates *bool  `json:"flexible_dates"`
 }
 
 func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
@@ -67,7 +67,9 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		})
 	}
 
-	query := bson.M{}
+	query := bson.M{
+		"status": "pending",
+	}
 
 	if body.FemalesOnly != nil && *body.FemalesOnly {
 		if *account.Gender != "female" {
@@ -83,10 +85,10 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 	round := func(val float64) float64 {
 		return math.Round(val*1e6) / 1e6
 	}
-	
+
 	// lat := round(body.To.Lat)
 	// lng := round(body.To.Lng)
-	
+
 	// query["waypoints"] = bson.M{
 	// 	"$elemMatch": bson.M{
 	// 		"type": "destination",
@@ -102,9 +104,9 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 	// 	},
 	// }
 
-	query["waypoints"] = bson.M{
-		"$all": []bson.M{
-			{
+	query["$and"] = []bson.M{
+		{
+			"waypoints": bson.M{
 				"$elemMatch": bson.M{
 					"type": "pickup",
 					"for":  "driver",
@@ -118,7 +120,9 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 					},
 				},
 			},
-			{
+		},
+		{
+			"waypoints": bson.M{
 				"$elemMatch": bson.M{
 					"type": "destination",
 					"for":  "driver",
@@ -133,8 +137,7 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 				},
 			},
 		},
-	}	
-	
+	}
 
 	if body.FlexibleDates != nil && *body.FlexibleDates {
 		// Filter the trips that are within 48 hours of the datetime
@@ -171,8 +174,16 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 		trips = []tripEntities.TripEntity{}
 	}
 
+	var newTrips []tripEntities.TripEntity
+	// check if any trip is in the past
+	for _, trip := range trips {
+		if trip.Datetime.After(time.Now()) {
+			newTrips = append(newTrips, trip)
+		}
+	}
+
 	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
-		"trips":   trips,
+		"trips":   newTrips,
 		"success": true,
 	})
 }

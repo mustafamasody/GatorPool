@@ -140,5 +140,6 @@ func DriverApply(req *http.Request, res http.ResponseWriter, ctx context.Context
 	return util.JSONResponse(res, http.StatusCreated, map[string]interface{}{
 		"success": true,
 		"message": "driver application created",
+		"application_uuid": applicationUUID,
 	})
 }

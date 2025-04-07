@@ -4,6 +4,7 @@ import { Button, Input } from '@heroui/react';
 import {DatePicker} from "@heroui/react";
 import {parseDate, getLocalTimeZone} from "@internationalized/date";
 import fetchBase from '../../../common/fetchBase';
+import social from '../../../assets/images/social.png';
 
 interface DashboardProps {
     accountData: AccountData;
@@ -303,7 +304,7 @@ const DriverApply: React.FC<DashboardProps> = ({ accountData, setAccountData }) 
                                         }).then(res => res.json()).then(data => {
                                             if(data.success) {
                                                 // Refresh page
-                                                window.location.reload();
+                                                window.location.href ="/driver-application?uuid=" + data.application_uuid;
                                             } else {
                                                 alert(data.error);
                                             }
@@ -320,7 +321,7 @@ const DriverApply: React.FC<DashboardProps> = ({ accountData, setAccountData }) 
                     }
                 </div>
                 <div className="flex w-1/2 h-full items-center justify-center">
-                    <img src={require("../../../assets/images/social.png")} className="h-96 w-96" />
+                    <img src={social} className="h-96 w-96" />
                 </div>
             </div>
         </div>

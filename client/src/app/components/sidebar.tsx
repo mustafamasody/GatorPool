@@ -17,6 +17,19 @@ import { Button } from '@heroui/react';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import logo from '../../assets/images/logo.png';
+import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import WorkHistoryOutlinedIcon from '@mui/icons-material/WorkHistoryOutlined';
+import DirectionsCarFilledOutlinedIcon from '@mui/icons-material/DirectionsCarFilledOutlined';
+import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
+import HailOutlinedIcon from '@mui/icons-material/HailOutlined';
+import HailIcon from '@mui/icons-material/Hail';
+import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
     interface SidebarProps {
         setSidebarState: React.Dispatch<React.SetStateAction<boolean>>;
         sidebarState: boolean;
@@ -59,14 +72,14 @@ import logo from '../../assets/images/logo.png';
           setTooltipHover(false);
           setTooltipHoverFor('');
         }}
-        className={`relative flex items-center transition delay-25 w-full py-3 px-4 
+        className={`relative flex items-center w-full py-3 px-4
           ${sidebarShown ? '' : 'lg:items-center lg:justify-center'}
-          rounded-full text-gray-300 
-          active:scale-[95%] transition-transform duration-200 ease-in-out
+          rounded-xl text-gray-800 dark:text-gray-300 
+          
           ${
             activeTab === id || activeTab === secondaryId
-              ? 'bg-gator-translucent '
-              : 'hover:bg-gator-translucent2 darkv1fds:hover:bg-[#1f376cb0]'
+              ? 'bg-slate-200 dark:bg-[#1a1a1a] '
+              : 'hover:bg-slate-200 dark:hover:bg-[#1a1a1a] darkv1fds:hover:bg-[#1f376cb0]'
           }
         `}
         
@@ -84,28 +97,9 @@ import logo from '../../assets/images/logo.png';
         }
         {
           sidebarShown && (
-            <span className={`text-start ml-4 text-md font-RobotoMedium ${activeTab === id ? ' text-emerald-400 ' : ' text-white  '}`}>
+            <span className={`text-start ml-4 text-md font-RobotoMedium text-gray-800 dark:text-gray-300`}>
             {title}
           </span>
-          )
-        }
-
-        {
-          tooltipHover && tooltipHoverFor === id && (
-            <div
-            className={`
-            ${sidebarShown ? ' hidden ' : ' absolute '}
-            ${
-            title.length > 20 ? '-right-32' : '-right-24'
-            } bg-black  px-4 py-2 rounded shadow max-w-xs whitespace-nowrap`}
-            >
-            <p className="text-white text-sm truncate">
-            {title}
-            </p>
-        </div>
-
-
-
           )
         }
       </Link>
@@ -114,37 +108,27 @@ import logo from '../../assets/images/logo.png';
     const mainTabs: MainTab[] = [
       {
         id: "ride",
-        icon: <Bike />,
+        icon: <Bike className="text-gray-800 dark:text-gray-300" />,
         title: "Ride",
         tabgroup: <>
-            <Tab title="Dashboard" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="dashboard"  />
-            <Tab title="Find a ride" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-ride"  />
-            <Tab title="Ride History" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  />
+            <Tab title="Dashboard" activeIcon={<HomeSharpIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="dashboard"  />
+            <Tab title="Find a ride" activeIcon={<TravelExploreIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<TravelExploreOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-ride"  />
+            <Tab title="Ride History" activeIcon={<WorkHistoryIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<WorkHistoryOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  />
         </>,
         mapArray: ["dashboard", "find-ride", "ride-history"]
       },
       {
         id: "drive",
-        icon: <ShipWheel />,
+        icon: <ShipWheel className="text-gray-800 dark:text-gray-300" />,
         title: "Drive",
         tabgroup: <>
         {
           accountData?.driver_verified && (
             <>
-            <Button
-              variant="bordered"
-              color="primary"
-              // startContent={<AddIcon className="text-green-400 " sx={{ fontSize: 24 }} />}
-              className="w-full rounded-full py-6 mb-2 font-RobotoBold text-md"
-              onClick={() => {
-                navigate('/create-trip');
-              }}
-            >
-              Create Ride
-            </Button>
-              <Tab title="My Trips" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="my-trips"  />
-              <Tab title="Find riders" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
-              <Tab title="Ratings" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
+              <Tab title="Create Ride" activeIcon={<AddCircleOutlineIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<AddCircleOutlineOutlinedIcon  sx={{ fontSize: 24 }} />} id="create-trip"  />
+              <Tab title="My Trips" activeIcon={<DirectionsCarFilledIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<DirectionsCarFilledOutlinedIcon  sx={{ fontSize: 24 }} />} id="my-trips"  />
+              <Tab title="Find riders" activeIcon={<HailIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HailOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-riders"  />
+              <Tab title="Ratings" activeIcon={<StarBorderIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<StarBorderOutlinedIcon  sx={{ fontSize: 24 }} />} id="ratings"  />
             </>
           )
         }
@@ -155,7 +139,7 @@ import logo from '../../assets/images/logo.png';
                 accountData.driver_applications.map((application, index) => (
                   <Tab
                   key={application.application_uuid}
-                  title={"Application " + (index + 1)} activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id={`driver-application?uuid=${application.application_uuid}`}
+                  title={"Application " + (index + 1)} activeIcon={<HomeSharpIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id={`driver-application?uuid=${application.application_uuid}`}
                    secondaryId={application.application_uuid} />
                 ))
               }
@@ -165,7 +149,7 @@ import logo from '../../assets/images/logo.png';
         {
           !accountData.driver_applications && !accountData.driver_verified && (
             <>
-              <Tab title="Apply" activeIcon={<HomeSharpIcon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="driver-apply"  />
+              <Tab title="Apply" activeIcon={<HomeSharpIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="driver-apply"  />
             </>
           )
         }
@@ -174,10 +158,10 @@ import logo from '../../assets/images/logo.png';
       },
       {
         id: "settings",
-        icon: <Settings />,
+        icon: <Settings className="text-gray-800 dark:text-gray-300" />,
         title: "Settings",
         tabgroup: <>
-            <Tab title="Profile" activeIcon={<Person2Icon className={`text-emerald-400 `} sx={{ fontSize: 24 }} />} nonActiveIcon={<Person2Icon  sx={{ fontSize: 24 }} />} id="profile"  />
+            <Tab title="Profile" activeIcon={<Person2Icon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<Person2Icon  sx={{ fontSize: 24 }} />} id="profile"  />
         </>,
         mapArray: ["profile"]
       },
@@ -223,68 +207,19 @@ import logo from '../../assets/images/logo.png';
     className={`relative flex mobile:fixed lg:fixed flex-row items-center text-gray-300 
       ${announcementData ? " mt-10 h-[calc(100vh-2rem)] " : " h-full "}
         z-20
-        bg-black
+        bg-white dark:bg-[#0c0c0c]
         border-r-1 dark:border-neutral-800 border-neutral-300
-        ${sidebarShown ? ' w-[19.5rem] ' : ' lg:max-w-20 '}
+        w-[16.5rem] 
         
     `}
     ref={sidebarOpenRef}
     >
 
-<div className={`
-        ${sidebarShown ? "flex" : "hidden "}
-         flex-col w-20 h-full px-2 py-2 border-r-1 items-center border-neutral-800`}>
-          
-                  <img
-                  onClick={() => {
-                    window.location.href = '/';
-                  }}
-                  src={logo} className={`w-12 h-12 items-center
-          rounded-md
-          dark:rounded-xs`} alt="GatorPool" />
-          {
-            mainTabs.map((tab) => (
-              <Link
-                key={tab.id}
-                to={`/${tab.mapArray[0]}`}
-                onClick={() => {
-                  setActiveMainTab(tab.id);
-                  handleTabClick(tab.mapArray[0]);
-                }}
-                className={`
-                ${activeMainTab === tab.id ? ' bg-neutral-900 text-white ' : ' hover:bg-foregroundDark '}
-                p-3 rounded-full mt-2
-                `}>
-                  {tab.icon}
-              </Link>
-            ))
-          }
-
-      </div>
+      
 
       <div className="flex flex-col w-full h-full">
 
-      <button
-              onClick={() => {
-                setSidebarShown(!sidebarShown);
-
-                // set the current main tab to whichever one the activeTab is in
-                const mainTab = mainTabs.find(tab => tab.id === activeTab);
-                if(mainTab) {
-                  setActiveMainTab(mainTab.id);
-                }
-              }}
-              className={`
-              hidden lg:flex items-center justify-center absolute top-4 -right-4 w-8 h-8 rounded-full lightv1:bg-slate-100 lightv1:hover:bg-slate-200 newdark:bg-primarynewdark newdark:hover:bg-secondarynewdark border border-1 border-neutral-700
-              `}>
-                {
-                  sidebarShown ? (
-                    <ChevronLeftIcon sx={{ fontSize: 28 }} className="text-white " />
-                  ) : (
-                    <ChevronRightIcon sx={{ fontSize: 28 }} className="text-white " />
-                  )
-                }
-              </button>
+        <div className="flex flex-col w-full h-auto px-4 pt-4">
 
               <button
                 onClick={(e) => {
@@ -292,35 +227,45 @@ import logo from '../../assets/images/logo.png';
                     e.preventDefault();
                     e.stopPropagation();
                 }}
-                className="absolute  lg:hidden left-[16.5rem] top-[1rem] text-white  rounded-full p-1 lightv1:hover:bg-slate-400 newdark:hover:bg-hoverlighternewdark darkv1:hover:bg-hover">
+                className="absolute  lg:hidden left-[13.5rem] top-[1.35rem] text-white  rounded-full p-1 lightv1:hover:bg-slate-400 newdark:hover:bg-hoverlighternewdark darkv1:hover:bg-hover">
                 <div className="flex justify-center items-center">
                     <CloseIcon style={{ color: "white" }} sx={{ fontSize: 24 }} />
                 </div>    
               </button>
 
-              {
-                sidebarShown ? (
-                  <h1 className="text-2xl ml-6 font-RobotoSemiBold text-white  mt-4 text-left">
-                  {mainTabs.find(tab => tab.id === activeMainTab)?.title}
-                </h1>
-                ) : (
-                  <img src={logo} className={`w-12 h-12 mx-auto mt-2 items-center
+              <div className="flex flex-row items-center  space-x-2">
+                <img src={logo} className={`w-12 h-12 items-center
                     rounded-md
                     dark:rounded-xs`} alt="GatorPool" />
-                )
-              }
+                <h1 className="text-md font-RobotoSemiBold text-black dark:text-white">
+                  GatorPool
+                </h1>
+              </div>
+            </div>
 
-              <div className="flex flex-col mt-3 min-w-[100%] w-full h-full">
+              <div className="flex flex-col px-0 py-4 min-w-[100%] w-full h-full">
 
-                  {
-                    mainTabs.map((tab) => (
-                      activeMainTab === tab.id && (
-                        <div key={Math.random()} className="flex flex-col space-y-1 items-center w-full px-4">
-                            {tab.tabgroup}
-                        </div>
-                      )
-                    ))
-                  }
+                <div className="flex flex-col w-full h-full space-y-4">
+
+                {
+                  mainTabs.map((tab) => (
+                    <div key={tab.id} className="flex flex-col space-y-1 items-center w-full px-4">
+                      <div className="flex w-full justify-start flex-row items-center">
+                        {tab.icon}
+                        <h1 className="ml-2 w-min text-md text-left font-RobotoSemiBold text-black dark:text-white">
+                          {tab.title}
+                        </h1>
+                        <div className="flex ml-2 w-full bg-gray-800 dark:bg-gray-300 rounded-full h-[2px]"> </div>
+                      </div>
+
+                      {
+                        tab.tabgroup
+                      }
+                    </div>
+                  ))
+                }
+
+                </div>
 
                   <div
                   className={`
@@ -353,7 +298,7 @@ import logo from '../../assets/images/logo.png';
                       }}
                       >
                         <div className="  ">
-                            <LogoutIcon sx={{ fontSize: 24 }} className={`text-emerald-400 `} />
+                            <LogoutIcon sx={{ fontSize: 24 }} className={`text-gray-800 dark:text-gray-300  `} />
                         </div>
 
                         {

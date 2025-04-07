@@ -14,6 +14,7 @@ import CreateTrip from './driver/create_trip/create_trip';
 import RiderFlowQuery from './rider/query/query';
 import MyTrips from './driver/my_trips/my_trips';
 import DriverTrip from './driver/drivertrip/drivertrip';
+import RiderFlowRequest from './rider/query/rider_flow_request';
 /**
  *     "status_cards": [
         {
@@ -147,6 +148,15 @@ const ViewController = ({}) => {
             component = <CreateTrip accountData={accountData} setAccountData={setAccountData} />;
             break;
         case "find-ride":
+
+            if(secondaryTab) {
+                if(secondaryTab === "rider-flow") {
+                    title = 'Find Ride';
+                    component = <RiderFlowRequest accountData={accountData} setAccountData={setAccountData} />;
+                    break;
+                }
+            }
+
             title = 'Find Ride';
             component = <RiderFlowQuery accountData={accountData} setAccountData={setAccountData} />;
             break;
@@ -185,7 +195,7 @@ const ViewController = ({}) => {
 
         return (
 
-            <div  className="relative flex flex-row w-full bg-backgroundDark ">
+            <div  className="relative flex flex-row w-full bg-white dark:bg-[#0c0c0c] ">
                         {
                             announcementData && (
                                 <div className={`fixed flex z-40 items-center justify-center top-0 left-0 h-10 w-full ${announcementData.type === "general" ? " bg-green-600 text-white " : " bg-amber-500 text-white "}`}>
@@ -224,7 +234,7 @@ const ViewController = ({}) => {
                 <AnimatePresence>
                     {sidebarVisible && (
                         <motion.div
-                            className={`fixed z-50 top-0 left-0 w-[19.5rem] h-full bg-slate-950 block lg:hidden`}
+                            className={`fixed z-50 top-0 left-0 w-[16.5rem] h-full block lg:hidden`}
                             variants={sidebarVariants}
                             initial="hidden"
                             animate="visible"
@@ -255,7 +265,7 @@ const ViewController = ({}) => {
                     <div
                     className={`
                         
-                    ${sidebarVisible ? ' mobile:hidden lg:block w-64 ' : ' mobile:hidden lg:block w-16 '}
+                    mobile:hidden lg:block w-64
                     absolute fixed z-30 border-r-1 border-neutral-200 top-0 left-0 bg-slate-950`}>
                         {
                             accountData &&<Sidebar
@@ -265,7 +275,7 @@ const ViewController = ({}) => {
                         }
                     </div>
     
-                    <div className={`${sidebarShown ? ' lg:ml-[19.5rem] w-full lg:w-[calc(100vw-19.5rem)] ' : ' lg:ml-20 w-full lg:w-[calc(100vw-5rem)] '}`}>
+                    <div className={`${sidebarShown ? ' lg:ml-[16.5rem] w-full lg:w-[calc(100vw-16.5rem)] ' : ' lg:ml-20 w-full lg:w-[calc(100vw-5rem)] '}`}>
                         {
                             accountData && component
                         }

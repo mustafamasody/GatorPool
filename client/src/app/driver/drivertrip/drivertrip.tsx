@@ -421,6 +421,16 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                     </h1>
 
                     {
+                        trip?.status === "cancelled" ? (
+                            <>
+                            <h1 className="text-red-500 font-RobotoSemiBold text-lg mt-4">Trip Cancelled</h1>
+                            <p className="text-red-500 font-RobotoRegular text-sm mt-0">
+                                This trip has been cancelled. You will receive a warning on your account.
+                            </p>
+                            </>
+                        ) : (
+                            <>
+                                                {
                         !confirmCancelTrip && (
                             <Button
                                 color="danger"
@@ -488,6 +498,9 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     Are you sure you want to cancel this trip? This action is irreversible and you will receive a warning on your account. Multiple warnings can lead to a temporary or permanent ban.
                                 </p>
                             </div>
+                        )
+                    }
+                            </>
                         )
                     }
                 </div>

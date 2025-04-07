@@ -286,6 +286,9 @@ const FeedDisplay = ({ accountData, setAccountData }: FeedDisplayProps) => {
     return (
         <div>
             <div className="flex flex-col h-screen items-center justify-center w-full bg-white dark:bg-black p-6">
+                <h1 className="text-3xl font-RobotoBold text-black dark:text-white">
+                    Hector's Feed Display, remove all code related to mapbox as were just displaying the results in a table
+                </h1>
             <div className="relative flex flex-col w-full h-full items-center justify-center">
                 <div id="map-container" className="relativerounded-xl w-full h-full" />
                     <div className="absolute top-4 left-4 flex flex-col w-[24rem] items-center justify-center border border-1 border-neutral-300 dark:border-neutral-800 rounded-xl p-8 bg-white dark:bg-black">

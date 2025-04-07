@@ -14,6 +14,7 @@ import FinishSignup from './app/auth/finish_signup';
 import ProtectedRoute from './app/auth/auth_provider';
 import ViewController from './app/view_controller';
 import {addToast, ToastProvider} from "@heroui/toast";
+import FeedDisplay from './app/rider/query/feed_display';
 
 function App() {
 
@@ -45,16 +46,17 @@ function App() {
               <Route path="/auth/signin" element={<SignIn />} />
               <Route path="/auth/finish" element={<FinishSignup />} />
               <Route path="/verify" element={<Verify />} />
-              <Route path="/feed-display" element={<FeedDisplay/>} />
 
               <Route path="/profile" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/driver-apply" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/find-ride" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/find-ride/rider-flow" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/driver-application" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/create-trip" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/my-trips" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/drivertrip/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+
               
           </Routes>
         </div>
