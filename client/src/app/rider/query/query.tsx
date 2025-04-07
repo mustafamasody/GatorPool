@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button, Input, Checkbox } from '@heroui/react';
 import { useNavigate } from 'react-router-dom';
 import { RiderQueryEntity } from '../../../common/types/rider_query';
@@ -11,6 +11,7 @@ import {parseDate, getLocalTimeZone} from "@internationalized/date";
 import mapboxgl from 'mapbox-gl';
 import { WaypointEntity } from '../../../common/types/waypoint';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { debounce } from '../../utils/debounce';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
 
@@ -68,32 +69,35 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
     const [flexibleDatesOption, setFlexibleDatesOption] = useState<boolean>(false);
     const [femaleDriversOnlyOption, setFemaleDriversOnlyOption] = useState<boolean>(false);
 
-    // Updated search function
-    const searchAddress = async (query: string, type: string) => {
-        if (query.length < 3) {
-            if (type === "from") {
-                setFromSearchResults([]);
-            } else {
-                setToSearchResults([]);
+    // Updated search function with debounce
+    const debouncedSearchAddress = useCallback(
+        debounce(async (query: string, type: string) => {
+            if (query.length < 3) {
+                if (type === "from") {
+                    setFromSearchResults([]);
+                } else {
+                    setToSearchResults([]);
+                }
+                return;
             }
-            return;
-        }
 
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&autocomplete=true&limit=5`;
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&autocomplete=true&limit=5`;
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
 
-            if (type === "from") {
-                setFromSearchResults(data.features || []);
-            } else {
-                setToSearchResults(data.features || []);
+                if (type === "from") {
+                    setFromSearchResults(data.features || []);
+                } else {
+                    setToSearchResults(data.features || []);
+                }
+            } catch (error) {
+                console.error("Error fetching geocode data:", error);
             }
-        } catch (error) {
-            console.error("Error fetching geocode data:", error);
-        }
-    };
+        }, 500),
+        []
+    );
     
     useEffect(() => {
         mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
@@ -292,7 +296,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                                     className="w-full"
                                     onChange={(e) => {
                                         setFromText(e.target.value);
-                                        searchAddress(e.target.value, "from");
+                                        debouncedSearchAddress(e.target.value, "from");
                                     }}
                                 />
                                 {fromSearchResults.length > 0 && (
@@ -317,7 +321,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                                     className="w-[]"
                                     onChange={(e) => {
                                         setToText(e.target.value);
-                                        searchAddress(e.target.value, "to");
+                                        debouncedSearchAddress(e.target.value, "to");
                                     }}
                                 />
                                 {toSearchResults.length > 0 && (
