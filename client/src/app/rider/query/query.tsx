@@ -44,6 +44,7 @@ interface RiderFlowQueryProps {
     setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
 }
 
+
 const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) => {
 
     const [pastQueries, setPastQueries] = useState<RiderQueryEntity[]>([]); 
@@ -436,7 +437,11 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
     } else if(tripsResult && tripsResult.length > 0) {
         return (
             <>
-                <FeedDisplay accountData={accountData} setAccountData={setAccountData} />
+                <FeedDisplay 
+                accountData={accountData} 
+                setAccountData={setAccountData} 
+                tripsResult = {tripsResult}
+                />
             </>
         )
     } else {

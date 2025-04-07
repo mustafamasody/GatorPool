@@ -12,15 +12,20 @@ import mapboxgl from 'mapbox-gl';
 import { WaypointEntity } from '../../../common/types/waypoint';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { debounce } from '../../utils/debounce';
+import { TripEntity } from '../../../common/types/trip_entity';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import HailIcon from '@mui/icons-material/Hail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
 
 interface FeedDisplayProps {
     accountData: AccountData;
     setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
+    tripsResult: TripEntity[];
 }
 
-const FeedDisplay = ({ accountData, setAccountData }: FeedDisplayProps) => {
+const FeedDisplay = ({ accountData, setAccountData, tripsResult }: FeedDisplayProps) => {
 
     const [pastQueries, setPastQueries] = useState<RiderQueryEntity[]>([]); 
 
