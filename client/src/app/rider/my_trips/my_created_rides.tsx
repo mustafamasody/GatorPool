@@ -12,8 +12,9 @@ const MyCreatedRides = () => {
     const [totalSessionsPages, setTotalSessionsPages] = useState<number>(1);
 
     const navigate = useNavigate();
+
     useEffect(() => {
-        fetch(`${fetchBase}/v1/rider/trips?page=${currentSessionsPage}`, {
+        fetch(`${fetchBase}/v1/rider/trips?page=${currentSessionsPage}&flow_type=created`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",

@@ -509,14 +509,14 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                     <h1 className="text-black dark:text-white font-RobotoSemiBold text-lg mt-4">Accepted ({trip?.riders?.filter(rider => rider.accepted).length || 0})</h1>
                     <div className="flex flex-col space-y-2 max-h-80 w-full overflow-y-auto ">
                         {
-                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                            trip?.riders?.filter(rider => rider.accepted).map((rider) => (
                                 <div className="flex flex-row items-center justify-between bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl">
                                 <div className="flex flex-col">
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        Mustafa Masody
+                                        {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {new Date().toLocaleString()}
+                                        {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                 </div>
                                 <div className="flex flex-row items-center space-x-2">
@@ -533,22 +533,74 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                     <h1 className="text-black dark:text-white font-RobotoSemiBold text-lg mt-4">Requests ({trip?.riders?.filter(rider => !rider.accepted).length || 0})</h1>
                     <div className="flex flex-col space-y-2 max-h-80 w-full overflow-y-auto ">
                         {
-                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                            trip?.riders?.filter(rider => !rider.accepted).map((rider) => (
                                 <div className="flex flex-row items-center justify-between bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl">
                                 <div className="flex flex-col">
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        Mustafa Masody
+                                        {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {new Date().toLocaleString()}
+                                        {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                 </div>
                                 <div className="flex flex-row items-center space-x-2">
-                                    <Button className="p-1 rounded-full"  isIconOnly onPress={() => {
+                                    <Button
+                                    
+                                    className="p-1 rounded-full"  isIconOnly onPress={() => {
+                                        fetch(`${fetchBase}/v1/trip/${trip_uuid}/reject/${rider.user_uuid}`, {
+                                            method: 'POST',
+                                            credentials: 'include',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
+                                                'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
+                                            }
+                                        }).then(res => res.json()).then(data => {
+                                            if(data.success) {
+                                                setTrip(data.trip);
+                                            } else {
+                                                addToast({
+                                                    title: "Error",
+                                                    description: data.error,
+                                                    color: "danger"
+                                                });
+                                            }
+                                        }).catch(err => {
+                                            addToast({
+                                                title: "Error",
+                                                description: "An error occured.",
+                                                color: "danger"
+                                            });
+                                        })
                                     }}>
                                         <X className="w-4 h-4 text-black dark:text-white" />
                                     </Button>
                                     <Button className="p-1 rounded-full" isIconOnly onPress={() => {
+                                        fetch(`${fetchBase}/v1/trip/${trip_uuid}/accept/${rider.user_uuid}`, {
+                                            method: 'POST',
+                                            credentials: 'include',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
+                                                'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
+                                            }
+                                        }).then(res => res.json()).then(data => {
+                                            if(data.success) {
+                                                setTrip(data.trip);
+                                            } else {
+                                                addToast({
+                                                    title: "Error",
+                                                    description: data.error,
+                                                    color: "danger"
+                                                });
+                                            }
+                                        }).catch(err => {
+                                            addToast({
+                                                title: "Error",
+                                                description: "An error occured.",
+                                                color: "danger"
+                                            });
+                                        })
                                     }}>
                                         <Check className="w-4 h-4 text-black dark:text-white" />
                                     </Button>

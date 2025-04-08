@@ -17,6 +17,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import HailIcon from '@mui/icons-material/Hail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import FeedDisplay from './feed_display';
+import { DriverProfile } from '../../../common/types/driver_info';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
 
@@ -83,6 +84,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
     const [tripDate, setTripDate] = useState<Date>(new Date());
 
     const [tripsResult, setTripsResult] = useState<TripEntity[] | null>(null);
+    const [driverProfiles, setDriverProfiles] = useState<DriverProfile[] | null>(null);
     const [riderFlowBody, setRiderFlowBody] = useState<any>(null);
 
     const [fromWaypoint, setFromWaypoint] = useState<WaypointEntity>({
@@ -329,6 +331,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                                         }).then(res => res.json()).then(data => {
                                             if(data.success) {
                                                 setTripsResult(data.trips);
+                                                setDriverProfiles(data.driverProfiles);
                                             } else {
                                                 console.error(data.error);
                                             }
@@ -357,6 +360,7 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
                 accountData={accountData} 
                 setAccountData={setAccountData} 
                 tripsResult = {tripsResult}
+                driverProfiles = {driverProfiles}
                 />
             </>
         )

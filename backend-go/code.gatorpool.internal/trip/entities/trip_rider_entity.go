@@ -25,6 +25,9 @@ type TripRiderEntity struct {
 
 	// What the rider is willing to pay for
 	Willing 			*TripRiderWillingEntity			`json:"willing,omitempty" bson:"willing"`
+
+	// Timestamp of when the rider was created
+	CreatedAt			*time.Time						`json:"created_at,omitempty" bson:"created_at"`
 }
 
 type TripRiderWillingEntity struct {

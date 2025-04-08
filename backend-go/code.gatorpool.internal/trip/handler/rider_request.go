@@ -7,34 +7,17 @@ import (
 	"net/http"
 	"time"
 
+	accountEntities "code.gatorpool.internal/account/entities"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	riderEntities "code.gatorpool.internal/rider/entities"
 	tripEntities "code.gatorpool.internal/trip/entities"
-	accountEntities "code.gatorpool.internal/account/entities"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
+	"github.com/go-chi/chi"
 	"github.com/pborman/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-/*
-{
-    "body": {
-        "from": {
-            "lat": 29.6436,
-            "lng": -82.3549,
-            "text": "University of Florida"
-        },
-        "to": {
-            "lat": 25.773357,
-            "lng": -80.1919,
-            "text": "Miami, Florida, United States"
-        },
-        "datetime": "2025-04-07T20:26:12.210Z",
-        "flexible_dates": false,
-        "females_only": true
-    }
-}
-*/
 type RiderRequestTripBody struct {
 	Body struct {
 		From struct {
@@ -186,4 +169,167 @@ func RiderRequestTrip(req *http.Request, res http.ResponseWriter, ctx context.Co
 		"trip_uuid": newTripUuid,
 		"success": true,
 	})
+}
+
+func DriverFlowRiderRequestTrip(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
+	
+	tripUUID := chi.URLParam(req, "trip_uuid")
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripsCollection := db.Collection(datastores.Trips)
+
+	var trip tripEntities.TripEntity
+	err := tripsCollection.FindOne(ctx, bson.M{"trip_uuid": tripUUID}).Decode(&trip)
+	if err != nil {
+		fmt.Println("Error finding trip: ", err)
+	}
+
+	// UNCOMMENT THIS IN PRODUCTION
+
+	// if *trip.PostedByType == "driver" && *trip.PostedBy == *account.UserUUID {
+	// 	return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+	// 		"error": "you cannot request a trip that you posted",
+	// 	})
+	// }
+	
+	for _, rider := range trip.Riders {
+		if *rider.UserUUID == *account.UserUUID {
+			return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+				"error": "you have already requested this trip or are a rider on this trip",
+			})
+		}
+	}
+
+	newWaypoint := &tripEntities.WaypointEntity{
+		Type: ptr.String("pickup"),
+		For:  ptr.String("rider"),
+		Data: map[string]interface{}{
+			"rider_uuid": account.UserUUID,
+			"first_name": account.FirstName,
+			"last_name": account.LastName,
+		},
+		Latitude:  trip.Waypoints[0].Latitude,
+		Longitude: trip.Waypoints[0].Longitude,
+		Name: trip.Waypoints[0].Name,
+		Address: trip.Waypoints[0].Address,
+		Address2: trip.Waypoints[0].Address2,
+		City: trip.Waypoints[0].City,
+		State: trip.Waypoints[0].State,
+		Zip: trip.Waypoints[0].Zip,
+		GeoText: trip.Waypoints[0].GeoText,
+		Expected: trip.Waypoints[0].Expected,
+		Actual: trip.Waypoints[0].Actual,
+	}
+
+	tripRiderEntity := &tripEntities.TripRiderEntity{
+		UserUUID: account.UserUUID,
+		Address: newWaypoint,
+		Accepted: ptr.Bool(false),
+		AcceptedAt: nil,
+		Rating: nil,
+		Review: nil,
+		Willing: &tripEntities.TripRiderWillingEntity{
+			PayFood: trip.RiderRequirements.PayFood,
+			PayGas: trip.RiderRequirements.PayGas,
+			Custom: map[string]interface{}{},
+		},
+		CreatedAt: ptr.Time(time.Now()),
+	}
+
+	trip.Riders = append(trip.Riders, tripRiderEntity)
+
+	_, err = tripsCollection.UpdateOne(ctx, bson.M{"trip_uuid": tripUUID}, bson.M{"$set": bson.M{"riders": trip.Riders}})
+	if err != nil {
+		fmt.Println("Error updating trip: ", err)
+	}
+
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"success": true,
+	})	
+}
+
+func DriverFlowAcceptRiderRequest(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
+	
+	tripUUID := chi.URLParam(req, "trip_uuid")
+	riderUUID := chi.URLParam(req, "rider_uuid")
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripsCollection := db.Collection(datastores.Trips)
+
+	var trip tripEntities.TripEntity
+	err := tripsCollection.FindOne(ctx, bson.M{"trip_uuid": tripUUID}).Decode(&trip)
+	if err != nil {
+		fmt.Println("Error finding trip: ", err)
+	}
+
+	if *trip.PostedBy != *account.UserUUID {
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": "you are not the driver of this trip",
+		})
+	}
+
+	for i, rider := range trip.Riders {
+		if *rider.UserUUID == riderUUID {
+			trip.Riders[i].Accepted = ptr.Bool(true)
+			trip.Riders[i].AcceptedAt = ptr.Time(time.Now())
+			break
+		}
+	}
+
+	_, err = tripsCollection.UpdateOne(ctx, bson.M{"trip_uuid": tripUUID}, bson.M{"$set": bson.M{"riders": trip.Riders}})
+	if err != nil {
+		fmt.Println("Error updating trip: ", err)
+	}
+
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"trip": trip,
+	})	
+}
+
+func DriverFlowRejectRiderRequest(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
+	
+	tripUUID := chi.URLParam(req, "trip_uuid")
+	riderUUID := chi.URLParam(req, "rider_uuid")
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripsCollection := db.Collection(datastores.Trips)
+
+	var trip tripEntities.TripEntity
+	err := tripsCollection.FindOne(ctx, bson.M{"trip_uuid": tripUUID}).Decode(&trip)
+	if err != nil {
+		fmt.Println("Error finding trip: ", err)
+	}
+
+	if *trip.PostedBy != *account.UserUUID {
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": "you are not the driver of this trip",
+		})
+	}
+
+	for i, rider := range trip.Riders {
+		if *rider.UserUUID == riderUUID {
+			trip.Riders = append(trip.Riders[:i], trip.Riders[i+1:]...)
+			break
+		}
+	}
+
+	_, err = tripsCollection.UpdateOne(ctx, bson.M{"trip_uuid": tripUUID}, bson.M{"$set": bson.M{"riders": trip.Riders}})
+	if err != nil {
+		fmt.Println("Error updating trip: ", err)
+	}
+
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"trip": trip,
+	})	
 }

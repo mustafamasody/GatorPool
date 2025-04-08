@@ -11,6 +11,7 @@ import (
 	accountEntities "code.gatorpool.internal/account/entities"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	tripEntities "code.gatorpool.internal/trip/entities"
+	tripHandler "code.gatorpool.internal/trip/handler"
 	"code.gatorpool.internal/util"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -176,18 +177,56 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 
 	var newTrips []tripEntities.TripEntity
 	// check if any trip is in the past
+	now := time.Now().UTC()
 	for _, trip := range trips {
-		if trip.Datetime.After(time.Now()) {
-			newTrips = append(newTrips, trip)
+		if trip.Datetime.After(now) {
+
+			if *trip.Carpool {
+				newTrips = append(newTrips, trip)
+			} else {
+				acceptedRiders := 0
+
+				for _, rider := range trip.Riders {
+					if *rider.Accepted {
+						acceptedRiders++
+					}
+				}
+
+				if acceptedRiders == 0 {
+					newTrips = append(newTrips, trip)
+				}
+			}
 		}
-	}
+	}	
 
 	if newTrips == nil {
 		newTrips = []tripEntities.TripEntity{}
 	}
 
+	if len(newTrips) == 0 {
+		return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+			"trips":   newTrips,
+			"driverProfiles": []string{},
+			"success": true,
+		})
+	}
+
+	var tripUUIDs []string
+	for _, trip := range newTrips {
+		tripUUIDs = append(tripUUIDs, *trip.TripUUID)
+	}
+
+	driverProfiles, err := tripHandler.GetTripArrayDriverInformation(tripUUIDs)
+	if err != nil {
+		fmt.Println("Error getting driver profiles: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error getting driver profiles",
+		})
+	}
+
 	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
 		"trips":   newTrips,
+		"driverProfiles": driverProfiles,
 		"success": true,
 	})
 }

@@ -3,7 +3,7 @@ import fetchBase from '../../../common/fetchBase'
 import { AccountData } from '../../view_controller'
 import { TripEntity } from '../../../common/types/trip_entity'
 import { Button, CircularProgress } from '@heroui/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import MyCreatedRides from './my_created_rides';
 
@@ -13,19 +13,33 @@ interface MyTripsProps {
 }
 
 const initialTabs = [
-    { id: 0, title: "My Created Rides", show: true },
-    { id: 1, title: "My Requested Rides", show: true },
+    { id: 0, title: "My Requested Rides", show: true },
+    { id: 1, title: "My Created Rides", show: true },
 ];
 
 const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get('tab');
 
     const [currentType, setCurrentType] = useState<string>("my_created_rides");
-
     const [activeTab1, setActiveTab1] = useState(0);
     const [tabStyle1, setTabStyle1] = useState({});
     const tabRef1 = useRef<HTMLDivElement>(null);
-
     const [tabs, setTabs] = useState(initialTabs);
+
+    // Handle initial tab state from URL
+    useEffect(() => {
+        if (!tabParam) {
+            // If no tab parameter, set default and update URL
+            navigate(`${location.pathname}?tab=created`, { replace: true });
+            setActiveTab1(0);
+        } else {
+            // Set active tab based on URL parameter
+            setActiveTab1(tabParam === 'created' ? 0 : 1);
+        }
+    }, [tabParam, location.pathname, navigate]);
 
     useLayoutEffect(() => {
         if (!tabRef1.current) return;
@@ -41,6 +55,9 @@ const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
 
     const handleTabClick1 = (tabId: number) => {
         setActiveTab1(tabId);
+        // Update URL with new tab state
+        const newTab = tabId === 0 ? 'created' : 'requested';
+        navigate(`${location.pathname}?tab=${newTab}`);
     };
 
     return (
@@ -85,7 +102,7 @@ const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
                         <div className="">
                             {/* Add your tab content here */}
                             {
-                                tab.id === 0 ? (
+                                tab.id === 1 ? (
                                     <MyCreatedRides />
                                 ) : (
                                     <></>

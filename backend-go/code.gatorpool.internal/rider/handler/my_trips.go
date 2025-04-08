@@ -26,6 +26,8 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 		})
 	}
 
+	flowType := req.URL.Query().Get("flow_type")
+
 	// Parse page number from query parameters
 	page := 1
 	if pageStr := req.URL.Query().Get("page"); pageStr != "" {
@@ -40,8 +42,25 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 	db := datastores.GetMongoDatabase(ctx)
 	tripsCollection := db.Collection(datastores.Trips)
 
+	query := bson.D{{Key: "riders.user_uuid", Value: *account.UserUUID}}
+	if flowType == "created" {
+		query = append(query, bson.E{
+			Key: "posted_by_type", Value: "rider",
+		}, bson.E{
+			Key: "posted_by", Value: *account.UserUUID,
+		})
+	} else if flowType == "requested" {
+		query = append(query, bson.E{
+			Key: "riders.user_uuid", Value: *account.UserUUID,
+		}, bson.E{
+			Key: "posted_by_type", Value: "driver",
+		}, bson.E{
+			Key: "posted_by", Value: bson.M{"$ne": *account.UserUUID},
+		})
+	}
+
 	// Get total count of trips
-	totalTrips, err := tripsCollection.CountDocuments(ctx, bson.M{"riders.user_uuid": *account.UserUUID})
+	totalTrips, err := tripsCollection.CountDocuments(ctx, query)
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
@@ -54,7 +73,7 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 	// Get paginated trips
 	var trips []*tripEntities.TripEntity
 	opts := options.Find().SetSkip(int64(skip)).SetLimit(itemsPerPage)
-	cursor, err := tripsCollection.Find(ctx, bson.M{"riders.user_uuid": *account.UserUUID}, opts)
+	cursor, err := tripsCollection.Find(ctx, query, opts)
 	if err != nil {
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
