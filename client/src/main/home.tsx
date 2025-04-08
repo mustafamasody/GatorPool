@@ -7,13 +7,30 @@ import { useDateFormatter } from "@react-aria/i18n";
 import mapboxgl from 'mapbox-gl';
 import { SvgBlob } from "react-svg-blob";
 import image_1 from "../assets/images/login.png";
-
+import home_blob_1 from "../assets/images/home_blob_1.png";
+import home_blob_2 from "../assets/images/home_blob_2.png";
+import home_blob_3 from "../assets/images/home_blob_3.png";
+import DocumentMeta from 'react-document-meta';
+import Footer from './components/footer';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Link } from 'react-router-dom';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
 
 const HomePage = () => {
+
+    const meta = {
+        title: 'GatorPool',
+        description: 'GatorPool',
+        // canonical: 'https://gatorpool.com',
+        meta: {
+            charset: 'utf-8',
+            name: {
+                keywords: 'GatorPool, UF, Rideshare, Rides, Pool, Carpool, Uber, Lyft',
+            },
+        },
+    };
+
     const [from, setFrom] = useState<{ lat: number, lng: number }>({
         lat: 29.6436,
         lng: -82.3549
@@ -205,8 +222,9 @@ const HomePage = () => {
     }, [route]);
 
     return (
-        <div className="light dark:dark bg-white dark:bg-black flex flex-col h-full min-h-full min-h-screen w-full">
+        <div className="light dark:dark bg-white dark:bg-[#0c0c0c] flex flex-col h-full min-h-screen w-full">
             <Navbar />
+            <DocumentMeta {...meta} />
             <div className="flex flex-col h-full w-full mt-32 px-6">
                 <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 items-center w-full max-w-screen-lg mx-auto">
                     <div className="flex flex-col md:w-1/2">
@@ -274,9 +292,9 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col h-full min-h-screen w-full items-center text-black">
+            <div className="flex flex-col h-auto w-full items-center text-black">
 
-                <div className="flex mt-32 bg-white dark:bg-black lg:mt-64 flex-col lg:space-x-8 px-4 lg:px-6 lg:flex-row items-center justify-center w-screen md:max-w-screen-lg">
+                <div className="flex mt-32 bg-white dark:bg-[#0c0c0c] lg:mt-64 flex-col lg:space-x-8 px-4 lg:px-6 lg:flex-row items-center justify-center w-screen md:max-w-screen-lg">
                     <div className="flex md:w-1/2 flex-col spac ">
                         <h1 className="text-center md:text-left text-black dark:text-white font-RobotoBold text-4xl md:text-6xl">
                             Helping gators get home safely.
@@ -300,13 +318,77 @@ const HomePage = () => {
                         </div>
                         
                         {/* Image positioned above the blob */}
-                        <img src={image_1}
+                        <img src={home_blob_1}
+                        className="relative w-full rounded-xl z-20 mt-4 shadow-[0px_10px_30px_rgba(0,0,0,0.3)] custom-3d-tilt" />
+
+                    </div>
+                </div>
+
+                <div className="flex my-32 bg-white dark:bg-[#0c0c0c] lg:mt-64 flex-col lg:space-x-8 px-4 lg:px-6 lg:flex-row items-center justify-center w-screen md:max-w-screen-lg">
+
+                    <div className="relative md:w-1/2 justify-center items-center mt-32 lg:mt-0 px- lg:px-0 flex flex-col">
+                        {/* Image positioned above the blob */}
+                        <img src={home_blob_2}
+                        className="relative w-full rounded-xl z-20 mt-4 shadow-[0px_10px_30px_rgba(0,0,0,0.3)] custom-3d-tilt" />
+
+                        
+                        {/* Blob positioned behind the image */}
+                        <div className="absolute inset-0 flex justify-center items-center z-0">
+                            <SvgBlob
+                            variant="gradient"
+                            colors={["#0de046", "#03631d"]}
+                            color="#00cec9"
+                            shapeProps={generateShapeProps()}
+                            isOutline={false} // Ensure `isOutline` is set to `false` if you don't want an outline
+                            className="w-[130%] h-auto" // Adjust size as needed
+                            />
+                        </div>
+                    
+                    </div>
+
+                    <div className="flex md:w-1/2 flex-col spac ">
+                        <h1 className="text-center md:text-left text-black dark:text-white font-RobotoBold text-4xl md:text-6xl">
+                            Set your own price.
+                        </h1>
+                        <p className="text-center md:text-left text-black dark:text-white font-RobotoRegular text-md md:text-lg mt-6 lg:mt-4">
+                            Payments are handled between you and the driver.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex mb-32 bg-white dark:bg-[#0c0c0c] lg:mt-32 flex-col lg:space-x-8 px-4 lg:px-6 lg:flex-row items-center justify-center w-screen md:max-w-screen-lg">
+                    <div className="flex md:w-1/2 flex-col spac ">
+                        <h1 className="text-center md:text-left text-black dark:text-white font-RobotoBold text-4xl md:text-6xl">
+                            Carpool with other gators.
+                        </h1>
+                        <p className="text-center md:text-left text-black dark:text-white font-RobotoRegular text-md md:text-lg mt-6 lg:mt-4">
+                            Enable carpooling to save money and reduce carbon emissions.
+                        </p>
+                    </div>
+
+                    <div className="relative md:w-1/2 justify-center items-center mt-32 lg:mt-0 px- lg:px-0 flex flex-col">
+                        {/* Blob positioned behind the image */}
+                        <div className="absolute inset-0 flex justify-center items-center z-0">
+                            <SvgBlob
+                            variant="gradient"
+                            colors={["#0de046", "#03631d"]}
+                            color="#00cec9"
+                            shapeProps={generateShapeProps()}
+                            isOutline={false} // Ensure `isOutline` is set to `false` if you don't want an outline
+                            className="w-[130%] h-auto" // Adjust size as needed
+                            />
+                        </div>
+                        
+                        {/* Image positioned above the blob */}
+                        <img src={home_blob_3}
                         className="relative w-full rounded-xl z-20 mt-4 shadow-[0px_10px_30px_rgba(0,0,0,0.3)] custom-3d-tilt" />
 
                     </div>
                 </div>
 
             </div>
+
+            <Footer />
         </div>
     );
 };

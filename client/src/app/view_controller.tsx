@@ -20,6 +20,7 @@ import RiderFlowCreatedTrip from './rider/tripview/created';
 import RiderFlowRequestedTrip from './rider/tripview/requested';
 import FindRiders from './driver/find_riders/find_riders';
 import RequestedTripView from './driver/drivertrip/requested_trip_view';
+import DocumentMeta from 'react-document-meta';
 /**
  *     "status_cards": [
         {
@@ -42,8 +43,14 @@ export interface AccountData {
     driver_verified?: boolean;
     driver_applications?: DriverApplicationEntity[];
     is_female?: boolean;
+    dashboard_stats?: DashboardStats;
 }
   
+export interface DashboardStats {
+    upcoming_trips: number;
+    past_trips: number;
+    account_type: string;
+}
 
 export interface StatusCard {
     uuid: string;
@@ -114,6 +121,7 @@ const ViewController = ({}) => {
                     driver_verified: data.driver_verified,
                     driver_applications: data.driver_applications,
                     is_female: data.is_female,
+                    dashboard_stats: data.dashboard_stats,
                 }
                 setAccountData(accountData);
             }
@@ -132,6 +140,18 @@ const ViewController = ({}) => {
 
     let component = null;
     let navigate = null;
+
+    const meta = {
+        title: 'GatorPool',
+        description: 'GatorPool',
+        // canonical: 'https://gatorpool.com',
+        meta: {
+            charset: 'utf-8',
+            name: {
+                keywords: 'GatorPool, UF, Rideshare, Rides, Pool, Carpool, Uber, Lyft',
+            },
+        },
+    };
 
     switch(currentTab) {
         case "profile":
@@ -237,6 +257,7 @@ const ViewController = ({}) => {
         return (
 
             <div  className="relative flex flex-row w-full bg-white dark:bg-[#0c0c0c] ">
+                <DocumentMeta {...meta} />
                         {
                             announcementData && (
                                 <div className={`fixed flex z-40 items-center justify-center top-0 left-0 h-10 w-full ${announcementData.type === "general" ? " bg-green-600 text-white " : " bg-amber-500 text-white "}`}>

@@ -15,11 +15,14 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     
     const updateAvatar = (imgSrc) => {
-        accountData.profile_picture = imgSrc;
+        setAccountData({
+            ...accountData,
+            profile_picture: imgSrc,
+        });
     };
 
     return(
-        <div className="flex bg-white dark:bg-black p-8 items-center w-full">
+        <div className="flex bg-white dark:bg-[#0c0c0c] min-h-screen p-8 items- w-full">
             <div className="flex flex-col w-full ml-16">
                 <h1 className="text-black dark:text-white text-l font-RobotoExtraBold text-2xl mt-20 mb-6">
                     Profile Details
@@ -89,6 +92,8 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ accountData, setAccountData }
                 <Modal
                     updateAvatar={updateAvatar}
                     closeModal={()=>setModalOpen(false)}
+                    accountData={accountData}
+                    setAccountData={setAccountData}
                 />
             )}
         </div>

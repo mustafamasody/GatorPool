@@ -399,7 +399,7 @@ const SignIn = () => {
                         
                         <div className="flex flex-col mt-auto">
                             <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                            By continuing, you agree to our <Link to="/terms" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link> and <Link to="/privacy" className="text-black dark:text-white underline font-RobotoBold text-sm">Privacy Policy</Link>.
+                            By continuing, you agree to our <Link to="/tos" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link>.
                             </p>
                         </div>
                     </div>
@@ -474,7 +474,7 @@ const SignIn = () => {
                         
                         <div className="flex flex-col mt-auto">
                             <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                            By continuing, you agree to our <Link to="/terms" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link> and <Link to="/privacy" className="text-black dark:text-white underline font-RobotoBold text-sm">Privacy Policy</Link>.
+                            By continuing, you agree to our <Link to="/tos" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link>.
                             </p>
                         </div>
                     </div>
@@ -536,7 +536,7 @@ const SignIn = () => {
                             
                             <div className="flex flex-col mt-auto">
                                 <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                By continuing, you agree to our <Link to="/terms" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link> and <Link to="/privacy" className="text-black dark:text-white underline font-RobotoBold text-sm">Privacy Policy</Link>.
+                                By continuing, you agree to our <Link to="/tos" className="text-black dark:text-white underline font-RobotoBold text-sm">Terms of Service</Link>.
                                 </p>
                             </div>
                         </div>

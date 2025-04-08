@@ -37,7 +37,7 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
                 setTrip(data.trip);
                 setUserUUID(data.userUUID);
 
-                fetch(`${fetchBase}/v1/trip/${trip_uuid}/rflow/driver`, {
+                fetch(`${fetchBase}/v1/trip/${trip_uuid}/rflow/driver?flow_type=requests`, {
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",

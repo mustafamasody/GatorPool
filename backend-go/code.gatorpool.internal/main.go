@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
+	"code.gatorpool.internal/datastores/gcs"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/secrets"
 	"code.gatorpool.internal/guardian/session"
@@ -17,11 +17,11 @@ import (
 	"github.com/joho/godotenv"
 
 	accountHandler "code.gatorpool.internal/account/handler"
-	riderHandler "code.gatorpool.internal/rider/handler"
-	driverHandler "code.gatorpool.internal/driver/handler"
-	configHandler "code.gatorpool.internal/config"
-	tripHandler "code.gatorpool.internal/trip/handler"
 	"code.gatorpool.internal/account/oauth"
+	configHandler "code.gatorpool.internal/config"
+	driverHandler "code.gatorpool.internal/driver/handler"
+	riderHandler "code.gatorpool.internal/rider/handler"
+	tripHandler "code.gatorpool.internal/trip/handler"
 )
 
 func main() {
@@ -59,6 +59,7 @@ func main() {
 
 	datastores.ConnectDB(uri)
 	secrets.InitializeSecretCache()
+	gcs.InitMediaHandler()
 
 	r := chi.NewRouter()
 
@@ -113,6 +114,10 @@ func main() {
 
 		r.With(session.VerifyOAuthToken).Post("/auth/2fa", func(w http.ResponseWriter, r *http.Request) {
 			accountHandler.ToggleTwoFA(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/idp/pfp", func(w http.ResponseWriter, r *http.Request) {
+			accountHandler.ChangeProfilePicture(r, w, r.Context())
 		})
 	})
 
@@ -262,125 +267,5 @@ func main() {
 	// MARK: Start Server
 	logger.Info("Server started at http://" + os.Getenv("HOSTNAME") + ":8080")
 	logger.Error(http.ListenAndServe(":8080", r).Error())
-
-}
-
-// MARK: Scripts
-// MARK: Setup
-// Setup is a script that sets up the application, with dependencies and configurations
-// To run, use `go run main.go setup`
-func setup(environment string) error {
-
-	// Set logger
-	logger := log.NewWithOptions(os.Stderr, log.Options{
-		ReportCaller:    true,                  // Report the file name and line number
-		ReportTimestamp: true,                  // Report the timestamp
-		TimeFormat:      "2006-01-02 15:04:05", // Set the time format
-		Prefix:          "SETUP",               // Set the prefix
-	})
-
-	// Check if the .env file exists, if not create it
-	logger.Info("(2/5) Checking if .env file exists...")
-	if _, err := os.Stat(".env"); os.IsNotExist(err) {
-
-		// Create the .env file
-		logger.Info("(3/5) .env file does not exist, creating .env file...")
-		file, err := os.Create(".env")
-		if err != nil {
-			logger.Fatal(err)
-		}
-		defer file.Close()
-
-		// Write the environment variables to the .env file
-		logger.Info("(4/5) Writing environment variables to .env file...")
-		file.WriteString("# .env\n\n")
-		file.WriteString("# Environment\n")
-		file.WriteString("ENV=" + environment + "\n")
-		file.WriteString("HOSTNAME=localhost\n")
-		file.WriteString("PORT=8080\n\n")		
-		file.WriteString("# Database\n")
-		file.WriteString("DB_URI=mongodb://<username>:<db_password>@gatorpool-main-cluster-shard-00-00.nnqaj.mongodb.net:27017,gatorpool-main-cluster-shard-00-01.nnqaj.mongodb.net:27017,gatorpool-main-cluster-shard-00-02.nnqaj.mongodb.net:27017/?ssl=true&replicaSet=atlas-w4mxqg-shard-0&authSource=admin&retryWrites=true&w=majority&appName=gatorpool-dev\n")
-		file.WriteString("DB_USERNAME=<username>\n")
-		file.WriteString("DB_PASSWORD=<password>\n\n")
-		file.WriteString("# NOTE: Replace <username> and <password> with the actual username and password issued to you by the database administrator")
-
-	} else {
-
-		// Read the .env file
-		envFile, err := os.ReadFile(".env")
-		if err != nil {
-			logger.Fatal(err)
-		}
-
-		// Split the .env file by new line
-		envLines := strings.Split(string(envFile), "\n")
-
-		// Check if the environment is production or staging
-		logger.Info("(3/5) Checking if DB_URI is set correctly...")
-		if environment == "production" || environment == "staging" {
-
-			logger.Info("Setting up GCP Secret Manager...")
-
-		} else {
-
-			// Get DB_USERNAME and DB_PASSWORD from the environment
-			DB_USERNAME := ""
-			DB_PASSWORD := ""
-			for i, line := range envLines {
-
-				// Check if the line contains DB_USERNAME
-				if strings.Contains(line, "DB_USERNAME") {
-
-					// Get the DB_USERNAME
-					DB_USERNAME = strings.Split(envLines[i], "=")[1]
-
-				} else if strings.Contains(line, "DB_PASSWORD") {
-
-					// Get the DB_PASSWORD
-					DB_PASSWORD = strings.Split(envLines[i], "=")[1]
-
-				}
-
-			}
-
-			// Loop through the .env file
-			for i, line := range envLines {
-
-				// Write the URI to the .env file
-				if strings.Contains(line, "DB_URI") {
-					envLines[i] = "DB_URI=mongodb://" + DB_USERNAME + ":" + DB_PASSWORD + "@gatorpool-main-cluster-shard-00-00.nnqaj.mongodb.net:27017,gatorpool-main-cluster-shard-00-01.nnqaj.mongodb.net:27017,gatorpool-main-cluster-shard-00-02.nnqaj.mongodb.net:27017/?ssl=true&replicaSet=atlas-w4mxqg-shard-0&authSource=admin&retryWrites=true&w=majority&appName=gatorpool-dev"
-				}
-
-			}
-
-		}
-
-		// Overriding the PORT and ENV based on the environment
-		logger.Info("(4/5) Overriding PORT and ENV based on environment...")
-
-		// Loop through the .env file
-		for i, line := range envLines {
-			if strings.Contains(line, "ENV") {
-
-				// Change the ENV to the environment
-				envLines[i] = "ENV=" + environment
-
-			}
-
-		}
-
-		// Write the new .env file
-		if environment != "production" {
-			err = os.WriteFile(".env", []byte(strings.Join(envLines, "\n")), 0644)
-			if err != nil {
-				logger.Fatal(err)
-			}
-		}
-
-	}
-
-	// Return nil if no errors
-	logger.Info("(5/5) Setup complete!")
-	return nil
 
 }

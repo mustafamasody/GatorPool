@@ -148,7 +148,87 @@ func LoadIn(req *http.Request, res http.ResponseWriter, ctx context.Context) *ht
 		}
 	}
 
+	dashboardStats := HydrateCards(account, *rider)
+	defaultReturn["dashboard_stats"] = dashboardStats
+
 	return util.JSONResponse(res, http.StatusOK, defaultReturn)
+}
+
+type DashboardStats struct {
+	UpcomingTrips int `json:"upcoming_trips"`
+	PastTrips int `json:"past_trips"`
+	AccountType string `json:"account_type"`
+}
+
+func HydrateCards(account accountEntities.AccountEntity, rider riderEntities.RiderEntity) DashboardStats {
+
+	var pastTrips []*tripEntities.TripEntity
+	var upcomingTrips []*tripEntities.TripEntity
+
+	db := datastores.GetMongoDatabase(context.Background())
+	tripsCollection := db.Collection(datastores.Trips)
+
+	// PAST TRIPS
+
+	riderQuery := bson.D{
+		{Key: "$or", Value: bson.A{
+			bson.D{{Key: "riders.user_uuid", Value: *rider.RiderUUID}},
+			bson.D{{Key: "assigned_driver.user_uuid", Value: *rider.RiderUUID}},
+		}},
+		{Key: "datetime", Value: bson.D{{Key: "$lte", Value: time.Now()}}},
+	}
+
+	cursor, err := tripsCollection.Find(context.Background(), riderQuery)
+	if err != nil {
+		fmt.Println("Error fetching trips with user: ", err)
+	} else {
+		err = cursor.All(context.Background(), &pastTrips)
+		if err != nil {
+			fmt.Println("Error decoding trips with user: ", err)
+		}
+	}
+
+	// UPCOMING TRIPS
+
+	riderQuery = bson.D{
+		{Key: "$or", Value: bson.A{
+			bson.D{{Key: "riders.user_uuid", Value: *rider.RiderUUID}},
+			bson.D{{Key: "assigned_driver.user_uuid", Value: *rider.RiderUUID}},
+		}},
+		{Key: "datetime", Value: bson.D{{Key: "$gte", Value: time.Now()}}},
+	}
+
+	cursor, err = tripsCollection.Find(context.Background(), riderQuery)
+	if err != nil {
+		fmt.Println("Error fetching trips with user: ", err)
+	} else {
+		err = cursor.All(context.Background(), &upcomingTrips)
+		if err != nil {
+			fmt.Println("Error decoding trips with user: ", err)
+		}
+	}
+
+	var driverEntity driverEntities.DriverEntity
+	driverCollection := db.Collection(datastores.Drivers)
+	driverQuery := bson.D{{Key: "driver_uuid", Value: *rider.RiderUUID}}
+	err = driverCollection.FindOne(context.Background(), driverQuery).Decode(&driverEntity)
+	if err != nil && err != mongo.ErrNoDocuments {
+		fmt.Println("Error fetching driver: ", err)
+	}
+
+	if err != nil && err == mongo.ErrNoDocuments {
+		return DashboardStats{
+			UpcomingTrips: len(upcomingTrips),
+			PastTrips: len(pastTrips),
+			AccountType: "Rider",
+		}
+	}
+
+	return DashboardStats{
+		UpcomingTrips: len(upcomingTrips),
+		PastTrips: len(pastTrips),
+		AccountType: "Rider and Driver",
+	}
 }
 
 func HydrateDashboard(account accountEntities.AccountEntity, rider riderEntities.RiderEntity) ([]*accountEntities.ReturnLoadInStatusCard, []*accountEntities.ReturnLoadInBottomAction) {
@@ -229,7 +309,7 @@ func HydrateDashboard(account accountEntities.AccountEntity, rider riderEntities
 
 	bottomActions = append(bottomActions, &accountEntities.ReturnLoadInBottomAction{
 		UUID: uuid.NewRandom().String(),
-		Title: "Miami Spring Break?",
+		Title: "June Miami Getaway?",
 		Description: "See fares to Miami for Spring Break",
 		Action: "book_trip_flow",
 		ActionName: "See Fares",

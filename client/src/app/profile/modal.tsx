@@ -1,7 +1,15 @@
 import CloseIcon from '../components/closeicon';
+import { AccountData } from '../view_controller';
 import ImageCropper from './imagecropper';
 
-const Modal = ({ updateAvatar, closeModal }) => {
+interface ModalProps {
+  updateAvatar: (url: string) => void;
+  closeModal: () => void;
+  accountData: AccountData;
+  setAccountData: (accountData: AccountData) => void;
+}
+
+const Modal = ({ updateAvatar, closeModal, accountData, setAccountData }: ModalProps) => {
   return (
     <div
       className="relative z-40 "
@@ -22,7 +30,7 @@ const Modal = ({ updateAvatar, closeModal }) => {
                 <span className="sr-only">Close menu</span>
                 <CloseIcon />
               </button>
-              <ImageCropper/>
+              <ImageCropper updateAvatar={updateAvatar} accountData={accountData} setAccountData={setAccountData} />
             </div>
           </div>
         </div>

@@ -19,8 +19,6 @@ import (
 
 func RiderFlowGetDriverProfiles(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
-	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
-
 	tripUUID := chi.URLParam(req, "trip_uuid")
 	flowType := req.URL.Query().Get("flow_type")
 	db := datastores.GetMongoDatabase(context.Background())
@@ -31,12 +29,6 @@ func RiderFlowGetDriverProfiles(req *http.Request, res http.ResponseWriter, ctx 
 	err := tripsCollection.FindOne(ctx, bson.M{"trip_uuid": tripUUID}).Decode(&trip)
 	if err != nil {
 		fmt.Println("Error finding trip: ", err)
-	}
-
-	if *trip.PostedByType != "rider" || *trip.PostedBy != *account.UserUUID {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
-			"error": "you are not the creator of this trip",
-		})
 	}
 
 	if flowType == "requests" {
@@ -429,6 +421,13 @@ func GetRidersInformation(req *http.Request, res http.ResponseWriter, ctx contex
 		fmt.Println("Error finding trip: ", err)
 		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
 			"error": "error finding trip",
+		})
+	}
+
+	if trip.Riders == nil || len(trip.Riders) == 0 {
+		return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+			"success": true,
+			"riders": []riderEntities.RiderEntity{},
 		})
 	}
 

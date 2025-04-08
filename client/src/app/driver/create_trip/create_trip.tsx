@@ -364,7 +364,7 @@ useEffect(() => {
     }, []);
 
     return (
-        <div className="flex flex-col space-y- bg-white dark:bg-black h-screen p-8">
+        <div className="flex flex-col space-y- bg-white dark:bg-[#0c0c0c] h-screen p-8">
             {
                 canCreateTrip ? (
                     <div className="flex flex-col h-full w-full">
