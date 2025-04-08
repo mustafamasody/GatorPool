@@ -136,6 +136,10 @@ func main() {
 		r.With(session.VerifyOAuthToken).Get("/trips", func(w http.ResponseWriter, r *http.Request) {
 			riderHandler.GetTripsRiderFlow(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Get("/trips/{trip_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			riderHandler.GetIndividualTrip(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/driver", func(r chi.Router) {
@@ -173,6 +177,14 @@ func main() {
 			riderHandler.QueryTrips(r, w, r.Context())
 		})
 
+		r.With(session.VerifyOAuthToken).Get("/{trip_uuid}/rflow/driver", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowGetDriverDetails(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/request/remove", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowRemoveRequest(r, w, r.Context())
+		})
+
 		r.With(session.VerifyOAuthToken).Put("/{trip_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.SaveTripSentBody(r, w, r.Context())
 		})
@@ -195,6 +207,10 @@ func main() {
 
 		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/reject/{rider_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.DriverFlowRejectRiderRequest(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/remove/{rider_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.DriverFlowRemoveRider(r, w, r.Context())
 		})
 	})
 

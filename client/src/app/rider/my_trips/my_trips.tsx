@@ -6,7 +6,7 @@ import { Button, CircularProgress } from '@heroui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import MyCreatedRides from './my_created_rides';
-
+import MyRequestedRides from './my_requested_rides';
 interface MyTripsProps {
     accountData: AccountData;
     setAccountData: React.Dispatch<React.SetStateAction<AccountData>>;
@@ -33,11 +33,11 @@ const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
     useEffect(() => {
         if (!tabParam) {
             // If no tab parameter, set default and update URL
-            navigate(`${location.pathname}?tab=created`, { replace: true });
+            navigate(`${location.pathname}?tab=requested`, { replace: true });
             setActiveTab1(0);
         } else {
             // Set active tab based on URL parameter
-            setActiveTab1(tabParam === 'created' ? 0 : 1);
+            setActiveTab1(tabParam === 'created' ? 1 : 0);
         }
     }, [tabParam, location.pathname, navigate]);
 
@@ -56,7 +56,7 @@ const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
     const handleTabClick1 = (tabId: number) => {
         setActiveTab1(tabId);
         // Update URL with new tab state
-        const newTab = tabId === 0 ? 'created' : 'requested';
+        const newTab = tabId === 1 ? 'created' : 'requested';
         navigate(`${location.pathname}?tab=${newTab}`);
     };
 
@@ -105,7 +105,7 @@ const MyTripsRider = ({ accountData, setAccountData }: MyTripsProps) => {
                                 tab.id === 1 ? (
                                     <MyCreatedRides />
                                 ) : (
-                                    <></>
+                                    <MyRequestedRides />
                                 )
                             }
                         </div>

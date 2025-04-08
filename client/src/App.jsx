@@ -56,6 +56,8 @@ function App() {
               <Route path="/create-trip" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/my-trips" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/drivertrip/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/ridertrip/requested/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/ridertrip/created/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/rider-flow/trips/" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/rider-flow/tripview/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
 

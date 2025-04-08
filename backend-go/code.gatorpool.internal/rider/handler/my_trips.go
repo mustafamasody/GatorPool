@@ -54,8 +54,6 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 			Key: "riders.user_uuid", Value: *account.UserUUID,
 		}, bson.E{
 			Key: "posted_by_type", Value: "driver",
-		}, bson.E{
-			Key: "posted_by", Value: bson.M{"$ne": *account.UserUUID},
 		})
 	}
 
@@ -105,5 +103,6 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 		"currentPage": page,
 		"totalPages":  totalPages,
 		"success":     true,
+		"userUUID":    *account.UserUUID,
 	})
 }

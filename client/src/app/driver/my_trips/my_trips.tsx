@@ -27,7 +27,8 @@ const MyTrips: React.FC<MyTripsProps> = ({ accountData, setAccountData }) => {
             }
         }).then(res => res.json()).then(data => {
             if(data.success) {
-                setTrips(data.trips);
+                // sort trips by datetime (newest first)
+                setTrips(data.trips.sort((a: TripEntity, b: TripEntity) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()));
             } else {
                 console.error(data.error);
             }
@@ -40,9 +41,31 @@ const MyTrips: React.FC<MyTripsProps> = ({ accountData, setAccountData }) => {
         fetchTrips();
     }, []);
 
+    if(trips.length === 0) {
+        return (
+            <div className="flex flex-col space-y- bg-white dark:bg-[#0c0c0c] h-screen">
+                <div className="flex flex-col w-full h-full items-center justify-center">
+                    <h1 className="text-4xl font-RobotoBold text-black dark:text-white">No trips found.</h1>
+                    <h1 className="text-lg font-RobotoBold text-black dark:text-white">Create a trip to get started.</h1>
+                    <Button
+                    color="primary"
+                    className="mt-4"
+                    onPress={() => {
+                        navigate('/create-trip');
+                    }}>
+                        Create Trip
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-col space-y- bg-white dark:bg-[#0c0c0c] h-screen">
-            <p className="text-xl font-RobotoBold p-8  text-left mr-auto mb-4 text-black dark:text-white">My Trips</p>
+            <p className="text-2xl font-RobotoBold pt-8 pl-8  text-left mr-auto mb-4 text-black dark:text-white">My Trips</p>
+            <p className="text-md font-RobotoRegular pt- pl-8  text-left mr-auto mb-4 text-black dark:text-white">
+                Here you can view all of your trips. They are separated by whether you created the trip or requested to be a driver for a trip.
+            </p>
 
             <div className="flex overflow-x-auto max-w-screen">
             <table className="w-full">

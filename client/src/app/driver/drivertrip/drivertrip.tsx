@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import fetchBase from '../../../common/fetchBase';
-import { TripEntity } from '../../../common/types/trip_entity';
+import { TripEntity, TripRiderEntity } from '../../../common/types/trip_entity';
 import { AccountData } from '../../view_controller';
 import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { ArrowLeft, Pencil, Save, Check, X } from 'lucide-react';
@@ -31,6 +31,8 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
     const [editCarpoolingPreference, setEditCarpoolingPreference] = useState<boolean>(false);
 
     const [confirmCancelTrip, setConfirmCancelTrip] = useState<boolean>(false);
+
+    const [confirmRemoveRider, setConfirmRemoveRider] = useState<TripRiderEntity | null>(null);
 
     useEffect(() => {
         fetch(`${fetchBase}/v1/driver/trips/${trip_uuid}`, {
@@ -521,8 +523,9 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                 </div>
                                 <div className="flex flex-row items-center space-x-2">
                                     <Button className="p-1 rounded-full"  isIconOnly onPress={() => {
+                                        setConfirmRemoveRider(rider);
                                     }}>
-                                        <Pencil className="w-4 h-4 text-black dark:text-white" />
+                                        <X className="w-4 h-4 text-black dark:text-white" />
                                     </Button>
                                     </div>
                                 </div>
@@ -611,6 +614,55 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                     </div>
                 </div>
             </div>
+
+            {
+                confirmRemoveRider && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div className="flex flex-col w-[28rem] space-y-2 bg-white dark:bg-neutral-900 p-4 rounded-xl">
+                            <p className="text-black dark:text-white font-RobotoRegular text-lg">
+                                Are you sure you want to remove <span className="font-RobotoSemiBold">{confirmRemoveRider.address.data.first_name} {confirmRemoveRider.address.data.last_name}</span> from the trip? This action is irreversible.
+                            </p>
+                            <div className="flex flex-row ml-auto mt-16 space-x-2">
+                                <Button onPress={() => {
+                                    setConfirmRemoveRider(null);
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button color="danger" onPress={() => {
+                                    fetch(`${fetchBase}/v1/trip/${trip_uuid}/remove/${confirmRemoveRider.user_uuid}`, {
+                                        method: 'POST',
+                                        credentials: 'include',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
+                                            'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
+                                        }
+                                    }).then(res => res.json()).then(data => {
+                                        if(data.success) {
+                                            setTrip(data.trip);
+                                            setConfirmRemoveRider(null);
+                                        } else {
+                                            addToast({
+                                                title: "Error",
+                                                description: data.error,
+                                                color: "danger"
+                                            });
+                                        }
+                                    }).catch(err => {
+                                        addToast({
+                                            title: "Error",
+                                            description: "An error occured.",
+                                            color: "danger"
+                                        });
+                                    })
+                                }}>
+                                    Remove
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     )
 }

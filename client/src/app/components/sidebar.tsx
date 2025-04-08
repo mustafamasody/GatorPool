@@ -116,7 +116,7 @@ import AirlinesOutlinedIcon from '@mui/icons-material/AirlinesOutlined';
             <Tab title="Dashboard" activeIcon={<HomeSharpIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<HomeOutlinedIcon  sx={{ fontSize: 24 }} />} id="dashboard"  />
             <Tab title="My Rides" activeIcon={<AirlinesIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<AirlinesOutlinedIcon  sx={{ fontSize: 24 }} />} id="rider-flow/trips"  />
             <Tab title="Find a ride" activeIcon={<TravelExploreIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<TravelExploreOutlinedIcon  sx={{ fontSize: 24 }} />} id="find-ride"  />
-            <Tab title="Ride History" activeIcon={<WorkHistoryIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<WorkHistoryOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  />
+            {/* <Tab title="Ride History" activeIcon={<WorkHistoryIcon className={`text-gray-800 dark:text-gray-300  `} sx={{ fontSize: 24 }} />} nonActiveIcon={<WorkHistoryOutlinedIcon  sx={{ fontSize: 24 }} />} id="ride-history"  /> */}
         </>,
         mapArray: ["dashboard", "find-ride", "ride-history"]
       },

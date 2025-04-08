@@ -16,6 +16,8 @@ import MyTrips from './driver/my_trips/my_trips';
 import DriverTrip from './driver/drivertrip/drivertrip';
 import RiderFlowRequest from './rider/query/rider_flow_request';
 import MyTripsRider from './rider/my_trips/my_trips';
+import RiderFlowCreatedTrip from './rider/tripview/created';
+import RiderFlowRequestedTrip from './rider/tripview/requested';
 /**
  *     "status_cards": [
         {
@@ -162,6 +164,19 @@ const ViewController = ({}) => {
 
             title = 'My Trips';
             component = <MyTrips accountData={accountData} setAccountData={setAccountData} />;
+            break;
+
+        case "ridertrip":
+            title = 'Rider Trip';
+            if(secondaryTab) {
+                if(secondaryTab === "requested") {
+                    component = <RiderFlowRequestedTrip accountData={accountData} setAccountData={setAccountData} />;
+                    break;
+                } else if(secondaryTab === "created") {
+                    component = <RiderFlowCreatedTrip accountData={accountData} setAccountData={setAccountData} />;
+                    break;
+                }
+            }
             break;
         case "find-ride":
 
