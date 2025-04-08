@@ -31,7 +31,7 @@ type OAuthBody struct {
 	MFACode   *string `json:"mfa_code"`
 }
 
-// https://gatorpool.com/oauth2/token
+// https://gatorpool.app/oauth2/token
 
 /*
 
@@ -60,7 +60,7 @@ type OAuthBody struct {
 		"scope": "internal"
 	}
 
-	
+
 */
 
 func OAuthToken(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
@@ -310,16 +310,16 @@ func IssueOAuthResponse(accountComplete bool, body *OAuthBody, req *http.Request
 		})
 
 		return util.JSONResponse(res, http.StatusOK, map[string]interface{}{
-			"success": true,
-			"message": "session issued",
+			"success":             true,
+			"message":             "session issued",
 			"onboarding_redirect": redirectToOnboarding,
 		})
 
 	} else {
 		return util.JSONResponse(res, http.StatusOK, map[string]interface{}{
-			"access_token":  *token,
-			"token_type":    "bearer",
-			"refresh_token": *refreshToken,
+			"access_token":        *token,
+			"token_type":          "bearer",
+			"refresh_token":       *refreshToken,
 			"onboarding_redirect": redirectToOnboarding,
 		})
 	}

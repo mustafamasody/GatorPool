@@ -1,0 +1,10 @@
+steps:
+  - name: 'node:22'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        npm install --legacy-peer-deps
+        npm run build
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args: ['gcloud', 'app', 'deploy', '--quiet']

@@ -11,12 +11,12 @@ import (
 	"time"
 
 	accountEntities "code.gatorpool.internal/account/entities"
-	riderEntities "code.gatorpool.internal/rider/entities"
-	configEntities "code.gatorpool.internal/config/entities"
 	"code.gatorpool.internal/account/validator"
+	configEntities "code.gatorpool.internal/config/entities"
 	datastores "code.gatorpool.internal/datastores/mongo"
 	"code.gatorpool.internal/guardian/encryption"
 	passwords "code.gatorpool.internal/guardian/password"
+	riderEntities "code.gatorpool.internal/rider/entities"
 	"code.gatorpool.internal/util"
 	"code.gatorpool.internal/util/ptr"
 	"code.gatorpool.internal/util/requesthydrator"
@@ -32,29 +32,29 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	email := req.Header.Get("X-GatorPool-Username")
 
 	if !*validator.ValidateInitializeSignUpRequest(req) {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_request" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid_request"})
 	}
 
 	email = strings.ToLower(email)
 
 	// Make sure the email domain is ufl.edu
 	if !strings.HasSuffix(email, "@ufl.edu") {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "uf_only" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "uf_only"})
 	}
 
 	body, err := requesthydrator.ParseJSONBody(req, []string{"password"})
 	if err != nil {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_request" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid_request"})
 	}
 
 	password := body["password"].(string)
 
 	if password == "" {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_password" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid_password"})
 	}
 
 	if !*passwords.ValidatePassword(&password) {
-		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{ "error": "invalid_password" })
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{"error": "invalid_password"})
 	}
 
 	db := datastores.GetMongoDatabase(ctx)
@@ -93,27 +93,27 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	}
 
 	account = &accountEntities.AccountEntity{
-		ID: primitive.NewObjectID(),
-		IsVerified: ptr.Bool(false),
-		IsComplete: ptr.Bool(false),
-		UserUUID: &accountUUID,
-		Email: &email,
-		CreatedAt: ptr.Time(time.Now()),
-		UpdatedAt: ptr.Time(time.Now()),
-		Sessions: []*accountEntities.Session{},
-		LastLogin: nil,
-		LastLogout: nil,
-		FirstName: nil,
-		LastName: nil,
-		Gender: nil,
-		UFID: nil,
-		Phone: nil,
-		RiderUUID: nil,
-		DriverUUID: nil,
-		TwoFAEnabled: ptr.Bool(false),
+		ID:             primitive.NewObjectID(),
+		IsVerified:     ptr.Bool(false),
+		IsComplete:     ptr.Bool(false),
+		UserUUID:       &accountUUID,
+		Email:          &email,
+		CreatedAt:      ptr.Time(time.Now()),
+		UpdatedAt:      ptr.Time(time.Now()),
+		Sessions:       []*accountEntities.Session{},
+		LastLogin:      nil,
+		LastLogout:     nil,
+		FirstName:      nil,
+		LastName:       nil,
+		Gender:         nil,
+		UFID:           nil,
+		Phone:          nil,
+		RiderUUID:      nil,
+		DriverUUID:     nil,
+		TwoFAEnabled:   ptr.Bool(false),
 		ProfilePicture: ptr.Bool(false),
 		Password: &accountEntities.Password{
-			Hash: hash,
+			Hash:             hash,
 			EncryptedVersion: version,
 		},
 	}
@@ -156,16 +156,16 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	}
 
 	newVerificationObject := &accountEntities.VerificationEntity{
-		ID:             primitive.NewObjectID(),
-		DeviceID:       ptr.String(deviceID),
-		Code:           code,
-		Info:           ptr.String(email),
-		CreatedAt:      ptr.Time(time.Now()),
-		Attempts:       ptr.Int32(0),
-		IsComplete:     ptr.Bool(false),
-		IsVerified:     ptr.Bool(false),
-		Resends:        ptr.Int32(0),
-		UUID:           account.UserUUID,
+		ID:         primitive.NewObjectID(),
+		DeviceID:   ptr.String(deviceID),
+		Code:       code,
+		Info:       ptr.String(email),
+		CreatedAt:  ptr.Time(time.Now()),
+		Attempts:   ptr.Int32(0),
+		IsComplete: ptr.Bool(false),
+		IsVerified: ptr.Bool(false),
+		Resends:    ptr.Int32(0),
+		UUID:       account.UserUUID,
 		EncryptedFields: &accountEntities.EncryptedFieldCache{
 			Email:    nil,
 			ObjectID: nil,
@@ -185,9 +185,9 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	stringObjectID = stringObjectID[10 : len(stringObjectID)-2]
 
 	emailVerificationData := encryption.EmailVerificationData{
-		Email: email,
-		Code:  stringCode,
-		ObjectID:    stringObjectID,
+		Email:    email,
+		Code:     stringCode,
+		ObjectID: stringObjectID,
 	}
 
 	err = encryption.EncryptEmailVerificationData(&emailVerificationData)
@@ -218,7 +218,7 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	if os.Getenv("ENV") == "development" {
 		link = "http://localhost:3000/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
 	} else {
-		link = "https://gatorpool.com/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
+		link = "https://gatorpool.app/verify?id=" + stringObjectID + "&signature=" + emailVerificationData.EncryptedCode
 	}
 
 	fmt.Println("Debug Link: " + link)
@@ -241,8 +241,8 @@ func SignUpV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *
 	}
 
 	return util.JSONResponse(res, http.StatusOK, map[string]interface{}{
-		"success":      true,
-		"message":      "account initialized",
+		"success": true,
+		"message": "account initialized",
 	})
 }
 
@@ -347,8 +347,8 @@ func VerifyAccount(req *http.Request, res http.ResponseWriter, ctx context.Conte
 	req.Header.Set("X-GatorPool-Username", *verification.Info)
 
 	return util.JSONResponse(res, 200, map[string]interface{}{
-		"success":      true,
-		"message":      "Account verified",
+		"success": true,
+		"message": "Account verified",
 	})
 }
 
@@ -437,16 +437,16 @@ func ResendVerificationEmail(req *http.Request, res http.ResponseWriter, ctx con
 		}
 
 		newVerificationObject := &accountEntities.VerificationEntity{
-			ID:             primitive.NewObjectID(),
-			DeviceID:       ptr.String(deviceID),
-			Code:           code,
-			Info:           ptr.String(email),
-			CreatedAt:      ptr.Time(time.Now()),
-			Attempts:       ptr.Int32(0),
-			Resends:        ptr.Int32(0),
-			IsComplete:     ptr.Bool(false),
-			IsVerified:     ptr.Bool(false),
-			UUID:           account.UserUUID,
+			ID:         primitive.NewObjectID(),
+			DeviceID:   ptr.String(deviceID),
+			Code:       code,
+			Info:       ptr.String(email),
+			CreatedAt:  ptr.Time(time.Now()),
+			Attempts:   ptr.Int32(0),
+			Resends:    ptr.Int32(0),
+			IsComplete: ptr.Bool(false),
+			IsVerified: ptr.Bool(false),
+			UUID:       account.UserUUID,
 			EncryptedFields: &accountEntities.EncryptedFieldCache{
 				Email:    nil,
 				ObjectID: nil,
@@ -529,11 +529,10 @@ func ResendVerificationEmail(req *http.Request, res http.ResponseWriter, ctx con
 	res.Header().Set("X-GatorPool-Username", req.Header.Get("X-GatorPool-Username"))
 
 	return util.JSONResponse(res, 200, map[string]interface{}{
-		"success":      true,
-		"message":      "Verification email sent",
+		"success": true,
+		"message": "Verification email sent",
 	})
 }
-
 
 func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
 
@@ -633,17 +632,17 @@ func FinishAccountV1(req *http.Request, res http.ResponseWriter, ctx context.Con
 	rider := &riderEntities.RiderEntity{
 		RiderUUID: account.RiderUUID,
 		PastTrips: []*string{},
-		Rating: nil,
+		Rating:    nil,
 		Options: &riderEntities.RiderOptionsEntity{
-			PayGas: nil,
+			PayGas:  nil,
 			PayFood: nil,
 		},
 		Fulfillment: &riderEntities.RiderFulfillmentEntity{
 			BackedOut: ptr.Int64(0),
 		},
 		Disceplanary: &riderEntities.RiderDisceplanaryEntity{
-			Warnings: []*string{},
-			Bans: []*string{},
+			Warnings:   []*string{},
+			Bans:       []*string{},
 			Complaints: []*string{},
 		},
 		Address: nil,

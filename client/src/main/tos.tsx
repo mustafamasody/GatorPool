@@ -6,7 +6,7 @@ const TOS = () => {
     const meta = {
         title: 'Terms of Service',
         description: 'Terms of Service',
-        // canonical: 'https://gatorpool.com/tos',
+        // canonical: 'https://gatorpool.app/tos',
         meta: {
             charset: 'utf-8',
             name: {
@@ -82,7 +82,7 @@ const TOS = () => {
 
                     <section>
                         <h2 className="text-2xl font-RobotoBold mb-4">10. Contact</h2>
-                        <p>For questions about these terms, please contact us at support@gatorpool.com</p>
+                        <p>For questions about these terms, please contact us at support@gatorpool.app</p>
                     </section>
                 </div>
             </div>

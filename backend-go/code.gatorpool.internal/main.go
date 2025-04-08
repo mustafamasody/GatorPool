@@ -67,7 +67,7 @@ func main() {
 
 	// Set up CORS middleware
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://gatorpool.netlify.app"}, // Allow your frontend origin
+		AllowedOrigins:   []string{"http://localhost:3000", "https://gatorpool.netlify.app", "https://gatorpool-react-client.ue.r.appspot.com", "https://gatorpool-449522.ue.r.appspot.com", "https://api.gatorpool.app", "https://gatorpool.app", "https://www.gatorpool.app"}, // Allow your frontend origin
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-GatorPool-Username", "X-GatorPool-Device-Id", "*"},
 		AllowCredentials: true,

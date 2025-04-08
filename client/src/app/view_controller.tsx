@@ -144,7 +144,7 @@ const ViewController = ({}) => {
     const meta = {
         title: 'GatorPool',
         description: 'GatorPool',
-        // canonical: 'https://gatorpool.com',
+        // canonical: 'https://gatorpool.app',
         meta: {
             charset: 'utf-8',
             name: {

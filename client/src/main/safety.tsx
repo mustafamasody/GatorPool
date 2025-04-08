@@ -9,7 +9,7 @@ const Safety = () => {
     const meta = {
         title: 'Safety',
         description: 'Safety',
-        // canonical: 'https://gatorpool.com/safety',
+        // canonical: 'https://gatorpool.app/safety',
         meta: {
             charset: 'utf-8',
             name: {
