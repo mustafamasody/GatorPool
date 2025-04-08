@@ -6,7 +6,7 @@ const TOS = () => {
     const meta = {
         title: 'Terms of Service',
         description: 'Terms of Service',
-        // canonical: 'https://gatorpool.app/tos',
+        canonical: 'https://gatorpool.app/tos',
         meta: {
             charset: 'utf-8',
             name: {

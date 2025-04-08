@@ -13,7 +13,7 @@ const About = () => {
     const meta = {
         title: 'About GatorPool',
         description: 'About GatorPool',
-        // canonical: 'https://gatorpool.app/about',
+        canonical: 'https://gatorpool.app/about',
         meta: {
             charset: 'utf-8',
             name: {
