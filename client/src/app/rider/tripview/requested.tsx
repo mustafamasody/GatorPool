@@ -311,7 +311,7 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
                                         {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {rider.address.data.first_name} {rider.address.data.last_name}
+                                        Accepted on {new Date(rider.accepted_at).toLocaleString()}
                                     </p>
                                 </div>
                                 </div>
@@ -329,7 +329,7 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
                                         {rider.address.data.first_name} {rider.address.data.last_name}
                                     </p>
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {rider.address.data.first_name} {rider.address.data.last_name}
+                                        Requested on {new Date(rider.created_at).toLocaleString()}
                                     </p>
                                 </div>
                                 </div>

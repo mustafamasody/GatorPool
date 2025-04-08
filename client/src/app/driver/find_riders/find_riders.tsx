@@ -4,7 +4,7 @@ import { AccountData } from '../../view_controller';
 import Feed from './feed';
 
 const initialTabs = [
-    { id: 0, title: "Find Rides", show: true },
+    { id: 0, title: "Find Riders", show: true },
     { id: 1, title: "Requested Rides", show: true },
 ];
 

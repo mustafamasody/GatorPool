@@ -212,6 +212,30 @@ func main() {
 		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/remove/{rider_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.DriverFlowRemoveRider(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Post("/driver/feed", func(w http.ResponseWriter, r *http.Request) {
+			driverHandler.QueryTripsFeed(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/driver/request", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowDriverRequestTrip(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Get("/{trip_uuid}/rflow/driver", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowGetDriverProfiles(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/request/accept/{driver_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowRiderAcceptDriverRequest(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/driver/remove/{driver_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowRiderRemoveDriver(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/request/reject/{driver_uuid}", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowRiderRejectDriverRequest(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/config", func(r chi.Router) {

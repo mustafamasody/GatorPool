@@ -22,6 +22,9 @@ type TripDriverRequestEntity struct {
 
 	// Timestamp of when the driver requested the trip
 	RequestedAt			*time.Time						`json:"requested_at,omitempty" bson:"requested_at"`
+
+	// The fare of the trip
+	Fare				*TripFareEntity					`json:"fare,omitempty" bson:"fare"`
 }
 
 type TripAssignedDriverEntity struct {

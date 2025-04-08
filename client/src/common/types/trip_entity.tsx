@@ -60,6 +60,7 @@ export interface TripDriverRequestEntity {
 	user_uuid?: string;
 	address?: WaypointEntity;
 	requested_at?: string;
+	fare?: TripFareEntity;
 }
 
 export interface TripAssignedDriverEntity {
@@ -77,6 +78,7 @@ export interface TripRiderEntity {
 	rating?: number;
 	review?: string;
 	willing?: TripRiderWillingEntity;
+	created_at?: string;
 }
 
 export interface TripRiderWillingEntity {
