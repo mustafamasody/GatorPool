@@ -41,6 +41,24 @@ const MyRequestedRides = () => {
                     />
                 </div>
         )
+    }
+     else if(trips.length === 0) {
+        return (
+            <div className="flex flex-col space-y- bg-white dark:bg-[#0c0c0c] h-full">
+                <div className="flex flex-col w-full h-full items-center justify-center">
+                    <h1 className="text-4xl font-RobotoBold text-black dark:text-white">No trips found.</h1>
+                    <h1 className="text-lg font-RobotoBold text-black dark:text-white">Check out what's available.</h1>
+                    <Button
+                    color="primary"
+                    className="mt-4"
+                    onPress={() => {
+                        navigate('/find-ride');
+                    }}>
+                        Find Rides
+                    </Button>
+                </div>
+            </div>
+        )
     } else {
         return (
     

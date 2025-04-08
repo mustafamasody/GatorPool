@@ -97,7 +97,7 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
                 </div>
             </div>
 
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5">
                 <div className="flex flex-col bg-gray-200 dark:bg-neutral-900 p-4 rounded-xl h-32">
                     <h1 className="text-black dark:text-white font-RobotoSemiBold text-2xl">From</h1>
                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
@@ -110,10 +110,18 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
                         {trip?.waypoints.find(waypoint => waypoint.type === "destination")?.geo_text}
                     </p>
                 </div>
-                <div className="flex flex-col bg-gray-200 dark:bg-neutral-900 p-4 rounded-xl h-32">
+                <div className="flex flex-col justify-between bg-gray-200 dark:bg-neutral-900 p-4 rounded-xl h-32">
+                    <div>
                     <h1 className="text-black dark:text-white font-RobotoSemiBold text-2xl">When</h1>
                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
                         {new Date(trip?.datetime).toLocaleString()}
+                    </p>
+                    </div>
+                </div>
+                <div className="flex flex-col bg-gray-200 dark:bg-neutral-900 p-4 rounded-xl h-32">
+                    <h1 className="text-black dark:text-white font-RobotoSemiBold text-2xl">Expected Arrival</h1>
+                    <p className="text-black dark:text-white font-RobotoRegular text-sm">
+                        {new Date(trip?.waypoints.find(waypoint => waypoint.type === "destination")?.expected).toLocaleString()}
                     </p>
                 </div>
                 <div className="flex flex-col bg-gray-200 dark:bg-neutral-900 p-4 rounded-xl h-32">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { AccountData } from '../../view_controller';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {now, parseAbsoluteToLocal, today} from "@internationalized/date";
@@ -11,6 +11,26 @@ import fetchBase from '../../../common/fetchBase';
 import { addToast } from '@heroui/react';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibXVzdGFmYW1hc29keSIsImEiOiJjbTZva3FneTIwZjI5MmxvdWQ1dHY1NTlwIn0.oNPGEBsenNviLdx_qzcPWw';
+
+// Fetch Route from Mapbox Directions API
+const fetchRoute = async (from: { lat: number, lng: number }, to: { lat: number, lng: number }, departureTime: Date) => {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from.lng},${from.lat};${to.lng},${to.lat}?geometries=geojson&access_token=${MAPBOX_ACCESS_TOKEN}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const duration = data.routes[0]?.duration; // Duration in seconds
+        
+        if (duration) {
+            // Calculate expected arrival time by adding duration to departure time
+            const expectedArrivalTime = new Date(departureTime.getTime() + duration * 1000);
+            return expectedArrivalTime;
+        }
+    } catch (error) {
+        console.error("Error fetching route:", error);
+    }
+    return null;
+};
 
 // Debounced search function outside component
 const debouncedSearchAddress = debounce(async (query: string, type: string, setResults: (results: any[]) => void) => {
@@ -86,6 +106,20 @@ const RiderFlowRequest = ({ accountData, setAccountData, isFemale }: RiderFlowRe
         longitude: riderFlowBody?.body?.to?.lng,
     });
 
+    // Separate state for coordinates to prevent infinite updates
+    const [fromCoords, setFromCoords] = useState<{ lat: number, lng: number } | null>(
+        riderFlowBody?.body?.from ? {
+            lat: riderFlowBody.body.from.lat,
+            lng: riderFlowBody.body.from.lng
+        } : null
+    );
+    const [toCoords, setToCoords] = useState<{ lat: number, lng: number } | null>(
+        riderFlowBody?.body?.to ? {
+            lat: riderFlowBody.body.to.lat,
+            lng: riderFlowBody.body.to.lng
+        } : null
+    );
+
     const [willingToPayForGas, setWillingToPayForGas] = useState<boolean>(false);
     const [willingToPayForFood, setWillingToPayForFood] = useState<boolean>(false);
 
@@ -107,8 +141,51 @@ const RiderFlowRequest = ({ accountData, setAccountData, isFemale }: RiderFlowRe
         feed: false,
     });
 
+    const [expectedArrivalTime, setExpectedArrivalTime] = useState<string | null>(null);
+
+    // Create a memoized debounced function using useCallback
+    const updateExpectedArrival = useCallback(
+        debounce(async (
+            fromCoords: { lat: number, lng: number },
+            toCoords: { lat: number, lng: number },
+            departureTime: Date,
+            setToWaypoint: React.Dispatch<React.SetStateAction<WaypointEntity>>
+        ) => {
+            console.log("Updating expected arrival with:", { fromCoords, toCoords, departureTime });
+            if (!fromCoords || !toCoords) {
+                console.log("Missing coordinates");
+                return;
+            }
+
+            const expectedArrivalTime = await fetchRoute(
+                fromCoords,
+                toCoords,
+                departureTime
+            );
+
+            if (expectedArrivalTime) {
+                console.log("Setting expected arrival time:", expectedArrivalTime);
+                setToWaypoint(prev => ({
+                    ...prev,
+                    expected: expectedArrivalTime
+                }));
+                setExpectedArrivalTime(expectedArrivalTime.toISOString());
+            }
+        }, 1000),
+        [] // Empty dependency array since debounce is stable
+    );
+
+    // Update expected arrival time when coordinates or departure time changes
+    useEffect(() => {
+        console.log("Coordinates changed:", { fromCoords, toCoords, date: date.toDate() });
+        if (fromCoords && toCoords) {
+            updateExpectedArrival(fromCoords, toCoords, date.toDate(), setToWaypoint);
+        }
+    }, [fromCoords, toCoords, date, updateExpectedArrival]);
+
     // Handle Address Selection
     const handleAddressSelect = async (place: any, type: string) => {
+        console.log("Address selected:", { place, type });
         if(type === "from") {
             setFromText(place.place_name);
             const destination = { lat: place.center[1], lng: place.center[0] };
@@ -119,20 +196,23 @@ const RiderFlowRequest = ({ accountData, setAccountData, isFemale }: RiderFlowRe
                 latitude: place.center[1],
                 longitude: place.center[0],
                 expected: date.toDate(),
-            })
+            });
+            setFromCoords(destination);
+            console.log("Set from coordinates:", destination);
 
         } else {
             setToText(place.place_name);
             const destination = { lat: place.center[1], lng: place.center[0] };
             setTo(destination);
             setToSearchResults([]);
-            // let expectedTime: Date = await fetchRoute(destination); // Fetch the best route
             setToWaypoint({
                 geo_text: place.place_name,
                 latitude: place.center[1],
                 longitude: place.center[0],
                 expected: null,
-            })
+            });
+            setToCoords(destination);
+            console.log("Set to coordinates:", destination);
         }
     };
 
@@ -284,12 +364,26 @@ const RiderFlowRequest = ({ accountData, setAccountData, isFemale }: RiderFlowRe
                             className="w-full mt-6"
                             color="primary"
                             onPress={() => {
+
+                                let newRiderFlowBody = {
+                                    body: {
+                                        ...riderFlowBody.body,
+                                        to: {
+                                            ...riderFlowBody.body.to,
+                                            expected: expectedArrivalTime
+                                        }
+                                    },
+                                    pay_for_gas: willingToPayForGas,
+                                    pay_for_food: willingToPayForFood,
+                                }
+
                                 if(!termsAccepted.guaranteed_ride || !termsAccepted.feed) {
                                     addToast({
                                         title: "Terms and conditions not accepted",
                                         description: "You must accept the terms and conditions to request a ride.",
                                         color: "danger"
                                     });
+                                    console.log("riderFlowBody", newRiderFlowBody);
                                     return;
                                 }
 
@@ -301,14 +395,10 @@ const RiderFlowRequest = ({ accountData, setAccountData, isFemale }: RiderFlowRe
                                         'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
                                         'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
                                     },
-                                    body: JSON.stringify({
-                                        ...riderFlowBody,
-                                        pay_for_gas: willingToPayForGas,
-                                        pay_for_food: willingToPayForFood,
-                                    })
+                                    body: JSON.stringify(newRiderFlowBody)
                                 }).then(res => res.json()).then(data => {
                                     if(data.success) {
-                                        // navigate(`/rider-flow/trips/${data.trip_uuid}`);
+                                        navigate(`/rider-flow/trips?tab=created`);
                                     } else {
                                         console.error(data.error);
                                     }

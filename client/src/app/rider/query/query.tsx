@@ -106,30 +106,6 @@ const RiderFlowQuery = ({ accountData, setAccountData }: RiderFlowQueryProps) =>
     const [femaleDriversOnlyOption, setFemaleDriversOnlyOption] = useState<boolean>(false);
 
     useEffect(() => {
-        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-
-        if (!mapContainerRef.current) return;
-
-        const map = new mapboxgl.Map({
-            container: mapContainerRef.current,
-            style: 'mapbox://styles/mustafamasody/cm6olrhpt000k01qrebc2e55u',
-            center: [from.lng, from.lat],
-            zoom: 14,
-        });
-
-        new mapboxgl.Marker()
-            .setLngLat([from.lng, from.lat])
-            .setPopup(new mapboxgl.Popup().setHTML("<b>University of Florida</b><br>Reitz Union"))
-            .addTo(map);
-
-        mapRef.current = map;
-
-        return () => {
-            map.remove();
-        };
-    }, []);
-
-    useEffect(() => {
         setTripDate(date.toDate());
     }, [date]);
 

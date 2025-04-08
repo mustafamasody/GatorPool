@@ -29,6 +29,7 @@ type RiderRequestTripBody struct {
 			Lat float64 `json:"lat"`
 			Lng float64 `json:"lng"`
 			Text string  `json:"text"`
+			Expected string `json:"expected"`
 		} `json:"to"`
 		Datetime string `json:"datetime"`
 		FemalesOnly bool `json:"females_only"`
@@ -91,6 +92,15 @@ func RiderRequestTrip(req *http.Request, res http.ResponseWriter, ctx context.Co
 		GeoText:   ptr.String(body.From.Text),
 	}
 
+	// parse expected time as iso
+	expectedTime, err := time.Parse(time.RFC3339, body.To.Expected)
+	if err != nil {
+		fmt.Println("Error parsing expected time: ", err)
+		return util.JSONResponse(res, http.StatusBadRequest, map[string]interface{}{
+			"error": "invalid expected time",
+		})
+	}
+
 	toWaypoint := &tripEntities.WaypointEntity{
 		Type: ptr.String("destination"),
 		For:  ptr.String("driver"),
@@ -98,6 +108,7 @@ func RiderRequestTrip(req *http.Request, res http.ResponseWriter, ctx context.Co
 		Latitude:  ptr.Float64(body.To.Lat),
 		Longitude: ptr.Float64(body.To.Lng),
 		GeoText:   ptr.String(body.To.Text),
+		Expected:  &expectedTime,
 	}
 
 	femalesOnly := false
