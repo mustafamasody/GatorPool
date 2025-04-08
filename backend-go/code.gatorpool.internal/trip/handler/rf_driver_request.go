@@ -160,10 +160,17 @@ func RiderFlowRiderAcceptDriverRequest(req *http.Request, res http.ResponseWrite
 		}
 	}
 
+	accountsCollection := db.Collection(datastores.Accounts)
+	var driverAccount accountEntities.AccountEntity
+	err = accountsCollection.FindOne(ctx, bson.M{"user_uuid": driverRequest.UserUUID}).Decode(&driverAccount)
+	if err != nil {
+		fmt.Println("Error finding driver account: ", err)
+	}
+
 	newAssignedDriver := &tripEntities.TripAssignedDriverEntity{
-		UserUUID: account.UserUUID,
+		UserUUID: driverRequest.UserUUID,
 		Address: driverRequest.Address,
-		Gender: account.Gender,
+		Gender: driverAccount.Gender,
 		AssignedAt: ptr.Time(time.Now()),
 	}
 

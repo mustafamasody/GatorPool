@@ -448,7 +448,7 @@ useEffect(() => {
                                     className="w-2/3 "
                                     granularity="second"
                                     label="Date and time"
-                                    minValue={today(getLocalTimeZone())}
+                                    minValue={today(getLocalTimeZone()).add({days: 2})}
                                     value={parseAbsoluteToLocal(new Date(tripOptions?.datetime || new Date()).toISOString())}
                                     onChange={setDate}
                                 />
@@ -549,3 +549,7 @@ useEffect(() => {
 }
 
 export default CreateTrip
+
+
+
+/// fdsfdsfdsfsdf

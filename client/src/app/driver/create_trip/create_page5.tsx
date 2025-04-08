@@ -10,7 +10,7 @@ import { Feature, Polygon } from "geojson";
 import { CreateTripDriverFlowOptionsEntity } from '../types';
 import {Checkbox} from "@heroui/react";
 import { REQUEST_HEADERS } from '../../utils/headers';
-
+import { useNavigate } from 'react-router-dom';
 interface CreatePage5Props {
     tripOptions?: CreateTripDriverFlowOptionsEntity;
     setTripOptions: React.Dispatch<React.SetStateAction<CreateTripDriverFlowOptionsEntity>>;
@@ -23,6 +23,8 @@ const CreatePage5: React.FC<CreatePage5Props> = ({ tripOptions, setTripOptions, 
     const [loadingCreateTrip, setLoadingCreateTrip] = useState(false);
 
     const [error, setError] = useState<string>(null);
+
+    const navigate = useNavigate();
 
     const createTrip = async () => {
         setLoadingCreateTrip(true);
@@ -37,6 +39,7 @@ const CreatePage5: React.FC<CreatePage5Props> = ({ tripOptions, setTripOptions, 
         }).then(res => res.json()).then(data => {
             if(data.success) {
                 setLoadingCreateTrip(false);
+                navigate('/my-trips');
             } else {
                 setError(data.error);
             }
@@ -208,3 +211,13 @@ const CreatePage5: React.FC<CreatePage5Props> = ({ tripOptions, setTripOptions, 
 };
 
 export default CreatePage5;
+
+
+
+
+
+
+
+
+
+// fdsafdsfdsf

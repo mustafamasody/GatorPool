@@ -48,13 +48,20 @@ func GetTripsRiderFlow(req *http.Request, res http.ResponseWriter, ctx context.C
 			Key: "posted_by_type", Value: "rider",
 		}, bson.E{
 			Key: "posted_by", Value: *account.UserUUID,
-		})
+		}, bson.E{
+			Key: "flow_type", Value: "rider_requests_driver",
+		},
+	)
 	} else if flowType == "requested" {
 		query = append(query, bson.E{
 			Key: "riders.user_uuid", Value: *account.UserUUID,
 		}, bson.E{
 			Key: "posted_by_type", Value: "driver",
-		})
+		},
+		bson.E{
+			Key: "flow_type", Value: "driver_requests_riders",
+		},
+	)
 	}
 
 	// Get total count of trips

@@ -182,9 +182,9 @@ func main() {
 			riderHandler.QueryTrips(r, w, r.Context())
 		})
 
-		r.With(session.VerifyOAuthToken).Get("/{trip_uuid}/rflow/driver", func(w http.ResponseWriter, r *http.Request) {
-			tripHandler.RiderFlowGetDriverDetails(r, w, r.Context())
-		})
+		// r.With(session.VerifyOAuthToken).Get("/{trip_uuid}/rflow/driver", func(w http.ResponseWriter, r *http.Request) {
+		// 	tripHandler.RiderFlowGetDriverDetails(r, w, r.Context())
+		// })
 
 		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/request/remove", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.RiderFlowRemoveRequest(r, w, r.Context())

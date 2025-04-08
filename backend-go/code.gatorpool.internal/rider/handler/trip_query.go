@@ -143,14 +143,14 @@ func QueryTrips(req *http.Request, res http.ResponseWriter, ctx context.Context)
 	if body.FlexibleDates != nil && *body.FlexibleDates {
 		// Filter the trips that are within 48 hours of the datetime
 		query["datetime"] = bson.M{
-			"$gte": datetime.Add(-48 * time.Hour),
-			"$lte": datetime.Add(48 * time.Hour),
+			"$gte": datetime.Add(-24 * 28 * time.Hour),
+			"$lte": datetime.Add(24 * 28 * time.Hour),
 		}
 	} else {
 		// Filter the trips that are within 8 hours of the datetime
 		query["datetime"] = bson.M{
-			"$gte": datetime.Add(-8 * time.Hour),
-			"$lte": datetime.Add(8 * time.Hour),
+			"$gte": datetime.Add(-24 * 7 * time.Hour),
+			"$lte": datetime.Add(24 * 7 * time.Hour),
 		}
 	}
 

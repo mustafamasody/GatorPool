@@ -16,7 +16,7 @@ const MyRequestedRides = () => {
     const [userUUID, setUserUUID] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`${fetchBase}/v1/rider/trips?page=${currentSessionsPage}&flow_type=request`, {
+        fetch(`${fetchBase}/v1/rider/trips?page=${currentSessionsPage}&flow_type=requested`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -125,3 +125,5 @@ const MyRequestedRides = () => {
 }
 
 export default MyRequestedRides;
+
+// fdsfdsfdsfd

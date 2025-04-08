@@ -30,7 +30,7 @@ const RiderFlowCreatedTrip = ({ accountData, setAccountData }: RiderFlowRequeste
     const [selectedDriverRequest, setSelectedDriverRequest] = useState<TripDriverRequestEntity | null>(null);
 
     useEffect(() => {
-        fetch(`${fetchBase}/v1/rider/trips/${trip_uuid}`, {
+        fetch(`${fetchBase}/v1/rider/trips/${trip_uuid}?flow_type=created`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -612,3 +612,5 @@ const RiderFlowCreatedTrip = ({ accountData, setAccountData }: RiderFlowRequeste
 }
 
 export default RiderFlowCreatedTrip;
+
+// fdsfdssfsf

@@ -41,8 +41,8 @@ const DriverApply: React.FC<DashboardProps> = ({ accountData, setAccountData }) 
         <div className="flex flex-col space-y- bg-white dark:bg-black min-h-screen p-8">
             <h1 className="text-black dark:text-white text-2xl font-RobotoSemiBold">Apply to become a driver</h1>
 
-            <div className="flex flex-row w-full mt-16">
-                <div className="flex flex-col h-[40rem] w-1/2 h-full">
+            <div className="flex flex-col lg:flex-row w-full mt-16">
+                <div className="flex flex-col h-[40rem] w-full lg:w-1/2 h-full">
                     {
                         currentPage === 1 && (
                             <div className="flex flex-col w-full h-full">
@@ -320,7 +320,7 @@ const DriverApply: React.FC<DashboardProps> = ({ accountData, setAccountData }) 
                         )
                     }
                 </div>
-                <div className="flex w-1/2 h-full items-center justify-center">
+                <div className="flex w-full lg:w-1/2 h-full items-center justify-center">
                     <img src={social} className="h-96 w-96" />
                 </div>
             </div>

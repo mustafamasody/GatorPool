@@ -25,7 +25,7 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
     const [confirmRemoveTrip, setConfirmRemoveTrip] = useState<boolean>(false);
 
     useEffect(() => {
-        fetch(`${fetchBase}/v1/rider/trips/${trip_uuid}`, {
+        fetch(`${fetchBase}/v1/rider/trips/${trip_uuid}?flow_type=requested`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -344,3 +344,5 @@ const RiderFlowRequestedTrip = ({ accountData, setAccountData }: RiderFlowReques
 }
 
 export default RiderFlowRequestedTrip;
+
+// fdsfsdfds
