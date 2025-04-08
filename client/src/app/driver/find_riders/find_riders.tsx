@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AccountData } from '../../view_controller';
 import Feed from './feed';
+import RequestedRides from './requested_rides';
 
 const initialTabs = [
     { id: 0, title: "Find Riders", show: true },
@@ -100,6 +101,12 @@ const FindRiders = ({ accountData, setAccountData }: FindRidersProps) => {
                         {
                             tab.id === 0 && (
                                 <Feed accountData={accountData} setAccountData={setAccountData} />
+                            )
+                        }
+
+                        {
+                            tab.id === 1 && (
+                                <RequestedRides />
                             )
                         }
                         {/* {

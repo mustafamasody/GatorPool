@@ -236,6 +236,18 @@ func main() {
 		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/rider/request/reject/{driver_uuid}", func(w http.ResponseWriter, r *http.Request) {
 			tripHandler.RiderFlowRiderRejectDriverRequest(r, w, r.Context())
 		})
+
+		r.With(session.VerifyOAuthToken).Get("/driver/trips/requested", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowDriverGetRequestedTrips(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Post("/{trip_uuid}/driver/freeform/remove", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.RiderFlowDriverRemoveFromTripFreeform(r, w, r.Context())
+		})
+
+		r.With(session.VerifyOAuthToken).Get("/{trip_uuid}/riders", func(w http.ResponseWriter, r *http.Request) {
+			tripHandler.GetRidersInformation(r, w, r.Context())
+		})
 	})
 
 	r.Route("/v1/config", func(r chi.Router) {

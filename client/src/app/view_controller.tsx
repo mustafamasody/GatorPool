@@ -19,6 +19,7 @@ import MyTripsRider from './rider/my_trips/my_trips';
 import RiderFlowCreatedTrip from './rider/tripview/created';
 import RiderFlowRequestedTrip from './rider/tripview/requested';
 import FindRiders from './driver/find_riders/find_riders';
+import RequestedTripView from './driver/drivertrip/requested_trip_view';
 /**
  *     "status_cards": [
         {
@@ -152,6 +153,10 @@ const ViewController = ({}) => {
         case "create-trip":
             title = 'Create Trip';
             component = <CreateTrip accountData={accountData} setAccountData={setAccountData} />;
+            break;
+        case "driver-flow-trips":
+            title = 'Driver Flow Trips';
+            component = <RequestedTripView accountData={accountData} setAccountData={setAccountData} />;
             break;
         case "rider-flow":
 

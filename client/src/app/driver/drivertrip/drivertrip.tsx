@@ -6,6 +6,7 @@ import { AccountData } from '../../view_controller';
 import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { ArrowLeft, Pencil, Save, Check, X } from 'lucide-react';
 import { NumberInput, addToast } from '@heroui/react';
+import { RiderProfile } from '../../../common/types/rider_info';
 
 interface DriverTripProps {
     accountData: AccountData;
@@ -28,6 +29,8 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
     const [editAcPreference, setEditAcPreference] = useState<boolean>(false);
     const [editConversatingPreference, setEditConversatingPreference] = useState<boolean>(false);
 
+    const [riderProfiles, setRiderProfiles] = useState<RiderProfile[]>([]);
+
     const [editCarpoolingPreference, setEditCarpoolingPreference] = useState<boolean>(false);
 
     const [confirmCancelTrip, setConfirmCancelTrip] = useState<boolean>(false);
@@ -47,6 +50,22 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
             if(data.success) {
                 setTrip(data.trip);
                 setTripCopy(data.trip);
+            }
+        }).catch(err => {
+            console.error(err);
+        });
+
+        fetch(`${fetchBase}/v1/trip/${trip_uuid}/riders`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-GatorPool-Device-Id': localStorage.getItem('X-GatorPool-Device-Id') || '',
+                'X-GatorPool-Username': localStorage.getItem('X-GatorPool-Username') || ''
+            }
+        }).then(res => res.json()).then(data => {
+            if(data.success) {
+                setRiderProfiles(data.riders);
             }
         }).catch(err => {
             console.error(err);
@@ -164,18 +183,23 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             label="Trip Fare"
                             className="w-full"
                         />
-                        <Button
-                        isIconOnly
-                            onPress={() => {
-                                if(editFareTrip) {
-                                    saveTrip();
-                                }
-                                setEditFareTrip(!editFareTrip);
-                            }}
-                            className="p-1 rounded-full"
-                        >
-                            {editFareTrip ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                        </Button>
+                        {
+                            trip?.flow_type !== "rider_requests_driver" && (
+                                <Button
+                                isIconOnly
+                                    onPress={() => {
+                                        if(editFareTrip) {
+                                            saveTrip();
+                                        }
+                                        setEditFareTrip(!editFareTrip);
+                                    }}
+                                    className="p-1 rounded-full"
+                                >
+                                    {editFareTrip ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+
+                        }
                     </div> 
 
                     <div className="flex flex-row space-x-2 items-center">
@@ -194,8 +218,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             label="Food Fare"
                             className="w-full"
                         />
-                        <Button
-                        isIconOnly
+                        {
+                            trip?.flow_type !== "rider_requests_driver" && (
+                                <Button
+                                isIconOnly
                             onPress={() => {
                                 if(editFareTrip) {
                                     saveTrip();
@@ -204,8 +230,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             }}
                             className="p-1 rounded-full"
                         >
-                            {editFareFood ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                        </Button>
+                                    {editFareFood ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                     </div> 
 
                     <div className="flex flex-row space-x-2 items-center">
@@ -224,8 +252,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             label="Gas Fare"
                             className="w-full"
                         />
-                        <Button
-                        isIconOnly
+                        {
+                            trip?.flow_type !== "rider_requests_driver" && (
+                                <Button
+                                isIconOnly
                             onPress={() => {
                                 if(editFareTrip) {
                                     saveTrip();
@@ -234,8 +264,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             }}
                             className="p-1 rounded-full"
                         >
-                            {editFareGas ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                            </Button>
+                                    {editFareGas ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                         </div>
 
                         <h1 className="text-black dark:text-white font-RobotoSemiBold text-lg mt-4">Aggregated Fare: ${tripCopy?.fare?.aggregated}</h1>
@@ -263,9 +295,11 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             <p className="text-black dark:text-white font-RobotoRegular text-sm">
                                 Passengers can control or request music
                             </p>
-                            <Button
-                                isIconOnly
-                                className="p-1 rounded-full"
+                            {
+                                trip?.flow_type !== "rider_requests_driver" && (
+                                    <Button
+                                    isIconOnly
+                                    className="p-1 rounded-full"
                                 onPress={() => {
                                     if(editMusicPreference) {
                                         saveTrip();
@@ -273,8 +307,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     setEditMusicPreference(!editMusicPreference);
                                 }}
                             >
-                                {editMusicPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                            </Button>
+                                    {editMusicPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                         </div>
 
                         <div className="flex flex-row space-x-2 items-center">
@@ -297,8 +333,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             <p className="text-black dark:text-white font-RobotoRegular text-sm">
                                 Passengers can control or request AC
                             </p>
-                            <Button
-                                isIconOnly
+                            {
+                                trip?.flow_type !== "rider_requests_driver" && (
+                                    <Button
+                                    isIconOnly
                                 className="p-1 rounded-full"
                                 onPress={() => {
                                     if(editAcPreference) {
@@ -307,8 +345,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     setEditAcPreference(!editAcPreference);
                                 }}
                             >
-                                {editAcPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                            </Button>
+                                    {editAcPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                         </div>
 
                         <div className="flex flex-row space-x-2 items-center">
@@ -359,9 +399,11 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     </p>
                                 )
                             }
-                            <Button
-                                isIconOnly
-                                className="p-1 rounded-full"
+                            {
+                                trip?.flow_type !== "rider_requests_driver" && (
+                                    <Button
+                                        isIconOnly
+                                        className="p-1 rounded-full"
                                 onPress={() => {
                                     if(editConversatingPreference) {
                                         saveTrip();
@@ -369,8 +411,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                     setEditConversatingPreference(!editConversatingPreference);
                                 }}
                             >
-                                {editConversatingPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                            </Button>
+                                    {editConversatingPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                         </div>
                     </div>
 
@@ -389,9 +433,11 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                         <p className="text-black dark:text-white font-RobotoRegular text-sm">
                             Carpooling
                         </p>
-                        <Button
-                            isIconOnly
-                            className="p-1 rounded-full"
+                        {
+                            trip?.flow_type !== "rider_requests_driver" && (
+                                <Button
+                                isIconOnly
+                                className="p-1 rounded-full"
                             onPress={() => {
                                 if(editCarpoolingPreference) {
                                     saveTrip();
@@ -410,8 +456,10 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                 setEditCarpoolingPreference(!editCarpoolingPreference);
                             }}
                         >
-                            {editCarpoolingPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
-                        </Button>
+                                    {editCarpoolingPreference ? <Save className="w-4 h-4 text-black dark:text-white" /> : <Pencil className="w-4 h-4 text-black dark:text-white" />}
+                                </Button>
+                            )
+                        }
                     </div>
 
                     <h1 className="text-red-500 font-RobotoSemiBold text-lg mt-4">
@@ -515,35 +563,37 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                                 <div className="flex flex-row items-center justify-between bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl">
                                 <div className="flex flex-col">
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {rider.address.data.first_name} {rider.address.data.last_name}
-                                    </p>
-                                    <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                    Accepted on {new Date(rider.accepted_at).toLocaleString()}
+                                        {riderProfiles.find(profile => profile.user_uuid === rider.user_uuid)?.first_name} {riderProfiles.find(profile => profile.user_uuid === rider.user_uuid)?.last_name}
                                     </p>
                                 </div>
-                                <div className="flex flex-row items-center space-x-2">
+                                {
+                                    trip.flow_type !== "rider_requests_driver" && (
+                                
+                                    <div className="flex flex-row items-center space-x-2">
                                     <Button className="p-1 rounded-full"  isIconOnly onPress={() => {
                                         setConfirmRemoveRider(rider);
                                     }}>
                                         <X className="w-4 h-4 text-black dark:text-white" />
                                     </Button>
                                     </div>
+                                    )}
                                 </div>
+                                
                             ))
                         }
                     </div>
 
-                    <h1 className="text-black dark:text-white font-RobotoSemiBold text-lg mt-4">Requests ({trip?.riders?.filter(rider => !rider.accepted).length || 0})</h1>
+                    {
+                        trip?.flow_type !== "rider_requests_driver" && (
+                            <>
+                                                <h1 className="text-black dark:text-white font-RobotoSemiBold text-lg mt-4">Requests ({trip?.riders?.filter(rider => !rider.accepted).length || 0})</h1>
                     <div className="flex flex-col space-y-2 max-h-80 w-full overflow-y-auto ">
                         {
                             trip?.riders?.filter(rider => !rider.accepted).map((rider) => (
                                 <div className="flex flex-row items-center justify-between bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl">
                                 <div className="flex flex-col">
                                     <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                        {rider.address.data.first_name} {rider.address.data.last_name}
-                                    </p>
-                                    <p className="text-black dark:text-white font-RobotoRegular text-sm">
-                                    Requested on {new Date(rider.created_at).toLocaleString()}
+                                        {riderProfiles.find(profile => profile.user_uuid === rider.user_uuid)?.first_name} {riderProfiles.find(profile => profile.user_uuid === rider.user_uuid)?.last_name}
                                     </p>
                                 </div>
                                 <div className="flex flex-row items-center space-x-2">
@@ -612,6 +662,9 @@ const DriverTrip: React.FC<DriverTripProps> = ({ accountData, setAccountData }) 
                             ))
                         }
                     </div>
+                            </>
+                        )
+                    }
                 </div>
             </div>
 

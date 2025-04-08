@@ -61,6 +61,7 @@ function App() {
               <Route path="/rider-flow/trips/" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/rider-flow/tripview/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
               <Route path="/find-riders" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
+              <Route path="/driver-flow-trips/requested/:trip_uuid" element={<ProtectedRoute><ViewController /></ProtectedRoute>} />
 
               
           </Routes>

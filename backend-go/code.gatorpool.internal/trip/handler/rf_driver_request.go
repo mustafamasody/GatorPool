@@ -309,3 +309,139 @@ func RiderFlowRiderRejectDriverRequest(req *http.Request, res http.ResponseWrite
 		"trip": trip,
 	})	
 }
+
+func RiderFlowDriverGetRequestedTrips(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripsCollection := db.Collection(datastores.Trips)
+	var trips []tripEntities.TripEntity
+	cursor, err := tripsCollection.Find(ctx, bson.D{
+		{Key: "driver_requests.user_uuid", Value: account.UserUUID},
+	})
+	if err != nil {
+		fmt.Println("Error finding trips: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error finding trips",
+		})
+	}
+	
+	err = cursor.All(ctx, &trips)
+	if err != nil {
+		fmt.Println("Error decoding trips: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error decoding trips",
+		})
+	}
+
+	if trips == nil {
+		trips = []tripEntities.TripEntity{}
+	}
+
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"trips": trips,
+	})	
+}
+
+func RiderFlowDriverRemoveFromTripFreeform(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	account, _ := req.Context().Value("account").(accountEntities.AccountEntity)
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripUUID := chi.URLParam(req, "trip_uuid")
+
+	tripsCollection := db.Collection(datastores.Trips)
+	var trip tripEntities.TripEntity
+	err := tripsCollection.FindOne(ctx, bson.D{
+		{Key: "trip_uuid", Value: tripUUID},
+	}).Decode(&trip)
+
+	if err != nil {
+		fmt.Println("Error finding trips: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error finding trips",
+		})
+	}
+
+	if trip.AssignedDriver != nil && *trip.AssignedDriver.UserUUID == *account.UserUUID {
+
+		// Remove the assigned driver
+		trip.AssignedDriver = nil
+
+		_, err = tripsCollection.UpdateOne(ctx, bson.D{
+			{Key: "trip_uuid", Value: tripUUID},
+		}, bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "assigned_driver", Value: trip.AssignedDriver},
+			}},
+		})
+
+		if err != nil {
+			fmt.Println("Error updating trip: ", err)
+			return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+				"error": "error updating trip",
+			})
+		}
+
+		return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+			"success": true,
+		})
+	} else {
+		// Remove from driver requests
+		for i, driverRequest := range trip.DriverRequests {
+			if *driverRequest.UserUUID == *account.UserUUID {
+				trip.DriverRequests = append(trip.DriverRequests[:i], trip.DriverRequests[i+1:]...)
+				break
+			}
+		}
+
+		_, err = tripsCollection.UpdateOne(ctx, bson.D{
+			{Key: "trip_uuid", Value: tripUUID},
+		}, bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "driver_requests", Value: trip.DriverRequests},
+			}},
+		})
+
+		return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+			"success": true,
+		})
+	}
+}
+
+func GetRidersInformation(req *http.Request, res http.ResponseWriter, ctx context.Context) *http.Response {
+
+	db := datastores.GetMongoDatabase(context.Background())
+
+	tripUUID := chi.URLParam(req, "trip_uuid")
+
+	tripsCollection := db.Collection(datastores.Trips)
+	var trip tripEntities.TripEntity
+	err := tripsCollection.FindOne(ctx, bson.D{
+		{Key: "trip_uuid", Value: tripUUID},
+	}).Decode(&trip)
+
+	if err != nil {
+		fmt.Println("Error finding trip: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error finding trip",
+		})
+	}
+
+	riders, err := GetTripArrayRiderInformation(*trip.Riders[0].UserUUID, []string{tripUUID})
+	if err != nil {
+		fmt.Println("Error getting riders: ", err)
+		return util.JSONResponse(res, http.StatusInternalServerError, map[string]interface{}{
+			"error": "error getting riders",
+		})
+	}
+	
+	return util.JSONGzipResponse(res, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"riders": riders,
+	})	
+}

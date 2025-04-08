@@ -51,6 +51,7 @@ func CancelTripDriverFlow(req *http.Request, res http.ResponseWriter, ctx contex
 
 	trip.Status = ptr.String("cancelled")
 	trip.UpdatedAt = ptr.Time(time.Now())
+	trip.AssignedDriver = nil
 
 	_, err = tripsCollection.UpdateOne(ctx, bson.M{"trip_uuid": tripUUID}, bson.M{"$set": trip})
 	if err != nil {

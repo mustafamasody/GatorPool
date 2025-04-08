@@ -407,7 +407,7 @@ const Feed = ({ accountData, setAccountData }: FeedProps) => {
                                 }).then(res => res.json()).then(data => {
                                     if(data.success) {
                                         // setRequestedTrip(null);
-                                        navigate('/find-riders?tab=requested');
+                                        window.location.href = "/find-riders?tab=requested"
                                         setRequestedTrip(null);
                                     } else {
                                         addToast({
