@@ -18,10 +18,21 @@ import FeedDisplay from './app/rider/query/feed_display';
 import About from './main/about';
 import Safety from './main/safety';
 import TOS from './main/tos';
+import { initGA, logPageView } from './lib/ga';
 
 function App() {
 
     let deviceID = '';
+
+    const location = useLocation();
+
+    useEffect(() => {
+      initGA();
+    }, []);
+  
+    useEffect(() => {
+      logPageView();
+    }, [location]);
 
     useEffect(() => {
       if(localStorage.getItem('X-GatorPool-Device-Id') !== null){

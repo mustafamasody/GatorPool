@@ -98,7 +98,7 @@ func RequestPasswordReset(req *http.Request, res http.ResponseWriter, ctx contex
 
 	auth := smtp.PlainAuth(
 		"",
-		"ufgatorpool@gmail.com",
+		"noreply@gatorpool.app",
 		secrets.EmailSecretValue,
 		"smtp.gmail.com",
 	)
@@ -106,7 +106,7 @@ func RequestPasswordReset(req *http.Request, res http.ResponseWriter, ctx contex
 	err = smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
-		"ufgatorpool@gmail.com",
+		"noreply@gatorpool.app",
 		[]string{email},
 		[]byte(message),
 	)

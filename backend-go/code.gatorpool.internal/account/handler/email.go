@@ -56,7 +56,7 @@ func SendEmail(body EmailRequestBody) error {
 	}
 
 	// Construct email headers
-	headers := "From: ufgatorpool@gmail.com\n" +
+	headers := "From: noreply@gatorpool.app\n" +
 		"To: " + body.Email + "\n" +
 		"Subject: " + subject + "\n" +
 		"MIME-version: 1.0\nContent-Type: text/html; charset=\"UTF-8\"\n\n"
@@ -67,7 +67,7 @@ func SendEmail(body EmailRequestBody) error {
 	// Set up SMTP authentication
 	auth := smtp.PlainAuth(
 		"",
-		"ufgatorpool@gmail.com",
+		"noreply@gatorpool.app",
 		secrets.EmailSecretValue,
 		"smtp.gmail.com",
 	)
@@ -76,7 +76,7 @@ func SendEmail(body EmailRequestBody) error {
 	err = smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
-		"ufgatorpool@gmail.com",
+		"noreply@gatorpool.app",
 		[]string{body.Email},
 		message,
 	)
