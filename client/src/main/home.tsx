@@ -346,7 +346,7 @@ const HomePage = () => {
                     
                     </div>
 
-                    <div className="flex md:w-1/2 flex-col spac ">
+                    <div className="flex md:w-1/2 flex-col mt-32 md:mt-0 ">
                         <h1 className="text-center md:text-left text-black dark:text-white font-RobotoBold text-4xl md:text-6xl">
                             Set your own price.
                         </h1>

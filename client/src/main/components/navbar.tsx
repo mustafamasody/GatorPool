@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <>
-        <nav className="bg-green-800 fixed z-30 text-white w-full shadow">
+        <nav className="bg-white dark:bg-[#0c0c0c] border-b-1 border-neutral-200 dark:border-neutral-800 fixed z-30 text-black dark:text-white w-full shadow">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20">
               {/* Logo and title */}
@@ -50,27 +50,27 @@ export default function Navbar() {
                 </div>
                 <div className="flex flex-row ml-auto md:mb- space-x-0 lg:space-x-4">
                 <div className="hidden md:flex space-x-2">
-                    <Link to="/" className="block font-RobotoRegular text-lg rounded-full text-white px-4 py-2 ">
+                    <Link to="/" className="block font-RobotoRegular text-lg rounded-full text-black dark:text-white px-4 py-2 ">
                       Home
                     </Link>
-                    <Link to="/about" className="block font-RobotoRegular text-lg rounded-full text-white px-4 py-2 ">
+                    <Link to="/about" className="block font-RobotoRegular text-lg rounded-full text-black dark:text-white px-4 py-2 ">
                       About
                     </Link>
-                    <Link to="/safety" className="block font-RobotoRegular text-lg rounded-full text-white px-4 py-2">
+                    <Link to="/safety" className="block font-RobotoRegular text-lg rounded-full text-black dark:text-white px-4 py-2">
                       Safety
                     </Link>
                   </div>
                   {
                     isLoggedIn ? (
-                      <Link to="/dashboard" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-white px-3 py-2 ">
+                      <Link to="/dashboard" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-black dark:text-white px-3 py-2 ">
                         Dashboard
                       </Link>
                     ) : (
                       <div className="flex flex-row space-x-2 items-center">
-                          <Link to="/auth/signup" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-white px-3 py-2 ">
+                          <Link to="/auth/signup" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-black dark:text-white px-3 py-2 ">
                             Try Now
                           </Link>
-                          <Link to="/auth/signin" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-white px-3 py-2 ">
+                          <Link to="/auth/signin" className="block font-RobotoRegular text-sm md:text-lg rounded-full text-black dark:text-white px-3 py-2 ">
                             Login
                           </Link>
                       </div>
@@ -83,7 +83,7 @@ export default function Navbar() {
               <div className="md:hidden">
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="text-gray-300 mt-2 md:mt-0 hover:text-white focus:outline-none focus:text-white"
+                  className="text-black dark:text-white mt-2 md:mt-0 focus:outline-none"
                 >
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     {isOpen ? (
@@ -99,13 +99,13 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {isOpen && (
               <div className="md:hidden flex flex-col space-y-2 mt-2">
-                <Link to="/" className="block py-2 px-4 text-white">
+                <Link to="/" className="block py-2 px-4 text-black dark:text-white">
                   Home
                 </Link>
-                <Link to="/about" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">
+                <Link to="/about" className="block font-RobotoRegular py-2 px-4 text-black dark:text-white hover:bg-primarynewdark">
                   About
                 </Link>
-                <Link to="/safety" className="block font-RobotoRegular py-2 px-4 text-white hover:bg-primarynewdark">
+                <Link to="/safety" className="block font-RobotoRegular py-2 px-4 text-black dark:text-white hover:bg-primarynewdark">
                   Safety
                 </Link>
               </div>

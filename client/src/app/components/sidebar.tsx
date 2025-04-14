@@ -232,7 +232,7 @@ import AirlinesOutlinedIcon from '@mui/icons-material/AirlinesOutlined';
                 }}
                 className="absolute  lg:hidden left-[13.5rem] top-[1.35rem] text-white  rounded-full p-1 lightv1:hover:bg-slate-400 newdark:hover:bg-hoverlighternewdark darkv1:hover:bg-hover">
                 <div className="flex justify-center items-center">
-                    <CloseIcon style={{ color: "white" }} sx={{ fontSize: 24 }} />
+                    <CloseIcon className="text-black dark:text-white" sx={{ fontSize: 24 }} />
                 </div>    
               </button>
 
@@ -306,7 +306,7 @@ import AirlinesOutlinedIcon from '@mui/icons-material/AirlinesOutlined';
 
                         {
                           sidebarShown && (
-                            <span className={` mt-1 ml-4  text-md font-RobotoRegular ${activeTab === 'account' ? ' text-white  ' : ' text-white '}
+                            <span className={` mt-1 ml-4 text-black dark:text-white  text-md font-RobotoRegular 
                             
                             `}>Sign Out</span>
                           )
